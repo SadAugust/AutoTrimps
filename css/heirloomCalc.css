@@ -38,3 +38,17 @@ span.textbox input {
 	background-color: #000000;
 	border: 0px black solid;
 }
+
+.customEfficiencyBtn {
+	height: 1.5vw;
+	padding: 0;
+	justify-content: center;
+	width: 2vw;
+	font-size: 0.8vw;
+	line-height: 1.3vw;
+	margin: 0.5px;
+	border: 1px solid #777;
+	border-radius: 1px;
+	margin-left: 0.1vw;
+	margin-right: 0.1vw;
+}

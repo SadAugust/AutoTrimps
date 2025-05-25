@@ -1168,11 +1168,11 @@ function makeAdditionalInfoTooltip(mouseover) {
 	}
 
 	if (game.permaBoneBonuses.voidMaps.owned > 0) {
-		tooltipText += `<p><b>Void</b><br>`;
+		tooltipText += `<p><b>Void (V)</b><br>`;
 		tooltipText += `The progress you have towards the <b>Void Maps</b> permanent bone upgrade counter.</p>`;
 	}
 
-	tooltipText += `<p><b>AL (Auto Level)</b><br>`;
+	tooltipText += `<p><b>Auto Level (AL)</b><br>`;
 	tooltipText += `L: The ideal map level for loot gains.<br>`;
 	tooltipText += `S: The ideal map level for a mixture of speed and loot gains. Auto Maps will use this when gaining Map Bonus stacks through the <b>Map Bonus</b> setting.`;
 
@@ -1183,7 +1183,7 @@ function makeAdditionalInfoTooltip(mouseover) {
 	const remainingTime = Math.ceil(refreshTimer - ((atConfig.intervals.counter / 10) % refreshTimer)) || refreshTimer;
 	tooltipText += `<p>The data shown is updated every ${refreshTimer} seconds. <b>${remainingTime}s</b> until the next update.</p>`;
 	tooltipText += `<p>Click this button while in the map chamber to either select your already purchased (loot) map or automatically set the inputs to ones the script recommends for a (loot) map.</p>`;
-	tooltipText += `<p>Control click this button to display a table of the calculators simulation results.</p>`;
+	tooltipText += `<p><i>You can view a table of the calculators simulation results by <b>double clicking</b> or holding <b>control</b> and clicking on this button.</i></p>`;
 
 	if (game.global.universe === 1 && game.jobs.Amalgamator.owned > 0) {
 		tooltipText += `<p><b>Breed Timer (B)</b><br>`;
@@ -1722,8 +1722,8 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 		for (let stance of stances) {
 			if (zone === best.loot[stance] && show_stance) {
 				if (game.global.universe === 2) {
-					if (stance === 'X') stance = 'One Shot';
-					if (stance === 'G') stance = 'Gamma';
+					if (stance === 'X') stance = 'OS';
+					if (stance === 'G') stance = 'GB';
 				}
 
 				stance_data += `<b>${stance}</b> `;

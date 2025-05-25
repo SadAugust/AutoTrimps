@@ -13,6 +13,7 @@ const atConfig = {
 		installedMods: ['spireTD', 'heirloomCalc', 'farmCalc', 'mutatorPreset', 'perky', 'surky', 'percentHealth'],
 		installedModules: ['import-export', 'utils', 'query', 'modifyGameFunctions', 'mapFunctions', 'calc', 'portal', 'upgrades', 'heirlooms', 'buildings', 'jobs', 'equipment', 'gather', 'stance', 'maps', 'breedtimer', 'combat', 'magmite', 'nature', 'other', 'fight-info', 'performance', 'bones', 'mapSettingsUI', 'gameSettingsUI', 'spireAssault'],
 		installedTesting: ['testChallenges', 'testProfile', 'testSave'],
+		installedExternal: ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'],
 		loadedExternal: [],
 		loadedModules: [],
 		loadedMods: [],
@@ -186,17 +187,24 @@ function loadScriptsAT() {
 
 	(async function () {
 		try {
-			const { pathMods, pathTesting, installedMods, installedModules, installedTesting } = atConfig.modules;
-			const testing = atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/' ? installedTesting : [];
-			const timeStamp = atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/' ? '' : `?${Math.floor(Date.now() / 60000) * 60000}`;
+			const localVersion = atConfig.initialise.basepath === 'https://localhost:8887/AutoTrimps_Local/';
+			const steamClient = typeof greenworks !== 'undefined';
+			if (localVersion && !steamClient) {
+				const testingFiles = ['jquery.min', 'select2.min'];
+				atConfig.modules.installedTesting.push(...testingFiles);
+				atConfig.modules.installedExternal = [];
+			}
+			const { pathMods, pathTesting, installedMods, installedModules, installedTesting, installedExternal } = atConfig.modules;
+			const testing = localVersion ? installedTesting : [];
+			const timeStamp = localVersion ? '' : `?${Math.floor(Date.now() / 60000) * 60000}`;
 
 			const modules = ['versionNumber', ...installedMods, ...installedModules, ...testing, 'SettingsGUI'];
-			const scripts = ['https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'https://Quiaaaa.github.io/AutoTrimps/Graphs.js', 'https://stellar-demesne.github.io/Trimps-VoidMapClarifier/VoidMapClarifier.js'];
-			const stylesheets = ['https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', `${atConfig.initialise.basepath}css/select2.css`, `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`, `${atConfig.initialise.basepath}css/mutatorPreset.css`];
+			const select2css = localVersion && !steamClient ? `${atConfig.initialise.basepath}testing/select2.min.css` : 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
+			const stylesheets = [`${select2css}`, `${atConfig.initialise.basepath}css/select2.css`, `${atConfig.initialise.basepath}css/tabs.css`, `${atConfig.initialise.basepath}css/farmCalc.css`, `${atConfig.initialise.basepath}css/perky.css`, `${atConfig.initialise.basepath}css/mutatorPreset.css`, `${atConfig.initialise.basepath}css/heirloomCalc.css`];
 
 			await loadModules('gameUpdates', atConfig.modules.pathMods, undefined, timeStamp);
 
-			for (const script of scripts) {
+			for (const script of installedExternal) {
 				if (atConfig.modules.loadedExternal.includes(script)) continue;
 				await loadScript(script, undefined, undefined, timeStamp);
 			}
@@ -228,7 +236,7 @@ function initialiseScript() {
 		main: atConfig.modules.installedMain.length > atConfig.modules.loadedMain.length,
 		modules: atConfig.modules.installedModules.length > atConfig.modules.loadedModules.length,
 		mods: atConfig.modules.installedMods.length > atConfig.modules.loadedMods.length,
-		externalScripts: 5 > atConfig.modules.loadedExternal.length
+		externalScripts: atConfig.modules.installedExternal.length > atConfig.modules.loadedExternal.length
 	};
 
 	if (Object.values(filesNotLoaded).some(Boolean)) {

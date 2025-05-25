@@ -60,7 +60,7 @@ function runHeirlooms() {
 	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
 	startingHeirloom.mods = heirlooms.newLoom.mods;
 
-	displaySelectedHeirloom(true);
+	displaySelectedHeirloom(undefined, undefined, undefined, undefined, undefined, undefined, true);
 	setupHeirloomHelpBtn();
 	updateModContainer('heirloomHelpBtn', heirlooms.newLoom);
 	recalculateHeirloomBonuses();
@@ -212,21 +212,30 @@ function setupHeirloomUI() {
 		hcGUI.$customRatioBtn.textContent = 'Use Custom Ratios';
 		hcGUI.$ratiosLine.row2.insertBefore(hcGUI.$customRatioBtn, document.getElementById('equalityTargetDiv'));
 
-		['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity'].forEach((button) => {
-			const efficiencyName = `${button} ${button !== 'Parity' ? 'Efficiency' : 'Power'}`;
+		['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity', 'Dragimp', 'Explorer', 'Breed'].forEach((button) => {
+			const efficiencyName = `${button} ${button === 'Breed' ? 'Speed' : button === 'Parity' ? 'Power' : 'Efficiency'}`;
 			const btn = document.createElement('DIV');
 			btn.id = `heirloomCustom${button}Btn`;
-			btn.setAttribute('class', `btn settingBtn${['Miner', 'Parity'].includes(button) ? 'true' : 'false'}`);
+			btn.setAttribute('class', `btn settingBtn${['Miner', 'Parity'].includes(button) ? 'true' : 'false'} customEfficiencyBtn`);
+			let clickTimer = null;
 			btn.addEventListener('click', (event) => {
-				if (event.ctrlKey) {
-					heirloomResourceSettingTooltip(button);
-				} else {
-					toggleCustomRatio(btn.id, button);
-				}
+				if (clickTimer) clearTimeout(clickTimer);
+				clickTimer = setTimeout(() => {
+					if (event.ctrlKey || event.metaKey) {
+						heirloomResourceSettingTooltip(button);
+					} else {
+						toggleCustomRatio(btn.id, button);
+					}
+					clickTimer = null;
+				}, 250);
 			});
-			btn.setAttribute('onmouseover', `tooltip("Enable ${efficiencyName}", "customText", event, '<p>Enabling this will allow the script to assign nullifium to ${efficiencyName} on this heirloom.</p><p><i>Set <b>custom spending percentages</b> by holding <b>control</b> and clicking.</i></p>')`);
+			btn.addEventListener('dblclick', (event) => {
+				if (clickTimer) clearTimeout(clickTimer);
+				heirloomResourceSettingTooltip(button);
+			});
+
+			btn.setAttribute('onmouseover', `tooltip("${efficiencyName}", "customText", event, '<p>Enabling this will allow the script to assign Nullifium to the <b>${efficiencyName}</b> modifier on this heirloom.</p><p><i>You can set <b>custom spending percentages</b> by <b>double clicking</b> or holding <b>control</b> and clicking.</i></p>')`);
 			btn.setAttribute('onmouseout', 'tooltip("hide")');
-			btn.style.cssText = `height: 1.5vw; padding: 0; justify-content: center; width: 2vw; font-size: 0.8vw; line-height: 1.3vw; margin: 0.5px; border: 1px solid #777; border-radius: 1px; margin-left: 0.1vw; margin-right: 0.1vw;`;
 			btn.textContent = button[0].toUpperCase();
 			hcGUI.$ratiosLine.row2.insertBefore(btn, document.getElementById('equalityTargetDiv'));
 		});
@@ -236,34 +245,34 @@ function setupHeirloomUI() {
 		}
 	};
 
+	const petName = game.global.universe === 2 ? 'Scruffy' : 'Fluffy';
 	const inputBoxes = {
 		row1: {
 			equipLevels: {
 				name: 'Efficiency Mods Weight',
-				description:
-					"<p>The weight you want to use for efficiency modifiers, the lower you put this value the higher the script will weight the efficiency modifiers.</p><p><b>Explorer & Dragimp Efficiency</b> modifiers will be calculated using roughly 1% of the cost of other efficiencies.</p><p>You can modify the percentage spent on other efficiency mods by holding <b>control</b> and clicking on the buttons below the <b>Allocate Nullifium</b> button.</p><br><p>If you set this to 0, the script won't spend any nullifium on Efficiency modifiers.</p>",
+				description: "<p>The weight you want to use for efficiency modifiers, the lower you put this value the higher the script will weight the efficiency modifiers.</p><p>You can modify the percentage spent on efficiency modifiers using the buttons below <b>Allocate Nullifium</b>.</p><p>If you set this to 0, the script won't spend any Nullifium on Efficiency modifiers.</p>",
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 90
 			},
 			VMWeight: {
 				name: 'Void Maps Weight',
-				description: '<p><b>Weight: Void Maps</b> is a multiplier to the value of Void Map Drop Chance. So if your next Void Map Drop Chance upgrade were to increase your value by 0.5%, the default weight (12) will multiply it by 12 so it will be calculated as if it were to increase your value by 6%.</p><p>The default weight (12) is used to provide a good balance between damage, survivability and helium gain.',
+				description: '<p><b>Weight: Void Maps</b> is a multiplier to the value of the <b>Void Map Drop Chance</b> modifier. So if your next Void Map Drop Chance upgrade were to increase your value by 0.5%, the default weight (12) will multiply it by 12 so it will be calculated as if it were to increase your value by 6%.</p><p>The default weight (12) is used to provide a good balance between damage, survivability and helium gain.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 12
 			},
 			XPWeight: {
 				name: 'Pet Exp Weight',
-				description: `<p><b>Pet Exp Weight</b> is a multiplier to the value of Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp. 
-				So if your next Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp upgrade were to increase your value by 0.5%, the default weight (12) will multiply it by 12 so it will be calculated as if it were to increase your value by 6%.</p><p>The default weight (12) is used to provide a good balance between efficiency modifiers and Pet (${game.global.universe === 2 ? 'Scruffy' : 'Fluffy'}) Exp gain.</p>`,
+				description: `<p><b>Pet Exp Weight</b> is a multiplier to the value of the <b>Pet (${petName}) Exp</b> modifier. 
+				So if your next Pet (${petName}) Exp upgrade were to increase your value by 0.5%, the default weight (12) will multiply it by 12 so it will be calculated as if it were to increase your value by 6%.</p><p>The default weight (12) is used to provide a good balance between efficiency modifiers and Pet (${petName}) Exp gain.</p><p>If you set this to 0, the script won't spend any Nullifium on Pet (${petName}) Exp.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 12
 			},
 			HPWeight: {
 				name: 'Health Weight',
-				description: `<p><b>Weight: HP</b> is a multiplier to the value of <b>Trimp Health</b>${
+				description: `<p><b>Weight: HP</b> is a multiplier to the value of the <b>Trimp Health</b>${
 					game.global.universe === 2 ? ', <b>Prismatic Shield</b>, ' : ' '
 				}and <b>Breed Speed</b> modifiers. So if your next Trimp Health upgrade were to increase your value by 0.5%, the default weight (1) will multiply it by 1 so it will be calculated as if it were to increase your value by 0.5%.</p><p>The default weight (1) is used to provide a good balance between damage, survivability and helium gain.`,
 				minValue: 0,
@@ -285,7 +294,7 @@ function setupHeirloomUI() {
 			},
 			seedDrop: {
 				name: 'Seed Drop Weight',
-				description: '<p><b>Seed Drop Weight</b> is a multiplier to the value of Seed Drop Rate. So if your next Seed Drop Rate upgrade were to increase your value by 0.5%, the default weight (2) will multiply it by 2 so it will be calculated as if it were to increase your value by 1%.</p><p>The default weight (2) is used to provide a good balance between damage, survivability and helium gain.',
+				description: '<p><b>Seed Drop Weight</b> is a multiplier to the value of the <b>Seed Drop Rate</b> modifier. So if your next Seed Drop Rate upgrade were to increase your value by 0.5%, the default weight (2) will multiply it by 2 so it will be calculated as if it were to increase your value by 1%.</p>',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 100,
@@ -310,29 +319,39 @@ function setupHeirloomHelpBtn() {
 	document.getElementById('selectedHeirloom').children[0].children[0].appendChild(heirloomHelpBtn);
 }
 
-function setupSelectedHeirloom() {
-	return {
-		Farmer: { enabled: false, weight: 100 },
-		Lumberjack: { enabled: false, weight: 100 },
-		Scientist: { enabled: false, weight: 100 },
-		Miner: { enabled: true, weight: 100 },
-		Parity: { enabled: true, weight: 100 }
-	};
+function setupSelectedHeirloom(heirloomType = 'Staff') {
+	if (heirloomType === 'Staff') {
+		return {
+			Farmer: { enabled: false, weight: 100 },
+			Lumberjack: { enabled: false, weight: 100 },
+			Scientist: { enabled: false, weight: 100 },
+			Miner: { enabled: true, weight: 100 },
+			Dragimp: { enabled: true, weight: 1 },
+			Explorer: { enabled: true, weight: 1 },
+			Parity: { enabled: true, weight: 100 }
+		};
+	} else if (heirloomType === 'Shield') {
+		return {
+			Breed: { enabled: false, weight: game.global.universe === 2 ? 10 : 100 }
+		};
+	}
 }
 
 function toggleCustomRatio(elemName, btnType = 'Ratio') {
 	const heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
-	const selectedHeirloom = _getSelectedHeirloom().id;
+	const selectedHeirloom = _getSelectedHeirloom();
+	const heirloomID = selectedHeirloom.id;
 	const ratioBtn = document.getElementById(elemName);
 	const currentClass = ratioBtn.className.split(' ')[1];
 	const newClass = currentClass === 'settingBtntrue' ? 'settingBtnfalse' : 'settingBtntrue';
-	ratioBtn.setAttribute('class', `btn ${newClass}`);
+	const classList = btnType === 'Ratio' ? `btn ${newClass}` : `btn ${newClass} customEfficiencyBtn`;
+	ratioBtn.setAttribute('class', classList);
 
-	if (!heirloomInputs[selectedHeirloom] || typeof heirloomInputs[selectedHeirloom][btnType] === 'undefined') {
-		heirloomInputs[selectedHeirloom] = setupSelectedHeirloom(heirloomInputs, selectedHeirloom);
+	if (!heirloomInputs[heirloomID] || typeof heirloomInputs[heirloomID][btnType] === 'undefined') {
+		heirloomInputs[heirloomID] = setupSelectedHeirloom(selectedHeirloom.type);
 	}
 
-	const heirloomSettings = heirloomInputs[selectedHeirloom];
+	const heirloomSettings = heirloomInputs[heirloomID];
 	if (typeof heirloomSettings[btnType] === 'boolean') {
 		heirloomSettings[btnType] = { enabled: newClass !== 'settingBtntrue', weight: 100 };
 	}
@@ -361,20 +380,21 @@ function heirloomResourceSettingEnter(event, resource) {
 
 function heirloomResourceSettingTooltip(resource) {
 	const heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
-	const selectedHeirloom = _getSelectedHeirloom().id;
-	const heirloomSettings = heirloomInputs[selectedHeirloom];
+	const selectedHeirloom = _getSelectedHeirloom();
+	const heirloomID = selectedHeirloom.id;
+	const heirloomSettings = heirloomInputs[heirloomID];
 
-	if (!heirloomSettings || typeof heirloomInputs[selectedHeirloom][resource] === 'undefined') {
-		heirloomInputs[selectedHeirloom] = setupSelectedHeirloom(heirloomInputs, selectedHeirloom);
+	if (!heirloomSettings || typeof heirloomInputs[heirloomID][resource] === 'undefined') {
+		heirloomInputs[heirloomID] = setupSelectedHeirloom(selectedHeirloom.type);
 	}
 
-	if (typeof heirloomInputs[selectedHeirloom][resource] === 'boolean') {
-		heirloomInputs[selectedHeirloom][resource] = { enabled: heirloomInputs[selectedHeirloom][resource], weight: 100 };
+	if (typeof heirloomInputs[heirloomID][resource] === 'boolean') {
+		heirloomInputs[heirloomID][resource] = { enabled: heirloomInputs[heirloomID][resource], weight: 100 };
 	}
 
 	const efficiencyName = `${resource} ${resource !== 'Parity' ? 'Efficiency' : 'Power'}`;
 	const tooltipDiv = document.getElementById('tooltipDiv');
-	const tooltipText = `The percentage you would like ${efficiencyName} to use on your heirloom. The value must be between 0 and 100.<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="heirloomResourceSettingEnter(event, '${resource}')" value="${heirloomInputs[selectedHeirloom][resource].weight}"></input>`;
+	const tooltipText = `The percentage you would like ${efficiencyName} to use on your heirloom. The value must be between 0 and 100.<br/><br/><input id="customNumberBox" style="width: 100%" onkeypress="heirloomResourceSettingEnter(event, '${resource}')" value="${heirloomInputs[heirloomID][resource].weight}"></input>`;
 	const costText = `<div class="maxCenter"><div class="btn btn-info" onclick="heirloomResourceSettingSave('${resource}')">Apply</div><div class="btn btn-info" onclick="cancelTooltip()">Cancel</div></div>`;
 
 	game.global.lockTooltip = true;
@@ -401,7 +421,7 @@ function heirloomResourceSettingSave(resource) {
 	tooltip('hide');
 
 	let value = Number(numBox);
-	if (value > 100 || value < 1 || isNaN(value)) value = 100;
+	if (value > 100 || value < 0 || isNaN(value)) value = 100;
 
 	const heirloomInputs = JSON.parse(localStorage.getItem('heirloomInputs'));
 	const selectedHeirloom = _getSelectedHeirloom().id;
@@ -451,14 +471,15 @@ function loadHeirloomSettings() {
 	const heirloomSettings = heirloomInputs[selectedHeirloom];
 	if (heirloomSettings && heirloomSettings.Ratio) heirloomInputs = heirloomSettings.Ratio;
 
-	const resourceSettings = ['Ratio', 'Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity'];
+	const resourceSettings = ['Ratio', 'Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity', 'Dragimp', 'Explorer', 'Breed'];
 	resourceSettings.forEach((setting) => {
-		let isEnabled = ['Miner', 'Parity'].includes(setting);
+		const enabledArray = ['Miner', 'Parity', 'Dragimp', 'Explorer'];
+		let isEnabled = enabledArray.includes(setting);
 		if (heirloomSettings) {
-			isEnabled = (heirloomSettings[setting] && heirloomSettings[setting].enabled) || (typeof heirloomSettings[setting] === 'undefined' && ['Miner', 'Parity'].includes(setting));
+			isEnabled = (heirloomSettings[setting] && heirloomSettings[setting].enabled) || (typeof heirloomSettings[setting] === 'undefined' && enabledArray.includes(setting));
 		}
 
-		document.getElementById(`heirloomCustom${setting}Btn`).setAttribute('class', `btn settingBtn${isEnabled ? 'true' : 'false'}`);
+		document.getElementById(`heirloomCustom${setting}Btn`).setAttribute('class', `btn settingBtn${isEnabled ? 'true' : 'false'} customEfficiencyBtn`);
 	});
 
 	document.getElementById('heirloomCustomRatioBtn').setAttribute('class', `btn settingBtn${heirloomSettings && heirloomSettings.Ratio ? 'true' : 'false'}`);
@@ -506,20 +527,19 @@ class Heirloom {
 
 			this.breedHeirloom = runningAT && this.type === 'Shield' && this.name === getPageSetting('heirloomBreed');
 
-			this.foodHeirloom = heirloom.type === 'Staff' && heirloomSettings && heirloomSettings.Farmer && heirloomSettings.Farmer.enabled;
-			this.foodPercentage = this.foodHeirloom && heirloomSettings && heirloomSettings.Farmer && typeof heirloomSettings.Farmer.weight !== 'undefined' ? heirloomSettings.Farmer.weight / 100 : 1;
-
-			this.woodHeirloom = heirloom.type === 'Staff' && heirloomSettings && heirloomSettings.Lumberjack && heirloomSettings.Lumberjack.enabled;
-			this.woodPercentage = this.woodHeirloom && heirloomSettings && heirloomSettings.Lumberjack && typeof heirloomSettings.Lumberjack.weight !== 'undefined' ? heirloomSettings.Lumberjack.weight / 100 : 1;
-
-			this.scienceHeirloom = heirloom.type === 'Staff' && heirloomSettings && heirloomSettings.Scientist && heirloomSettings.Scientist.enabled;
-			this.sciencePercentage = this.scienceHeirloom && heirloomSettings && heirloomSettings.Scientist && typeof heirloomSettings.Scientist.weight !== 'undefined' ? heirloomSettings.Scientist.weight / 100 : 1;
-
-			this.parityHeirloom = (heirloom.type === 'Staff' && heirloomSettings && typeof heirloomSettings.Parity === 'undefined') || (heirloomSettings.Parity && heirloomSettings.Parity.enabled);
-			this.parityPercentage = this.parityHeirloom && typeof heirloomSettings.Parity !== 'undefined' ? heirloomSettings.Parity.weight / 100 : 1;
-
-			this.metalHeirloom = (heirloom.type === 'Staff' && heirloomSettings && typeof heirloomSettings.Miner === 'undefined') || (heirloomSettings.Miner && heirloomSettings.Miner.enabled);
-			this.metalPercentage = this.metalHeirloom && heirloomSettings && typeof heirloomSettings.Miner !== 'undefined' ? heirloomSettings.Miner.weight / 100 : 1;
+			this.heirloomObj = {};
+			['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity', 'Dragimp', 'Explorer', 'Breed'].forEach((item) => {
+				const weakWeights = ['Dragimp', 'Explorer'].includes(item);
+				let enabled = typeof heirloomSettings !== 'undefined' && typeof heirloomSettings[item] !== 'undefined' && heirloomSettings[item].enabled;
+				const percent = enabled && typeof heirloomSettings[item].weight !== 'undefined' ? heirloomSettings[item].weight / 100 : weakWeights ? 0.01 : 1;
+				if (weakWeights && typeof heirloomSettings !== 'undefined' && typeof heirloomSettings[item] === 'undefined') {
+					enabled = true;
+				}
+				this.heirloomObj[item] = {
+					enabled,
+					percent
+				};
+			});
 
 			this.fluffyRewards = {
 				critChance: Fluffy.isRewardActive('critChance'),
@@ -706,6 +726,19 @@ class Heirloom {
 			return 1;
 		}
 
+		if (type.includes('all') || type === 'ParityPower') {
+			const modMapping = {
+				allMetal: 'MinerSpeed',
+				allWood: 'LumberjackSpeed',
+				allFood: 'FarmerSpeed',
+				ParityPower: 'ParitySpeed'
+			};
+
+			if (modMapping[type]) {
+				type = modMapping[type];
+			}
+		}
+
 		if (type === 'trimpAttack') {
 			return (value + 100 + stepAmount) / (value + 100);
 		}
@@ -716,11 +749,16 @@ class Heirloom {
 
 		if (type === 'breedSpeed') {
 			if (this.breedHeirloom) return 1e300;
-			/* magic number is log(1.01) / log(1 / 0.98) */
-			const baseValue = (100 * Math.pow(value + stepAmount * this.inputs.HPWeight, 0.492524625)) / (100 * Math.pow(value, 0.492524625));
-			const universeMult = game.global.universe === 2 ? 0.1 : 1;
-			const adjustedValue = (baseValue - 1) * universeMult + 1;
-			return adjustedValue;
+			const breedSettings = this.heirloomObj.breed;
+			if (typeof breedSettings !== 'undefined' && breedSettings.enabled) {
+				if (breedSettings.percent === 0) return 0;
+
+				/* magic number is log(1.01) / log(1 / 0.98) */
+				const baseValue = (100 * Math.pow(value + stepAmount * this.inputs.HPWeight, 0.492524625)) / (100 * Math.pow(value, 0.492524625));
+				const adjustedValue = (baseValue - 1) * breedSettings.percent + 1;
+
+				return adjustedValue;
+			}
 		}
 
 		if (type === 'prismatic') {
@@ -782,6 +820,7 @@ class Heirloom {
 		}
 
 		if (type === 'voidMaps') {
+			if (this.inputs.VMWeight === 0) return 0;
 			const divider = game.global.universe === 2 ? 10 : 1;
 			return (value + stepAmount * (this.inputs.VMWeight / divider)) / value;
 		}
@@ -791,10 +830,12 @@ class Heirloom {
 		}
 
 		if (type === 'FluffyExp') {
+			if (this.inputs.XPWeight === 0) return 0;
 			return (value + 100 + stepAmount * this.inputs.XPWeight) / (value + 100);
 		}
 
 		if (type === 'SeedDrop') {
+			if (this.inputs.seedDrop === 0) return 0;
 			return (value + 100 + stepAmount * this.inputs.seedDrop) / (value + 100);
 		}
 
@@ -802,38 +843,12 @@ class Heirloom {
 			return (value + 100 + stepAmount) / (value + 100);
 		}
 
-		if (type === 'DragimpSpeed' || type === 'ExplorerSpeed') {
-			const baseValue = Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
-			const adjustedValue = (baseValue - 1) * 0.01 + 1;
-			return adjustedValue;
-		}
-
-		const isFarmerSpeed = (type === 'FarmerSpeed' || type === 'allFood') && this.foodHeirloom;
-		const isLumberjackSpeed = (type === 'LumberjackSpeed' || type === 'allWood') && this.woodHeirloom;
-		const isMinerSpeed = (type === 'MinerSpeed' || type === 'allMetal') && this.metalHeirloom;
-		const isScientistSpeed = type === 'ScientistSpeed' && this.scienceHeirloom;
-		const isParityPower = type === 'ParityPower' && this.parityHeirloom;
-
-		if (isFarmerSpeed || isLumberjackSpeed || isMinerSpeed || isScientistSpeed) {
-			const percentageMap = {
-				FarmerSpeed: this.foodPercentage,
-				LumberjackSpeed: this.woodPercentage,
-				MinerSpeed: this.metalPercentage,
-				ScientistSpeed: this.sciencePercentage,
-				allFood: this.foodPercentage,
-				allWood: this.woodPercentage,
-				allMetal: this.metalPercentage
-			};
-
-			const baseValue = Math.log(((value + 100 + stepAmount) / (value + 100)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
-			const adjustedValue = (baseValue - 1) * percentageMap[type] + 1;
-
-			return adjustedValue;
-		}
-
-		if (isParityPower) {
-			const baseValue = Math.log(((value + 1 + stepAmount) / (value + 1)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
-			const adjustedValue = (baseValue - 1) * this.parityPercentage + 1;
+		const typeSplit = type.split('Speed');
+		if (type.includes('Speed') && typeof this.heirloomObj[typeSplit[0]] !== 'undefined' && this.heirloomObj[typeSplit[0]].enabled) {
+			if (this.heirloomObj[typeSplit[0]].percent === 0) return 0;
+			const addedValue = typeSplit[0] === 'Parity' ? 1 : 100;
+			const baseValue = Math.log(((value + addedValue + stepAmount) / (value + addedValue)) * (Math.pow(1.2, this.inputs.equipLevels) - 1) + 1) / Math.log(1.2) / this.inputs.equipLevels;
+			const adjustedValue = (baseValue - 1) * this.heirloomObj[typeSplit[0]].percent + 1;
 
 			return adjustedValue;
 		}
@@ -1229,8 +1244,6 @@ function calculate(autoUpgrade) {
 	if (allocatorButton.innerHTML !== allocateName) allocatorButton.innerHTML = allocateName;
 
 	const elemList = ['heirloomRatios0', 'VMWeight', 'HPWeight', 'equalityTarget', 'equipLevels', 'XPWeight', 'seedDrop', 'heirloomCustomRatioBtn'];
-	const resourceList = ['Farmer', 'Lumberjack', 'Miner', 'Scientist', 'Parity'];
-	const resourceListDisplay = startingHeirloom.type.includes('Staff');
 	const displayList = ['heirloomRatios0']; /* heirloomRatios0 is needed to display the UI */
 
 	if (startingHeirloom.type.includes('Shield')) {
@@ -1241,12 +1254,33 @@ function calculate(autoUpgrade) {
 		startTDCalc();
 	}
 
+	const resourceObj = {
+		Farmer: ['FarmerSpeed', 'allFood'],
+		Lumberjack: ['LumberjackSpeed', 'allWood'],
+		Miner: ['MinerSpeed', 'allMetal'],
+		Scientist: ['ScientistSpeed'],
+		Parity: ['ParityPower'],
+		Dragimp: ['DragimpSpeed'],
+		Explorer: ['ExplorerSpeed'],
+		Breed: ['breedSpeed']
+	};
+
+	const modList = [];
+	for (const item in startingHeirloom.mods) {
+		modList.push(startingHeirloom.mods[item][0]);
+	}
+
 	elemList.forEach((id) => setElemDisplay(id, displayList.includes(id) ? (id === 'heirloomRatios0' ? 'inline-block' : 'flex') : 'none', true));
-	resourceList.forEach((id) => setElemDisplay(`heirloomCustom${id}Btn`, resourceListDisplay ? 'flex' : 'none', false));
+	Object.keys(resourceObj).forEach((id) => {
+		const showBtn = resourceObj[id].some((mod) => modList.includes(mod));
+		setElemDisplay(`heirloomCustom${id}Btn`, showBtn ? 'flex' : 'none', false);
+	});
 
 	if (startingHeirloom.type.includes('Shield')) {
 		setElemDisplay('equalityTargetDiv', startingHeirloom.rarity < 11 ? 'hidden' : 'visible', false, 'visibility');
 	}
+
+	const resourceListDisplay = startingHeirloom.type.includes('Staff');
 	if (resourceListDisplay) {
 		setElemDisplay('XPWeightDiv', game.global.spiresCompleted < 2 ? 'hidden' : 'visible', false, 'visibility');
 		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity >= 11 ? 'flex' : 'none', false);
@@ -2485,6 +2519,22 @@ if (typeof originalpopulateHeirloomWindow !== 'function') {
 			if (elementExists('heirloomRatios')) document.getElementById('heirloomRatios').style.display = 'none';
 		} catch (e) {
 			console.log('Heirloom issue: ' + e, 'other');
+		}
+	};
+}
+
+/* on changing an heirloom icon load */
+if (typeof saveHeirloomIconHeirloomCalc !== 'function') {
+	var saveHeirloomIconHeirloomCalc = saveHeirloomIcon;
+	saveHeirloomIcon = function (...args) {
+		saveHeirloomIconHeirloomCalc(...args);
+		if (!heirloomsShown) return;
+
+		try {
+			const [number, location] = game.global.selectedHeirloom;
+			selectHeirloom(number, location);
+		} catch (e) {
+			console.log('Heirloom issue:', e, 'other');
 		}
 	};
 }

@@ -6263,7 +6263,6 @@ function _createAdditionalInfoTextbox() {
 		id: 'additionalInfoParent',
 		class: 'workBtn pointer noSelect',
 		style: 'display: block; font-size: 0.9vw; text-align: centre; solid black; transform:translateY(-1.5vh); max-width: 95%; margin: 0 auto',
-		onClick: 'farmCalcSetMapSliders()',
 		onmouseover: '',
 		onmouseout: 'tooltip("hide")'
 	});
@@ -6274,10 +6273,21 @@ function _createAdditionalInfoTextbox() {
 	const trimpsButtonCol = document.getElementById('trimps');
 	trimpsButtonCol.appendChild(additionalInfoContainer);
 
+	let clickTimer = null;
 	trimpsButtonCol.addEventListener('click', (event) => {
-		if (event.ctrlKey || event.metaKey) {
-			importExportTooltip('display');
-		}
+		if (clickTimer) clearTimeout(clickTimer);
+		clickTimer = setTimeout(() => {
+			if (event.ctrlKey || event.metaKey) {
+				importExportTooltip('display');
+			} else {
+				farmCalcSetMapSliders();
+			}
+			clickTimer = null;
+		}, 250);
+	});
+	trimpsButtonCol.addEventListener('dblclick', (event) => {
+		if (clickTimer) clearTimeout(clickTimer);
+		importExportTooltip('display');
 	});
 }
 
