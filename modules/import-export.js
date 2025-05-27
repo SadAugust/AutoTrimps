@@ -678,7 +678,7 @@ function _displayAutoHeirloomMods(tooltipDiv, heirloomRarity, heirloomType = 'Sh
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
 
-function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUniverse) {
+function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUniverse, whatIf = false) {
 	universe += 1;
 	const challengeOrders = {
 		c2: ['Size', 'Slow', 'Watch', 'Discipline', 'Balance', 'Meditate', 'Metal', 'Lead', 'Nom', 'Toxicity', 'Electricity', 'Coordinate', 'Trimp', 'Obliterated', 'Eradicated', 'Mapology', 'Trapper'],
@@ -740,8 +740,10 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 	const populateHeaders = (type) => {
 		challengeList[type] = {
 			number: `Difficulty`,
-			percent: `${type} %`,
 			zone: `Zone`,
+			percent: `${type}%`,
+			zoneWhatIf: `New Zone`,
+			percentWhatIf: `New ${type}%`,
 			percentzone: `HZE%`,
 			c2runner: `${type} Runner`,
 			runChallenge: `Auto Portal`
@@ -768,7 +770,7 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 	}
 
 	const processArray = (type, array, runnerList, challengesToRun) => {
-		if (array.length > 0) populateHeaders(type.toUpperCase());
+		if (array.length > 0) populateHeaders(type.toUpperCase(), whatIf);
 		const radLevel = type === 'c3';
 		const colourPercentages = type === 'c2' ? challengePercentages.c2 : challengePercentages.c3;
 		array.forEach((item, index) => {
@@ -782,6 +784,8 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 				percent: bonusPercent,
 				zone: game.c2[item],
 				percentzone: `${challengePercent.toFixed(2)}%`,
+				zoneWhatIf: game.c2[item],
+				percentWhatIf: bonusPercent,
 				c2runner: challengesToRun && runnerList.includes(item) ? '✅' : '❌',
 				runChallenge: challengesToRun && challengesToRun.includes(item) ? '✅' : '❌',
 				color: getChallengeColor(challengePercent, highPct, midPct)
@@ -805,25 +809,29 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 		processArray(type, array, runnerLists[type], challengesToRun[type]);
 	});
 
-	const createTableRow = (key, { number, percent, zone, color, percentzone, c2runner, runChallenge }) => `
+	const createTableRow = (key, { number, percent, zone, color, percentzone, c2runner, runChallenge, zoneWhatIf, percentWhatIf }) => `
 		<tr>
 			<td>${key}</td>
 			<td>${number}</td>
-			<td>${percent}</td>
 			<td>${zone}</td>
+			<td>${percent}</td>
 			<td${!['C2', 'C3'].includes(key) ? ` bgcolor='black'><font color=${color}>${percentzone}</font>` : `>${percentzone}`}</td>
+			${whatIf ? (!['C2', 'C3'].includes(key) ? `<td><input type="number" class="zone-input" value="${zone}" min="0" style="width:5em" onchange="_c2TableWhatIf('${key}', this.value, ${universe - 1})"></td>` : `<td>${zoneWhatIf}</td>`) : ''}
+			${whatIf ? (!['C2', 'C3'].includes(key) ? `<td id="${key}WhatIf" name="c2">${percent}</td>` : `<td>${percentWhatIf}</td>`) : ''}
 			<td>${c2runner}</td>
 			<td>${runChallenge}</td>
 		</tr>
 	`;
 
-	const createTotalRow = (type, value) => `
+	const createTotalRow = (type, value, total = '') => `
 		<tr>
 			<td>Total ${type}</td>
 			<td></td>
-			<td>${prettify(value)}%</td>
+			<td id="regularC2${total}" data-value="${value}">${prettify(value)}%</td>
 			<td></td>
 			<td></td>
+			${whatIf ? `<td></td>` : ``}
+			${whatIf ? `<td id="whatIfC2${total}">${prettify(value)}%</td>` : ``}
 			<td></td>
 			<td></td>
 		</tr>
@@ -831,12 +839,12 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 
 	const createTable = (challengeList) => {
 		const rows = Object.keys(challengeList).map((key) => createTableRow(key, challengeList[key]));
-		const cInfScore = hzeU2 >= 50 ? `${createTotalRow('C∞', game.global.totalSquaredReward.toFixed(2))}` : '';
+		const cInfScore = hzeU2 >= 50 ? `${createTotalRow('C∞', game.global.totalSquaredReward, 'Total')}` : '';
 		return `
 			<table class='bdTableSm table table-striped'>
 				<tbody>
 					${rows.join('')}
-					${createTotalRow(`C${universe}`, Math.min(universeCaps[`c${universe}`], challengeTotal.toFixed(2)))}
+					${createTotalRow(`C${universe}`, Math.min(universeCaps[`c${universe}`], challengeTotal))}
 					${cInfScore}
 				</tbody>
 			</table>
@@ -846,16 +854,70 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 
 	tooltipText += createTable(challengeList);
 
-	const costText = "<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Close</div></div>";
+	const costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-danger' onclick='cancelTooltip();'>Close</div><div class='btn btn-info' style='margin-left: 5vw; float: right;' onclick='importExportTooltip("c2table", undefined, ${universe - 1}, ${!whatIf})'>${whatIf ? 'Hide' : 'Show'} What Ifs</div></div>`;
 
 	const ondisplay = function () {
-		_verticalCenterTooltip();
+		_verticalCenterTooltip(undefined, undefined, undefined, whatIf ? '40' : '');
 	};
 
 	tooltipDiv.style.left = '33.75%';
 	tooltipDiv.style.top = '25%';
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function _c2TableWhatIf(challenge, value, universe) {
+	const elem = document.getElementById(`${challenge}WhatIf`);
+	if (elem) {
+		const newPercent = getIndividualSquaredReward(challenge, value);
+		elem.innerText = newPercent;
+
+		const elements = document.getElementsByName('c2');
+		let newTotal = Array.from(elements).reduce((sum, elem) => sum + Number(elem.innerHTML), 0);
+		if (universe === 1 && newTotal > 60000) newTotal = 60000;
+
+		const c2Elem = document.getElementById('regularC2');
+		const totalC = document.getElementById('whatIfC2');
+		if (totalC) {
+			totalC.innerHTML = `${prettify(newTotal)}%`;
+			/* const currentPct = Number(c2Elem.getAttribute('data-value'));
+			const pctIncrease = (currentPct / newTotal - 1) * 100;
+			const plusMinus = newTotal > currentPct ? '+' : '';
+			totalC.innerHTML += ` (${plusMinus}${pctIncrease.toFixed(2)}%)`; */
+		}
+
+		const totalC2Elem = document.getElementById('regularC2Total');
+		const totalCinf = document.getElementById('whatIfC2Total');
+		if (totalCinf) {
+			const totalC2Value = _c2TableCalcReward(universe, newTotal);
+			totalCinf.innerHTML = `${prettify(totalC2Value)}%`;
+
+			/* const currentPct = Number(totalC2Elem.getAttribute('data-value'));
+			const pctIncrease = (currentPct / totalC2Value - 1) * 100;
+			const plusMinus = totalC2Value > currentPct ? '+' : '';
+			totalCinf.innerHTML += ` (${plusMinus}${pctIncrease.toFixed(2)}%)`; */
+		}
+	}
+}
+
+function _c2TableCalcReward(universe, value) {
+	let reward = 0;
+	let rewardU2 = 0;
+	for (const item in game.challenges) {
+		const challenge = game.challenges[item];
+		if (!challenge.allowSquared) continue;
+
+		const thisReward = getIndividualSquaredReward(item, false);
+		if (challenge.allowU2 && challenge.blockU1) rewardU2 += thisReward;
+		else reward += thisReward;
+	}
+
+	if (universe === 1) reward = value;
+	if (universe === 2) rewardU2 = value;
+
+	if (reward > 60000) reward = 60000;
+	reward *= rewardU2 / 100 + 1;
+	return reward;
 }
 
 function _displaySetCustomChallenge(tooltipDiv) {

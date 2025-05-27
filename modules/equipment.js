@@ -200,7 +200,6 @@ function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAnci
 
 				if (game.global.universe === 1 && !game.buildings.Gym.locked) {
 					if (needGymystic()) continue;
-
 					const { Gym } = getPageSetting('buildingSettingsArray');
 
 					if (Gym && Gym.enabled && (Gym.buyMax <= 0 || Gym.buyMax > game.buildings.Gym.owned) && getPageSetting('buildingsType')) {
