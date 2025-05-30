@@ -638,6 +638,11 @@ function _autoEquipSave() {
 		let percent = parseInt(percentElem.value, 10);
 		percent = isNumberBad(percent) ? 0 : Math.max(Math.min(percent, 100), 0);
 		setting[name].percent = percent;
+
+		const buyMaxElem = document.getElementById(name + 'BuyMax');
+		let buyMax = parseInt(buyMaxElem.value, 10);
+		buyMax = isNumberBad(buyMax) ? 0 : Math.max(Math.min(buyMax, 9999), 0);
+		setting[name].buyMax = buyMax;
 	});
 
 	/* adding in equips that are locked so that there won't be any issues later on */
