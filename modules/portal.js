@@ -401,8 +401,7 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 
 	const runType = getPageSetting('c2RunnerMode', universe);
 	const c2RunnerPortal = getPageSetting('c2RunnerPortal', universe);
-	const c2RunnerPercent = runType === 0 ? getPageSetting('c2RunnerPercent', universe) / 100 : 1;
-	if (runType === 0 && (c2RunnerPortal <= 0 || c2RunnerPercent <= 0)) return;
+	if (runType === 0 && c2RunnerPortal <= 0) return;
 
 	const unlockedC2s = filterAndSortChallenges(challengesUnlockedObj(universe, false, false), 'c2');
 	const c2Setting = getPageSetting('c2RunnerSettings', universe);
@@ -440,7 +439,8 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 		let shouldRun = false;
 		if (runType === 0) {
 			if (challengeLevel >= c2RunnerPortal) continue;
-			shouldRun = challengeLevel / highestZone < c2RunnerPercent;
+			const runPercent = c2Setting[challengeName].percent / 100 || 0.85;
+			shouldRun = challengeLevel / highestZone < runPercent;
 		} else {
 			shouldRun = challengeLevel < c2Setting[challengeName].zone;
 		}

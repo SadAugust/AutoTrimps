@@ -3,6 +3,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		mapSettings: typeof mapSettingsDisplay === 'function' ? mapSettingsDisplay : null,
 		AutoStructure: typeof autoStructureDisplay === 'function' ? autoStructureDisplay : null,
 		AutoJobs: typeof autoJobsDisplay === 'function' ? autoJobsDisplay : null,
+		AutoEquip: typeof autoEquipDisplay === 'function' ? autoEquipDisplay : null,
 		uniqueMaps: typeof uniqueMapsDisplay === 'function' ? uniqueMapsDisplay : null,
 		messageConfig: typeof messageDisplay === 'function' ? messageDisplay : null,
 		dailyAutoPortal: typeof dailyPortalModsDisplay === 'function' ? dailyPortalModsDisplay : null,
@@ -33,6 +34,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 	const titleTexts = {
 		AutoStructure: 'Configure AutoTrimps Auto Structure',
 		AutoJobs: 'Configure AutoTrimps Auto Jobs',
+		AutoEquip: 'Configure AutoTrimps Auto Equip',
 		uniqueMaps: 'Unique Maps',
 		messageConfig: 'Message Config',
 		dailyAutoPortal: 'Daily Auto Portal Modifiers',

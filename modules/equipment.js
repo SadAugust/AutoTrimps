@@ -77,18 +77,19 @@ function _shouldSaveResource(resourceName) {
 	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
 
-function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false, ignoreShield = getPageSetting('equipNoShields')) {
+function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false, ignoreShield = false) {
 	if (mapSettings.pandaEquips) return pandemoniumEquipmentCheck(mapSettings.cacheGain);
 
 	const canAncientTreasure = game.mapUnlocks.AncientTreasure.canRunOnce;
 	const prestigeSetting = getPageSetting('equipPrestige');
 	const noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal');
 
+	const equipSettingsArray = getPageSetting('autoEquipSettingsArray');
 	const baseEquipmentObj = _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge);
 	const [highestPrestige, prestigesAvailableObj] = _getHighestPrestige(baseEquipmentObj, prestigeSetting, canAncientTreasure, noPrestigeChallenge);
 
-	const buyPrestigesObj = _populateBuyPrestiges(baseEquipmentObj);
-	const mostEfficientObj = _populateMostEfficientEquipment(baseEquipmentObj, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj, ignoreShield);
+	const buyPrestigesObj = _populateBuyPrestiges(equipSettingsArray, baseEquipmentObj);
+	const mostEfficientObj = _populateMostEfficientEquipment(equipSettingsArray, baseEquipmentObj, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj, ignoreShield);
 
 	return mostEfficientObj;
 }
@@ -96,18 +97,16 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 function calculateEquipCap(type, zoneGo = false, noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal'), externalCheck = false) {
 	if ((zoneGo && externalCheck) || noPrestigeChallenge) return Infinity;
 	if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return Infinity;
-	return type === 'attack' ? getPageSetting('equipCapAttack') : getPageSetting('equipCapHealth');
 }
 
-function calculateResourceSpendingPct(zoneGo = false, type = 'attack', equipPercent = getPageSetting('equipPercent'), resourceSpendingPct) {
+function calculateResourceSpendingPct(zoneGo = false, type = 'attack', resourceSpendingPct = 0) {
 	if (zoneGo || (mapSettings.shouldHealthFarm && type !== 'attack')) return 1;
 	if (mapSettings.mapName === 'Smithless Farm' && (type === 'attack' || mapSettings.equality > 0)) return 1;
-	return resourceSpendingPct || (equipPercent <= 0 ? 1 : Math.min(1, equipPercent / 100));
+	return resourceSpendingPct;
 }
 
 function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge) {
 	const equipZone = getPageSetting('equipZone');
-	const equipPercent = getPageSetting('equipPercent');
 	const currentMap = getCurrentMapObject() || { location: 'world' };
 
 	const getZoneGo = (type) => zoneGo || zoneGoCheck(equipZone, type, currentMap).active;
@@ -120,7 +119,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 			statPerResource: Infinity,
 			prestige: false,
 			cost: 0,
-			resourceSpendingPct: calculateResourceSpendingPct(zoneGo, type, equipPercent, resourceSpendingPct),
+			resourceSpendingPct: calculateResourceSpendingPct(zoneGo, type, resourceSpendingPct),
 			zoneGo: zoneGo,
 			equipCap: calculateEquipCap(type, zoneGo, noPrestigeChallenge)
 		};
@@ -160,24 +159,25 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 	return [highestPrestige, prestigesObj];
 }
 
-function _populateBuyPrestiges(mostEfficient) {
+function _populateBuyPrestiges(equipSettingsArray, mostEfficient) {
 	const buyPrestiges = {};
 	const pandemonium = challengeActive('Pandemonium');
 
 	for (const equipName in atData.equipment) {
 		const equipData = game.equipment[equipName];
 		if (equipData.locked || (pandemonium && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
+		if (!equipSettingsArray[equipName].enabled) continue;
 
 		const equipModule = atData.equipment[equipName];
 		const equipType = equipModule.stat;
-		const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct;
+		const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct !== 1 ? equipSettingsArray[equipName].percent / 100 : 1;
 		buyPrestiges[equipName] = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
 	}
 
 	return buyPrestiges;
 }
 
-function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj, ignoreShield) {
+function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj, ignoreShield) {
 	const mostEfficientOrig = { ...mostEfficient };
 	const { prestigeTypes, prestigesAvailable } = prestigesAvailableObj;
 	const prestigeSkip = { attack: false, health: false };
@@ -195,6 +195,8 @@ function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAnci
 			const maybeBuyPrestige = buyPrestigesObj[equipName];
 
 			if (equipData.locked || (pandemonium && game.challenges.Pandemonium.isEquipBlocked(equipName))) continue;
+			if (!equipSettingsArray[equipName].enabled) continue;
+
 			if (equipName === 'Shield') {
 				if (ignoreShield) continue;
 
@@ -215,7 +217,7 @@ function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAnci
 			const equipModule = atData.equipment[equipName];
 			const equipType = equipModule.stat;
 			const zoneGo = mostEfficient[equipType].zoneGo;
-			const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct;
+			const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct !== 1 ? equipSettingsArray[equipName].percent / 100 : 1;
 			const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
 			if (forcePrestige && equipName !== 'Shield') {
 				if (prestigesAvailable && allowPrestigeSkip && !maybeBuyPrestige.prestigeAvailable) {
@@ -230,6 +232,8 @@ function _populateMostEfficientEquipment(mostEfficient, buyPrestigesObj, canAnci
 
 			let equipCap = mostEfficient[equipType].equipCap;
 			if (equipData.level >= equipCap && mostEfficient[equipType].zoneGo) equipCap = Infinity;
+			if (equipCap !== Infinity) equipCap = equipSettingsArray[equipName].buyMax;
+			if (equipCap === 0) equipCap = Infinity;
 			if (maybeBuyPrestige.prestigeAvailable) equipCap = Math.min(equipCap, 9);
 
 			const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
@@ -315,7 +319,6 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	};
 
 	if (!Object.getOwnPropertyNames(atData.equipment).includes(equipName)) return prestigeInfo;
-	if (equipName === 'Shield' && getPageSetting('equipNoShields')) return prestigeInfo;
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
 

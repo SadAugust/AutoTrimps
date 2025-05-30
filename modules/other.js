@@ -1453,6 +1453,26 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '7.1.9') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			const settingName = 'c2RunnerSettings';
+			const values = ['value', 'valueU2'];
+			if (typeof tempSettings['c2RunnerPercent'] !== 'undefined' && typeof tempSettings['c2RunnerSettings'] !== 'undefined') {
+				for (let z = 0; z < values.length; z++) {
+					const percentSetting = tempSettings.c2RunnerPercent[values[z]];
+					const tempSetting = tempSettings[settingName][values[z]];
+					if (Object.keys(tempSetting).length > 0 && typeof percentSetting !== 'undefined') {
+						Object.entries(tempSetting).forEach(([key, setting]) => {
+							autoTrimpSettings[settingName][values[z]][key].percent = percentSetting;
+						});
+					}
+				}
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

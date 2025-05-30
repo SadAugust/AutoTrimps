@@ -26,6 +26,14 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 		elem.style.left = '33.75%';
 		elem.style.top = '1%';
 		elem.style.zIndex = 9;
+	} else if (what === 'Auto Equip Reset') {
+		tooltipText = `Are you sure you want to reset your Auto Equip setting to their default values?`;
+
+		costText = `<div class='maxCenter'><div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip2(true); _autoEquipReset(); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Confirm</div><div class='btn btn-danger ' onclick='cancelTooltip2(true); document.getElementById("tooltipDiv2").style.zIndex = 6;'>Cancel</div></div>`;
+
+		elem.style.left = '33.75%';
+		elem.style.top = '1%';
+		elem.style.zIndex = 9;
 	} else if (what === 'Auto Heirloom Changes') {
 		const [heirloomType, blacklist] = textString;
 		titleText = 'Hold On!!';

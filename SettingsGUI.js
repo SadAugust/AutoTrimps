@@ -383,10 +383,10 @@ function initialiseAllSettings() {
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
-				let description = "<p>If your HD (enemyHealth/trimpDamage) ratio is above this value it will override your <b>AE: Percent</b> input when looking at " + (atConfig.settingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
+				let description = "<p>If your HD (enemyHealth/trimpDamage) ratio is above this value it will override your equip <b>Percent</b> inputs when looking at " + (atConfig.settingUniverse !== 2 ? "weapon" : "equipment") + " purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase equipment when you slow down in world.<br></p>";
 				description += "<p>Your HD ratio can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
-				description += "<p>If set to <b>0 or below</b> it will disable this setting and only override your <b>AE: Percent</b> input when running <b>HD Farm</b>.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting and only override your equip <b>Percent</b> inputs when running <b>HD Farm</b>.</p>";
 				description += "<p><b>Recommended:</b> 1</p>";
 				return description;
 			}, 'value', 1, null, displayTab, [1, 2],
@@ -395,36 +395,13 @@ function initialiseAllSettings() {
 		createSetting('equipCutOffHS',
 			function () { return ('AE: HS Cut-off') },
 			function () {
-				let description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your <b>AE: Percent</b> input when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
+				let description = "<p>If your Hits Survived (trimpHealth/enemyDamage) ratio is below this value it will override your equip <b>Percent</b> inputs when looking at armor purchases and set your spending percentage to 100% of resources available.</p>";
 				description += "<p>Goal with this setting is to have it purchase equipment when you slow down in world.<br></p>";
 				description += "<p>Your Hits Survived ratio can be seen in either the <b>Auto Maps Status tooltip</b> or the AutoTrimp settings <b>Help</b> tab.</p>";
-				description += "<p>If set to <b>0 or below</b> it will disable this setting and only override your <b>AE: Percent</b> input when <b>Hits Survived</b> farming.</p>";
+				description += "<p>If set to <b>0 or below</b> it will disable this setting and only override your equip <b>Percent</b> inputs when <b>Hits Survived</b> farming.</p>";
 				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
 			}, 'value', 2.5, null, displayTab, [1, 2],
-			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
-
-		createSetting('equipCapAttack',
-			function () { return ('AE: Weapon Cap') },
-			function () {
-				let description = "<p>The value you want weapon equipment to stop being purchased at.</p>";
-				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
-				description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and you will purchase as many attack equips as it takes to reach your target.</p>`;
-				description += "<p><b>Recommended:</b> 20</p>";
-				return description;
-			}, 'value', 20, null, displayTab, [1, 2],
-			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
-
-		createSetting('equipCapHealth',
-			function () { return ('AE: Armour Cap') },
-			function () {
-				let description = "<p>The value you want armor equipment to stop being purchased at.</p>";
-				description += "<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>";
-				description += `<p>When your Hits Survived is below your <b>AE: HS Cut-off</b> setting <b>OR</b> when <b>Hits Survived</b> farming this cap is ignored and you will purchase as many health equips as it takes to reach your target.</p>`;
-				if (atConfig.settingUniverse ===2) description += `<p>If your <b>HD Ratio</b> is above your <b>AE: HD Cut-off</b> setting this cap is ignored and the script will purchase as many health equips as it takes to reach your target.</p>`;
-				description += "<p><b>Recommended:</b> 20</p>";
-				return description;
-			}, 'value', 20, null, displayTab, [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
 
 		createSetting('equipZone',
@@ -433,20 +410,10 @@ function initialiseAllSettings() {
 				let description = "<p>What zone to stop caring about what percentage of resources you're spending and buy as many prestiges and equipment as possible.</p>";
 				description += "<p>Can input multiple zones such as <b>200,231,251</b>, doing this will spend all your resources purchasing equipment and prestiges on each zone input.</p>";
 				description += "<p>You are able to enter a zone range, this can be done by using a decimal point between number ranges e.g. <b>23.120</b> which will cause the zone check to set your purchasing percentage to 100% between zones 23 and 120. <b>This can be used in conjunction with other zones too, just seperate inputs with commas!</b></p>";
-				description += "<p>If inside one of these zones it will override your <b>AE: Percent</b> input and set your spending percentage to 100% of resources available. It will also set your health and attack equipment caps to Infinity.</p>"
+				description += "<p>If inside one of these zones it will override your equip <b>Percent</b> inputs and set your spending percentage to 100% of resources available. It will also set your health and attack equipment caps to Infinity.</p>"
 				description += "<p><b>Recommended:</b> 999</p>";
 				return description;
 			}, 'multiValue', [-1], null, displayTab, [1, 2],
-			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
-
-		createSetting('equipPercent',
-			function () { return ('AE: Percent') },
-			function () {
-				let description = "<p>What percent of resources you'd like to spend on equipment.</p>";
-				description += "<p>If set to <b>0 or below</b> then your equip spending percentage will be set to 100%.</p>";
-				description += "<p><b>Recommended:</b> 10</p>";
-				return description;
-			}, 'value', 10, null, displayTab, [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
 
 		createSetting('equip2',
@@ -490,16 +457,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 6, null, displayTab, [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse) && getPageSetting('equipPrestige', atConfig.settingUniverse) === 2) });
-
-		createSetting('equipNoShields',
-			function () { return ('AE: No Shields') },
-			function () {
-				let description = "<p>Will stop the purchase of Shield equipment levels and prestiges.</p>";
-				description += "<p><b>This is only ever useful in very niche scenarios.</b></p>";
-				description += "<p><b>Recommended:</b> Off</p>";
-				return description;
-			}, 'boolean', false, null, displayTab, [1, 2],
-			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
 
 		createSetting('equipPortal',
 			function () { return ('AE: Portal') },
@@ -1917,18 +1874,6 @@ function initialiseAllSettings() {
 				description += `<p><b>Recommended:</b> Desired challenge end goal</p>`;
 				return description;
 			}, 'value', -1, null, displayTab, [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0 && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)) });
-
-		createSetting('c2RunnerPercent',
-			function () { return (`${_getChallenge2Info()} Runner: %`) },
-			function () {
-				let description = `<p>The percent threshold you want ${_getChallenge2Info()}s to be over.</p>`;
-				description += `<p>Will only run ${_getChallenge2Info()}s with a HZE% below this setting's value.</p>`;
-				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
-				description += `<p>If this setting is disabled it will also stop ${_getChallenge2Info()} Runner from starting any challenges.</p>`;
-				description += `<p><b>Recommended:</b> 85</p>`;
-				return description;
-			}, 'value', 0, null, displayTab, [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0 && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)) });
 
 		createHeading('dailyDescription', 'Daily Auto Portal Settings', displayTab)
@@ -5106,7 +5051,7 @@ function initialiseAllSettings() {
 			function () { return false });
 
 		createSetting('buildingSettingsArray',
-			function () { return ('Building Settings') },
+			function () { return ('Auto Building Settings') },
 			function () { return ('Click to adjust <b>Auto Structure</b> settings.') },
 			'mazDefaultArray', {
 				Hut: { enabled: true, percent: 80, buyMax: 200 },
@@ -5141,7 +5086,7 @@ function initialiseAllSettings() {
 			function () { return false });
 
 		createSetting('jobSettingsArray',
-			function () { return ('Job Settings') },
+			function () { return ('Auto Job Settings') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', {
 				Farmer: { enabled: true, ratio: 1 },
@@ -5157,7 +5102,27 @@ function initialiseAllSettings() {
 			}, null, displayTab, [1, 2],
 			function () { return false });
 		
-			createSetting('autoAllocatePresets',
+		createSetting('autoEquipSettingsArray',
+			function () { return ('Auto Equip Settings') },
+			function () { return ('Click to adjust settings.') },
+			'mazDefaultArray', {
+				Shield: { enabled: true, percent: 10, buyMax: 20 },
+				Dagger: { enabled: true, percent: 5, buyMax: 20 },
+				Boots: { enabled: true, percent: 5, buyMax: 20 },
+				Mace: { enabled: true, percent: 5, buyMax: 20 },
+				Helmet: { enabled: true, percent: 5, buyMax: 20 },
+				Polearm: { enabled: true, percent: 10, buyMax: 20 },
+				Pants: { enabled: true, percent: 10, buyMax: 20 },
+				Battleaxe: { enabled: true, percent: 10, buyMax: 20 },
+				Shoulderguards: { enabled: true, percent: 10, buyMax: 20 },
+				Greatsword: { enabled: true, percent: 25, buyMax: 20 },
+				Breastplate: { enabled: true, percent: 25, buyMax: 20 },
+				Arbalest: { enabled: true, percent: 25, buyMax: 20 },
+				Gambeson: { enabled: true, percent: 25, buyMax: 20 }
+			}, null, displayTab, [1, 2],
+			function () { return false });
+		
+		createSetting('autoAllocatePresets',
 			function () { return ('Auto Allocate Presets') },
 			function () { return ('Click to adjust settings.') },
 			'mazDefaultArray', JSON.stringify({
@@ -5381,7 +5346,7 @@ function _autoPortalTimeoutCheck(id) {
 	const portalSettings = ['autoPortal', 'heliumChallenge', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
 	const challengePortalSettings = ['frigidAutoPortal', 'mayhemAutoPortal', 'pandemoniumAutoPortal', 'desolationAutoPortal'];
 	const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse', 'dailyDontCap', 'dailyDontCapAmt', 'dailySkip'];
-	const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerPercent', 'c2RunnerEndMode'];
+	const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerEndMode'];
 
 	if (portalSettings.includes(id) || challengePortalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
 		_settingTimeout('autoPortal');
@@ -5946,10 +5911,10 @@ function _settingsToLineBreak() {
 	const Core = ['pauseScript'];
 	const Buildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const Jobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireOneOff', 'geneAssistTimerSpireC2'];
-	const Equipment = ['equipPercent', 'equipNoShields'];
+	const Equipment = ['equipZone', 'equipPrestigePct'];
 	const Combat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const Maps = ['recycleExplorer', 'mapBonusPrestige', 'mapBonusLevelType', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
-	const Portal = ['autoPortalForce', 'autoPortalUniverseSwap', 'c2Finish', 'c2RunnerPercent', 'dailyHeliumHrPortal'];
+	const Portal = ['autoPortalForce', 'autoPortalUniverseSwap', 'c2Finish', 'c2RunnerPortal', 'dailyHeliumHrPortal'];
 	const Challenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'experienceC2', 'toxicitySettings', 'archaeologyString3'];
 	const OneOff = ['oneOffFiller', 'frigidAutoPortal', 'mayhemAutoPortal', 'exterminateWorldStaff', 'pandemoniumAutoPortal'];
 	const C2 = ['c2Table', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'witherMutatorPreset', 'questSmithySpire', 'stormDestackTo', 'berserkDisableMapping', 'glassStacks'];
@@ -6100,10 +6065,8 @@ function _createButton(id, label, setting, tooltipText, timeWarp = '') {
 
 	container.appendChild(text);
 
-	if (label !== 'Equip') {
-		container.appendChild(settings);
-		settings.appendChild(settingsButton);
-	}
+	container.appendChild(settings);
+	settings.appendChild(settingsButton);
 
 	initial.appendChild(container);
 
@@ -6482,7 +6445,7 @@ function _setBuildingClasses() {
 function _setAutoEquipClasses() {
 	const autoEquip = getPageSetting('equipOn');
 	document.getElementById('equipOn').setAttribute('class', 'toggleConfigBtn noselect settingsBtn settingBtn' + autoEquip);
-	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'pointer noselect autoUpgradeBtn settingBtn' + autoEquip);
+	document.getElementById('autoEquipLabel').parentNode.setAttribute('class', 'toggleConfigBtn pointer noselect autoUpgradeBtn settingBtn' + autoEquip);
 }
 
 function _setAutoJobsClasses() {

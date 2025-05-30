@@ -302,6 +302,7 @@ function autoJobsDisplay(elem) {
 		percentJobs.push('Trainer');
 		if (hze >= 230) percentJobs.push('Magmamancer');
 	}
+
 	if (game.global.universe === 2) {
 		if (hze >= 30) percentJobs.push('Meteorologist');
 		if (hze >= 50) percentJobs.push('Worshipper');
@@ -531,6 +532,154 @@ function _autoJobsReset() {
 	setPageSetting('jobSettingsArray', setting);
 	cancelTooltip2();
 	importExportTooltip('AutoJobs');
+}
+
+/* auto equip */
+function autoEquipDisplay(elem) {
+	MODULES.popups.mazWindowOpen = true;
+
+	const baseText = `<p>Here you can choose which equipment will be automatically purchased when AT Auto Equip is toggled on. Click on a equipment name to enable the automatic purchasing of that equip, the <b>Percent</b> input specifies the cost-to-resource % that the equipment should be purchased below and set the <b>Up To</b> box to the maximum number of that equipment you'd like purchased <b>(0 for no limit)</b>.</p>
+
+	<p>For example, setting the <b>Percent</b> input to 10 and the <b>Up To</b> input to 20 for <b>Pants</b> will cause a level to be purchased when the cost of the next level is less than 10% of your metal, as long as you have less than 20 levels of the equip.</p>
+
+	<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>
+	
+	<p>When your Hits Survived is below your <b>AE: HS Cut-off</b> setting <b>OR</b> when <b>Hits Survived</b> farming then your Percent and Up To inputs for health equips will be ignored and it will farm as many equips as possible with 100% resources spent until either condition is no longer met. Similarly, for attack equips, when your HD Ratio is above your <b>AE: HD Cut-off</b> setting <b>OR</b> when <b>HD Ratio</b> then those inputs are overwritten.</p>`;
+
+	let tooltipText = `
+		<p>Welcome to AT's Auto Equip Settings! 
+		<span id='autoTooltipHelpBtn' role='button' style='font-size: 0.6vw;' class='btn btn-md btn-info' onclick='toggleAutoTooltipHelp(); _verticalCenterTooltip();'>Help</span></p>
+		<div id='autoTooltipHelpDiv' style='display: none'>
+		<p>${baseText}</p>
+		</div>
+	`;
+
+	const settingGroup = {};
+	const settingsArray = getPageSetting('autoEquipSettingsArray');
+
+	let obj = Object.keys(game.equipment);
+
+	obj.forEach((setting) => {
+		settingGroup[setting] = {};
+	});
+
+	tooltipText += `<div id='baseChallenges'>`;
+	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Equipment</span><br>`;
+	const elemWidth = `calc((100% - 1.4em - 2px) / 6.1)`;
+
+	let rowData = '';
+	let rows = 0;
+	let total = 0;
+	for (let item in settingGroup) {
+		if (!game.global.slowDone && ['Arbalest', 'Gambeson'].includes(item)) {
+			continue;
+		}
+
+		if (total > 0 && total % 2 === 0) {
+			tooltipText += `<div id='row${rows}' style= 'display: flex;'>${rowData}</div>`;
+			rowData = '';
+			rows++;
+		}
+
+		const setting = settingsArray[item] !== 'undefined' ? settingsArray[item] : (setting = item = { enabled: true, percent: 100 });
+		const equipClass = setting && setting.enabled ? 'Equipped' : 'NotEquipped';
+
+		rowData += `
+			<div id='${item}Btn' class='btnItem btnItem${equipClass}' style='height: 1.5vw; max-width: ${elemWidth}; min-width: ${elemWidth}; margin-right: 0.1em; margin-left: 0.1em; margin-top: 0.1em; margin-bottom: 0.2em;' onclick='_hideAutomationToggleElem(this)' data-hidden-text="${item}">
+				<span>${item}</span>
+			</div>&nbsp;`;
+
+		rowData += `
+		<div id ='${item}PercentDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
+			<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Percent").focus()'>Percent:
+			<input id='${item}Percent' type='number' step='1' value='${setting && setting.percent ? setting.percent : 0}' min='0' max='100' placeholder='100' style='color: white;' onfocus='this.select()'>
+			</span>
+		</div>`;
+
+		rowData += `
+		<div id ='${item}BuyMaxDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
+			<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw; margin-right: 1.61vw;' onclick='document.getElementById("${item}BuyMax").focus()'>Up to:
+			<input id='${item}BuyMax' type='number' step='1' value='${setting && setting.buyMax ? setting.buyMax : 0}' min='0' max='9999' placeholder='0' style='color: white;' onfocus='this.select()'>
+			</span>
+		</div>`;
+
+		total++;
+	}
+
+	tooltipText += `<div id='row${rows + 1}' style= 'display: flex;'>${rowData}</div>`;
+	tooltipText += `</div>`;
+
+	const costText = `
+		<div class='maxCenter'>
+			<div id='confirmTooltipBtn' class='btn btn-success btn-md' onclick='_autoEquipSave()'>Save and Close</div>
+			<div class='btn btn-danger btn-md' onclick='cancelTooltip()'>Cancel</div>
+			<div class='btn btn-primary btn-md' onclick='_autoEquipSave(); importExportTooltip("AutoEquip")'>Save</div>
+			<div class='btn btn-warning btn-md' style='float: right;' onclick='tooltipAT("Auto Equip Reset", event, undefined);'>Reset To Default</div>
+		</div>`;
+
+	elem.style.left = '30.5%';
+	elem.style.top = '25%';
+	elem.classList = `tooltipExtraCustom60`;
+	const ondisplay = () => _verticalCenterTooltip();
+
+	return [elem, tooltipText, costText, ondisplay];
+}
+
+function _autoEquipSave() {
+	const setting = {};
+	const items = Array.from(document.getElementsByClassName('btnItem'));
+
+	items.forEach((item) => {
+		const name = item.dataset.hiddenText;
+		setting[name] = setting[name] || {};
+		setting[name].enabled = item.classList.contains('btnItemEquipped');
+
+		const percentElem = document.getElementById(name + 'Percent');
+		let percent = parseInt(percentElem.value, 10);
+		percent = isNumberBad(percent) ? 0 : Math.max(Math.min(percent, 100), 0);
+		setting[name].percent = percent;
+	});
+
+	/* adding in equips that are locked so that there won't be any issues later on */
+	if (!game.global.slowDone) {
+		if (!setting.Arbalest) {
+			setting.Arbalest = {
+				enabled: true,
+				percent: 100
+			};
+		}
+		if (!setting.Gambeson) {
+			setting.Gambeson = {
+				enabled: true,
+				percent: 100
+			};
+		}
+	}
+
+	setPageSetting('autoEquipSettingsArray', setting);
+	cancelTooltip();
+}
+
+function _autoEquipReset() {
+	const setting = {
+		Shield: { enabled: true, percent: 10, buyMax: 20 },
+		Dagger: { enabled: true, percent: 5, buyMax: 20 },
+		Boots: { enabled: true, percent: 5, buyMax: 20 },
+		Mace: { enabled: true, percent: 5, buyMax: 20 },
+		Helmet: { enabled: true, percent: 5, buyMax: 20 },
+		Polearm: { enabled: true, percent: 10, buyMax: 20 },
+		Pants: { enabled: true, percent: 10, buyMax: 20 },
+		Battleaxe: { enabled: true, percent: 10, buyMax: 20 },
+		Shoulderguards: { enabled: true, percent: 10, buyMax: 20 },
+		Greatsword: { enabled: true, percent: 25, buyMax: 20 },
+		Breastplate: { enabled: true, percent: 25, buyMax: 20 },
+		Arbalest: { enabled: true, percent: 25, buyMax: 20 },
+		Gambeson: { enabled: true, percent: 25, buyMax: 20 }
+	};
+
+	setPageSetting('autoEquipSettingsArray', setting);
+	cancelTooltip2();
+	importExportTooltip('AutoEquip');
 }
 
 /* unique maps */
@@ -910,7 +1059,7 @@ function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
 
 	const displayZone = getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 1;
-	const baseText = `Here you can select the challenges you would like ${_getChallenge2Info()} Runner to complete${displayZone ? ` and the zone you'd like the challenge to finish at` : ``}.`;
+	const baseText = `Here you can select the challenges you would like ${_getChallenge2Info()} Runner to complete${displayZone ? ` and the zone you'd like the challenge to finish at` : `. It will only only run the ${_getChallenge2Info()}s when its HZE% is below what you have input into the <b>Below HZE%</b> input box`}.`;
 	const fusedText = `<br>Fused challenges are prioritised over their regular counterparts when starting challenges.`;
 
 	let tooltipText = `
@@ -922,10 +1071,11 @@ function c2RunnerDisplay(elem) {
 	`;
 
 	let addedFusedHeader = false;
+	const hze = atConfig.settingUniverse === 2 ? game.stats.highestRadLevel.valueTotal() : game.stats.highestLevel.valueTotal();
 	const fusedC2s = ['Enlightened', 'Paralysis', 'Nometal', 'Topology', 'Waze', 'Toxad'];
 	const settingGroup = {};
 	const c2RunnerSettings = getPageSetting('c2RunnerSettings', atConfig.settingUniverse);
-	const obsidianZone = getObsidianStart();
+	const obsidianZone = displayZone ? getObsidianStart() : 100;
 
 	let obj = challengesUnlockedObj(atConfig.settingUniverse, true, false);
 	obj = filterAndSortChallenges(obj, 'c2');
@@ -944,7 +1094,8 @@ function c2RunnerDisplay(elem) {
 
 	tooltipText += `<div id='baseChallenges'>`;
 	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Challenges</span><br>`;
-	const elemWidth = `calc((100% - 1.4em - 2px) / ${displayZone ? '6.1' : '3'})`;
+	const elemWidth = `calc((100% - 1.4em - 2px) / 6.1)`;
+	const displayType = displayZone ? 'zone' : 'percent';
 
 	let rowData = '';
 	let rows = 0;
@@ -983,17 +1134,15 @@ function c2RunnerDisplay(elem) {
 		rowData += `
 			<div id='${item}Btn' class='btnItem btnItem${equipClass}' style='height: 1.5vw; max-width: ${elemWidth}; min-width: ${elemWidth}; margin-right: 0.1em; margin-left: 0.1em; margin-top: 0.1em; margin-bottom: 0.2em;' onclick='_hideAutomationToggleElem(this)' data-hidden-text="${item}">
 				<span style="float: left;">${item}</span>
-				<span style="float: right;">z${challengeLevel}</span>
+				<span style="float: right;">z${challengeLevel}${!displayZone ? ' (' + (100 * (challengeLevel / hze)).toFixed(2).replace(/\.00$/, '') + '%)' : ''}</span>
 			</div>&nbsp;`;
 
-		if (displayZone) {
-			rowData += `
-		<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
-			<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>Finish Zone:
-			<input id='${item}Zone' type='number' step='1' value='${setting && setting.zone ? setting.zone : 0}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
-			</span>
-		</div>`;
-		}
+		rowData += `
+			<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
+				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>${displayZone ? 'Finish Zone:' : 'Below HZE%:'}
+				<input id='${item}Zone' type='number' step='1' value='${setting && setting[displayType] ? setting[displayType] : displayZone ? 0 : 85}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
+				</span>
+			</div>`;
 
 		total++;
 	}
@@ -1010,7 +1159,7 @@ function c2RunnerDisplay(elem) {
 
 	elem.style.left = '30.5%';
 	elem.style.top = '25%';
-	elem.classList = `tooltipExtraCustom${displayZone ? 6 : 3}0`;
+	elem.classList = `tooltipExtraCustom60`;
 	const ondisplay = () => _verticalCenterTooltip();
 
 	return [elem, tooltipText, costText, ondisplay];
@@ -1032,7 +1181,13 @@ function _c2RunnerSave() {
 			if (zone > 810) zone = 810;
 			zone = Number.isInteger(zone) ? zone : 0;
 			setting[name].zone = zone;
+			setting[name].percent = setting[name].percent || 100;
 		} else {
+			const percentElem = document.getElementById(name + 'Zone');
+			let percent = parseInt(percentElem.value, 10);
+			if (percent > 100) percent = 100;
+			percent = Number.isInteger(percent) ? percent : 100;
+			setting[name].percent = percent;
 			setting[name].zone = setting[name].zone || 0;
 		}
 	});
