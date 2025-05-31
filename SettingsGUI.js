@@ -419,7 +419,7 @@ function initialiseAllSettings() {
 				description += `<p>Inputs below 1 will divide the base cost of the most efficient health equip by this value to prioritise purchasing attack equipment.<br></p>`;
 				description += `<p>Alternatively, inputs above 1 will multiply the base cost of the most efficient atack equip by this value to prioritise purchasing health equipment.<br></p>`;
 				description += `<p>This settings value is capped at 2 and if set to <b>0 or below</b> it will disable this setting spend on all equip types equally.</p>`;
-				description += `<p><b>Recommended:</b> ${atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 200 ? '1-(inequality/1000)': '1'}</p>"`
+				description += `<p><b>Recommended:</b> ${atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 200 ? '1-(inequality/1000)': '1'}</p>`
 				return description;
 			}, 'value', 1, null, displayTab, [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
