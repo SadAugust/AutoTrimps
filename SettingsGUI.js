@@ -418,7 +418,8 @@ function initialiseAllSettings() {
 				let description = `<p>When purchasing equipment this will help you lean more towards attack or health equips by increasing the cost of one of them.</p>`;;
 				description += `<p>Inputs below 1 will divide the base cost of the most efficient health equip by this value to prioritise purchasing attack equipment.<br></p>`;
 				description += `<p>Alternatively, inputs above 1 will multiply the base cost of the most efficient atack equip by this value to prioritise purchasing health equipment.<br></p>`;
-				description += `<p>This settings value is capped at 2 and if set to <b>0 or below</b> it will disable this setting spend on all equip types equally.</p>`;
+				description += `<p>So if you have a value of 0.01 it would mean you have an attack:health weight of 100:1 and a value of 2 would be 1:2.<br></p>`;
+				description += `<p>This settings value is capped at 10 and if set to <b>below 0</b> it will disable this setting spend on all equip types equally.</p>`;
 				description += `<p><b>Recommended:</b> ${atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 200 ? '1-(inequality/1000)': '1'}</p>`
 				return description;
 			}, 'value', 1, null, displayTab, [1, 2],
@@ -5484,7 +5485,7 @@ function autoSetValue(id, multiValue, negative) {
 
 	if (id === 'equipWeight') {
 		if (num < -1) num = -1;
-		if (num > 2) num = 2;
+		if (num > 10) num = 10;
 	}
 
 	setting[`value${valueSuffix}`] = num;
