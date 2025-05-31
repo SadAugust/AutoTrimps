@@ -380,6 +380,14 @@ function initialiseAllSettings() {
 				return description;
 			}, 'boolean', true, null, displayTab, [1, 2]);
 
+		createSetting('equipPortal',
+			function () { return ('Auto Equip Portal') },
+			function () {
+				let description = "<p>Will ensure Auto Equip is enabled after portaling.</p>";
+				description += "<p><b>Recommended:</b> On</p>";
+				return description;
+			}, 'boolean', false, null, displayTab, [1, 2]);
+
 		createSetting('equipCutOffHD',
 			function () { return ('AE: HD Cut-off') },
 			function () {
@@ -402,6 +410,18 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 2.5</p>";
 				return description;
 			}, 'value', 2.5, null, displayTab, [1, 2],
+			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
+
+		createSetting('equipWeight',
+			function () { return ('AE: Equip Weight') },
+			function () {
+				let description = `<p>When purchasing equipment this will help you lean more towards attack or health equips by increasing the cost of one of them.</p>`;;
+				description += `<p>Inputs below 1 will divide the base cost of the most efficient health equip by this value to prioritise purchasing attack equipment.<br></p>`;
+				description += `<p>Alternatively, inputs above 1 will multiply the base cost of the most efficient atack equip by this value to prioritise purchasing health equipment.<br></p>`;
+				description += `<p>This settings value is capped at 2 and if set to <b>0 or below</b> it will disable this setting spend on all equip types equally.</p>`;
+				description += `<p><b>Recommended:</b> ${atConfig.settingUniverse === 2 && game.stats.highestRadLevel.valueTotal() >= 200 ? '1-(inequality/1000)': '1'}</p>"`
+				return description;
+			}, 'value', 1, null, displayTab, [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse)) });
 
 		createSetting('equipZone',
@@ -457,14 +477,6 @@ function initialiseAllSettings() {
 				return description;
 			}, 'value', 6, null, displayTab, [1, 2],
 			function () { return (getPageSetting('equipOn', atConfig.settingUniverse) && getPageSetting('equipPrestige', atConfig.settingUniverse) === 2) });
-
-		createSetting('equipPortal',
-			function () { return ('AE: Portal') },
-			function () {
-				let description = "<p>Will ensure Auto Equip is enabled after portaling.</p>";
-				description += "<p><b>Recommended:</b> On</p>";
-				return description;
-			}, 'boolean', false, null, displayTab, [1, 2]);
 
 		createSetting('equipShieldBlock',
 			function () { return ('Buy Shieldblock') },
@@ -5465,9 +5477,14 @@ function autoSetValue(id, multiValue, negative) {
 	unlockTooltip();
 	tooltip('hide');
 
-	const num = multiValue ? numBox.value.split(',').map(parseNum) : parseNum(numBox.value);
+	let num = multiValue ? numBox.value.split(',').map(parseNum) : parseNum(numBox.value);
 	if (Array.isArray(num) ? num.some(isNaN) : isNaN(num)) {
 		return tooltip('confirm', null, 'update', `Error with input ("${numBox.value}"), please try again`, null, `<b>${setting.name()} Setting Input Error!</b>`);
+	}
+
+	if (id === 'equipWeight') {
+		if (num < -1) num = -1;
+		if (num > 2) num = 2;
 	}
 
 	setting[`value${valueSuffix}`] = num;
@@ -5911,7 +5928,7 @@ function _settingsToLineBreak() {
 	const Core = ['pauseScript'];
 	const Buildings = ['deltaGigastation', 'autoGigaForceUpdate'];
 	const Jobs = ['geneAssistTimerSpire', 'geneAssistTimerAfter', 'geneAssistTimerSpireOneOff', 'geneAssistTimerSpireC2'];
-	const Equipment = ['equipZone', 'equipPrestigePct'];
+	const Equipment = ['equipPortal', 'equipZone'];
 	const Combat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const Maps = ['recycleExplorer', 'mapBonusPrestige', 'mapBonusLevelType', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
 	const Portal = ['autoPortalForce', 'autoPortalUniverseSwap', 'c2Finish', 'c2RunnerPortal', 'dailyHeliumHrPortal'];

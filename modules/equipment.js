@@ -506,6 +506,7 @@ function buyEquips() {
 	const equipTypeList = ['attack', 'health'];
 	if (game.global.universe === 1) equipTypeList.push('block');
 	const equipTypes = equipTypeList.sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
+	const equipWeight = getPageSetting('equipWeight') > 0 ? getPageSetting('equipWeight') : 1;
 	let keepBuying = false;
 
 	const saveResources = {
@@ -520,19 +521,24 @@ function buyEquips() {
 		const resourceUsed = equip.name === 'Shield' ? 'wood' : 'metal';
 		const equipData = game.equipment[equip.name];
 
-		if (!equip.name || equipData.locked || !(equip.prestige || canAffordBuilding(equip.name, false, false, true, false, 1))) continue;
-		if (equipData.level >= equip.equipCap && !equip.prestige && !equip.zoneGo) continue;
+		if (equipType === 'health' && equipWeight < 1) equip.cost /= equipWeight;
+		if (equipType === 'attack' && equipWeight > 1) equip.cost *= equipWeight;
+
+		if (!equip.name || equipData.locked) continue;
 		if (equip.cost > equip.resourceSpendingPct * game.resources[resourceUsed].owned) continue;
+		if (equipData.level >= equip.equipCap && !equip.prestige && !equip.zoneGo) continue;
 		if (saveResources[resourceUsed]) continue;
+		if (!(equip.prestige || canAffordBuilding(equip.name, false, false, true, false, 1))) continue;
 
 		if (equip.prestige) {
 			buyUpgrade(atData.equipment[equip.name].upgrade, true, true);
 			debug(`Upgrading ${equip.name} - Prestige ${equipData.prestige}`, `equipment`, '*upload');
 			keepBuying = true;
 		} else {
-			//Find out how many levels we can afford with 0.1% of resources.
+			/* calculate amount of levels that can be afforded with 0.1% of resources. */
 			let maxCanAfford = Math.max(1, getMaxAffordable(equip.cost, game.resources[resourceUsed].owned * 0.001, 1.2, true));
 			maxCanAfford = Math.min(maxCanAfford, equip.equipCap - equipData.level);
+
 			if (maxCanAfford > 0) {
 				buyEquipment(equip.name, true, true, maxCanAfford);
 				debug(`Upgrading ${maxCanAfford} ${equip.name}${maxCanAfford > 1 && !equip.name.endsWith('s') ? 's' : ''}`, `equipment`, `*upload3`);
