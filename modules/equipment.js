@@ -237,7 +237,7 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 			if (maybeBuyPrestige.prestigeAvailable) equipCap = Math.min(equipCap, 9);
 
 			const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
-			const skipPrestiges = ancientTreasurePrestigeSkip || (6 > equipData.level && (prestigeSetting === 0 || (prestigeSetting === 1 && !zoneGo)));
+			const skipPrestiges = ancientTreasurePrestigeSkip || (6 > equipData.level && prestigeSetting === 0) || (prestigeSetting === 1 && !zoneGo);
 
 			let nextLevelValue = 1;
 			let safeRatio = 1;
