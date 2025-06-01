@@ -376,6 +376,7 @@ function initialiseAllSettings() {
 			function () { return ('Auto Equip') },
 			function () {
 				let description = "<p>Master switch for whether the script will purchase equipment levels or prestiges.</p>";
+				description += "<p>The <b>Highlight Efficient Equipment</b> setting in the <b>Display</b> tab will highlight the equipment the script is planning to purchase next.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', true, null, displayTab, [1, 2]);
@@ -5056,9 +5057,10 @@ function initialiseAllSettings() {
 		createSetting('buildingsType',
 			function () { return ('Auto Structure') },
 			function () {
-				let description = "Click the left side of the button to toggle this on or off.</p>";
+				let description = "<p>Click the left side of the button to toggle this on or off.</p>";
 				description += "<p>Click the cog icon on the right side of this button to tell your Foremen what you want and when you want it.</p>";
-				description += "For more detailed information for this setting check out its Help section.</p>";
+				description += "<p>For more detailed information for this setting check out its Help section.</p>";
+				description += "<p>The <b>Highlight Efficient Buildings</b> setting in the <b>Display</b> tab will highlight the building the script is planning to purchase next.</p>";
 				return description;
 			}, 'boolean', 'true', null, displayTab, [1, 2],
 			function () { return false });
@@ -6302,10 +6304,17 @@ function _createAutoStructureButton() {
 	structureColumn.replaceChild(structureButton, structureColumn.children[1]);
 }
 
+function _autoEquipDescription() {
+	return `<p>Click the left side of the button to toggle this on or off.</p>
+	<p>Click the cog icon on the right side of this button to tell the script what you want and when you want it.</p>
+	<p>For more detailed information for this setting check out its Help section.</p>
+	<p>The <b>Highlight Efficient Equipment</b> setting in the <b>Display</b> tab will highlight the equipment the script is planning to purchase next.</p>`;
+}
+
 function _createAutoEquipButton() {
 	if (document.getElementById('autoEquipLabel') !== null) return;
 
-	const equipButton = _createButton('equipOn', 'Equip', settingUniverse('equipOn'), '"Toggle the Auto Equip setting."');
+	const equipButton = _createButton('equipOn', 'Equip', settingUniverse('equipOn'), '_autoEquipDescription()');
 	const equipColumn = document.getElementById('equipmentTitleDiv').children[0];
 	equipColumn.replaceChild(equipButton, equipColumn.children[2]);
 }
