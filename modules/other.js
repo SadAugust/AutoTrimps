@@ -1459,7 +1459,7 @@ function updateATVersion() {
 
 			const settingName = 'c2RunnerSettings';
 			const values = ['value', 'valueU2'];
-			if (typeof tempSettings['c2RunnerPercent'] !== 'undefined' && typeof tempSettings['c2RunnerSettings'] !== 'undefined') {
+			if (typeof tempSettings['c2RunnerPercent'] !== 'undefined' && typeof tempSettings[settingName] !== 'undefined') {
 				for (let z = 0; z < values.length; z++) {
 					const percentSetting = tempSettings.c2RunnerPercent[values[z]];
 					const tempSetting = tempSettings[settingName][values[z]];
@@ -1467,6 +1467,47 @@ function updateATVersion() {
 						Object.entries(tempSetting).forEach(([key, setting]) => {
 							autoTrimpSettings[settingName][values[z]][key].percent = percentSetting;
 						});
+					}
+				}
+			}
+
+			if (versionNumber < '7.2.2') {
+				const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+				let settingName = 'c2RunnerSettings';
+				const values = ['value', 'valueU2'];
+				if (typeof tempSettings[settingName] !== 'undefined') {
+					for (let z = 0; z < values.length; z++) {
+						const tempSetting = tempSettings[settingName][values[z]];
+						if (Object.keys(tempSetting).length > 0) {
+							Object.entries(tempSetting).forEach(([key, setting]) => {
+								autoTrimpSettings[settingName][values[z]][key].zoneHZE = 0;
+							});
+						}
+					}
+				}
+
+				settingName = 'autoEquipSettingsArray';
+				if (typeof tempSettings[settingName] !== 'undefined') {
+					for (let z = 0; z < values.length; z++) {
+						const tempSetting = tempSettings[settingName][values[z]];
+						if (Object.keys(tempSetting).length > 0) {
+							Object.entries(tempSetting).forEach(([key, setting]) => {
+								if (!tempSettings[settingName][values[z]][key].buyMax) {
+									autoTrimpSettings[settingName][values[z]][key].buyMax = 20;
+								}
+							});
+						}
+					}
+				}
+
+				if (typeof tempSettings['equipPrestige'] !== 'undefined') {
+					if (tempSettings.equipPrestige.value > 0) {
+						autoTrimpSettings.equipPrestige.value -= 1;
+					}
+
+					if (tempSettings.equipPrestige.valueU2 > 0) {
+						autoTrimpSettings.equipPrestige.valueU2 -= 1;
 					}
 				}
 			}

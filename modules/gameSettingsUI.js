@@ -1064,7 +1064,10 @@ function c2RunnerDisplay(elem) {
 	MODULES.popups.mazWindowOpen = true;
 
 	const displayZone = getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 1;
-	const baseText = `Here you can select the challenges you would like ${_getChallenge2Info()} Runner to complete${displayZone ? ` and the zone you'd like the challenge to finish at` : `. It will only only run the ${_getChallenge2Info()}s when its HZE% is below what you have input into the <b>Below HZE%</b> input box`}.`;
+	let baseText = `Here you can select the challenges you would like ${_getChallenge2Info()} Runner to complete`;
+	if (displayZone) baseText += ` and the zone you'd like the challenge to finish at.`;
+	else baseText += `. It will only only run the ${_getChallenge2Info()}s when its HZE% is below what you have input into the <b>Below HZE%</b> input box and will run them until they reach the HZE% you have input into the <b>Finish HZE%</b> input box.`;
+
 	const fusedText = `<br>Fused challenges are prioritised over their regular counterparts when starting challenges.`;
 
 	let tooltipText = `
@@ -1100,8 +1103,9 @@ function c2RunnerDisplay(elem) {
 	tooltipText += `<div id='baseChallenges'>`;
 	tooltipText += `<span class='messageConfigContainer' style='font-size: 1.3vw;'>&nbsp;Challenges</span><br>`;
 	const elemWidth = `calc((100% - 1.4em - 2px) / 6.1)`;
-	const displayType = displayZone ? 'zone' : 'percent';
+	const displayType = displayZone ? 'zone' : 'zoneHZE';
 
+	const itemsPerRow = !displayZone ? 2 : 3;
 	let rowData = '';
 	let rows = 0;
 	let total = 0;
@@ -1118,7 +1122,7 @@ function c2RunnerDisplay(elem) {
 			rowData = '';
 		}
 
-		if (total > 0 && total % 3 === 0) {
+		if (total > 0 && total % itemsPerRow === 0) {
 			tooltipText += `<div id='row${rows}' style= 'display: flex;'>${rowData}</div>`;
 			rowData = '';
 			rows++;
@@ -1138,16 +1142,25 @@ function c2RunnerDisplay(elem) {
 
 		rowData += `
 			<div id='${item}Btn' class='btnItem btnItem${equipClass}' style='height: 1.5vw; max-width: ${elemWidth}; min-width: ${elemWidth}; margin-right: 0.1em; margin-left: 0.1em; margin-top: 0.1em; margin-bottom: 0.2em;' onclick='_hideAutomationToggleElem(this)' data-hidden-text="${item}">
-				<span style="float: left;">${item}</span>
+				<span style="float: left;">${!displayZone && item === 'Trappapalooza' ? 'Trappa' : item}</span>
 				<span style="float: right;">z${challengeLevel}${!displayZone ? ' (' + (100 * (challengeLevel / hze)).toFixed(2).replace(/\.00$/, '') + '%)' : ''}</span>
 			</div>&nbsp;`;
 
 		rowData += `
 			<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>${displayZone ? 'Finish Zone:' : 'Below HZE%:'}
-				<input id='${item}Zone' type='number' step='1' value='${setting && setting[displayType] ? setting[displayType] : displayZone ? 0 : 85}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
+				<input id='${item}Zone' type='number' step='1' value='${setting && setting[displayType] ? setting[displayType] : displayZone ? 0 : 90}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
 				</span>
 			</div>`;
+
+		if (!displayZone) {
+			rowData += `
+			<div id ='${item}PercentDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
+				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Percent").focus()'>Finish HZE%:
+				<input id='${item}Percent' type='number' step='1' value='${setting && setting.percent ? setting.percent : 85}' min='1' max='100' placeholder='100' style='color: white;' onfocus='this.select()'>
+				</span>
+			</div>`;
+		}
 
 		total++;
 	}
@@ -1180,20 +1193,24 @@ function _c2RunnerSave() {
 		setting[name] = setting[name] || {};
 		setting[name].enabled = item.classList.contains('btnItemEquipped');
 
-		if (checkZone) {
-			const zoneElem = document.getElementById(name + 'Zone');
-			let zone = parseInt(zoneElem.value, 10);
-			if (zone > 810) zone = 810;
-			zone = Number.isInteger(zone) ? zone : 0;
-			setting[name].zone = zone;
-			setting[name].percent = setting[name].percent || 100;
-		} else {
-			const percentElem = document.getElementById(name + 'Zone');
+		const zoneElem = document.getElementById(name + 'Zone');
+		let zone = parseInt(zoneElem.value, 10);
+		if (zone > 810) zone = 810;
+		zone = Number.isInteger(zone) ? zone : 0;
+
+		if (!checkZone) {
+			const percentElem = document.getElementById(name + 'Percent');
 			let percent = parseInt(percentElem.value, 10);
 			if (percent > 100) percent = 100;
-			percent = Number.isInteger(percent) ? percent : 100;
+			percent = Number.isInteger(percent) ? percent : 85;
+
 			setting[name].percent = percent;
 			setting[name].zone = setting[name].zone || 0;
+			setting[name].zoneHZE = zone;
+		} else {
+			setting[name].percent = setting[name].percent || 85;
+			setting[name].zone = zone;
+			setting[name].zoneHZE = setting[name].zoneHZE || 0;
 		}
 	});
 

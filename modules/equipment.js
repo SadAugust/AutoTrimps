@@ -151,7 +151,7 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 			const currentPrestige = game.equipment[equipName].prestige;
 			highestPrestige = Math.max(highestPrestige, currentPrestige);
 			if (prestigesObj.prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
-			if (prestigeSetting === 0 || (prestigeSetting === 1 && mostEfficient[equipType].zoneGo) || (prestigeSetting === 2 && !canAncientTreasure)) continue;
+			if ((prestigeSetting === 0 && mostEfficient[equipType].zoneGo) || (prestigeSetting === 1 && !canAncientTreasure)) continue;
 
 			prestigesObj.prestigesAvailable = true;
 			prestigesObj.prestigeTypes[equipType] = true;
@@ -190,7 +190,7 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 		const healthStats = calcEquipment('attack');
 		const attackStats = calcEquipment('health');
 		const pandemonium = challengeActive('Pandemonium');
-		const prestigePct = prestigeSetting === 2 && !canAncientTreasure ? Math.min(1, getPageSetting('equipPrestigePct') / 100) : 1;
+		const prestigePct = prestigeSetting === 1 && !canAncientTreasure ? Math.min(1, getPageSetting('equipPrestigePct') / 100) : 1;
 
 		for (const equipName in atData.equipment) {
 			const equipData = game.equipment[equipName];
@@ -218,7 +218,7 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 			const equipType = equipModule.stat;
 			const zoneGo = mostEfficient[equipType].zoneGo;
 			const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct !== 1 ? equipSettingsArray[equipName].percent / 100 : 1;
-			const forcePrestige = (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
+			const forcePrestige = (prestigeSetting === 1 && canAncientTreasure) || prestigeSetting === 2;
 			if (forcePrestige && equipName !== 'Shield') {
 				if (prestigesAvailable && allowPrestigeSkip && !maybeBuyPrestige.prestigeAvailable) {
 					const otherEquipType = equipType === 'attack' ? 'health' : 'attack';
@@ -230,21 +230,19 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 				}
 			}
 
-			let equipCap = mostEfficient[equipType].equipCap;
+			let equipCap = mostEfficient[equipType].equipCap || 0;
 			if (equipData.level >= equipCap && mostEfficient[equipType].zoneGo) equipCap = Infinity;
 			if (equipCap !== Infinity) equipCap = equipSettingsArray[equipName].buyMax;
 			if (equipCap === 0) equipCap = Infinity;
 			if (maybeBuyPrestige.prestigeAvailable) equipCap = Math.min(equipCap, 9);
 
-			const ancientTreasurePrestigeSkip = prestigeSetting === 2 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
-			const skipPrestiges = ancientTreasurePrestigeSkip || (6 > equipData.level && prestigeSetting === 0) || (prestigeSetting === 1 && !zoneGo);
-
+			const ancientTreasurePrestigeSkip = prestigeSetting === 1 && !canAncientTreasure && game.resources[equipModule.resource].owned * prestigePct < maybeBuyPrestige.prestigeCost;
 			let nextLevelValue = 1;
 			let safeRatio = 1;
 			let nextLevelCost = 1;
 			let prestige = false;
 
-			if (maybeBuyPrestige.purchase && !skipPrestiges) {
+			if (maybeBuyPrestige.purchase && !ancientTreasurePrestigeSkip) {
 				({ prestigeCost: nextLevelCost, newStatValue: nextLevelValue, statPerResource: safeRatio } = maybeBuyPrestige);
 				prestige = true;
 			} else if (forcePrestige && highestPrestige > game.equipment[equipName].prestige) {
@@ -339,7 +337,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	const prestigeCost = getNextPrestigeCost(prestigeUpgradeName) * getEquipPriceMult();
 
 	// TODO Should consider Maybe Prestige, Force Prestige, etc
-	const minLevelBeforePrestige = getPageSetting('equip2') && ![2, 3].includes(getPageSetting('equipPrestige')) ? 2 : 1;
+	const minLevelBeforePrestige = getPageSetting('equip2') && ![1, 2].includes(getPageSetting('equipPrestige')) ? 2 : 1;
 	prestigeInfo.shouldPrestige = (equipment.level === 0 || equipment.level >= minLevelBeforePrestige) && game.resources.gems.owned > 0;
 	prestigeInfo.minNewLevel = Math.min(maxLevel, Math.ceil(0.25 + currentStatValue / oneLevelStat));
 	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;

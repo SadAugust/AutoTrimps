@@ -450,15 +450,14 @@ function initialiseAllSettings() {
 		createSetting('equipPrestige',
 			function () { 
 				const trimpleShortened = atConfig.settingUniverse === 1 ? "Trimple" : "Atlantrimp";
-				return [`AE: Prestige: Maybe`, `AE: Prestige: On`, `AE: Prestige: ${trimpleShortened}`, `AE: Prestige: Always`];
+				return [`AE: Prestige: Maybe`, `AE: Prestige: ${trimpleShortened}`, `AE: Prestige: Always`];
 			},
 			function () {
 				const trimple = atConfig.settingUniverse === 1 ? "<b>Trimple Of Doom</b>" : "<b>Atlantrimp</b>";
 				const trimpleShortened = atConfig.settingUniverse === 1 ? "Trimple" : "Atlantrimp";
 				let description = `<p>Will control how equipment levels and prestiges are purchased.</p>`;
 				description += `<p>Equipment levels are capped at <b>9</b> when a prestige is available for that equip to ensure the script doesn't unnecessarily spend resources on them when prestiges would be more efficient.</p>`;
-				description += `<p><b>AE: Prestige: Maybe</b><br>Will only purchase prestiges for equipment when you have 6 or more levels in it.</p>`;
-				description += `<p><b>AE: Prestige: On</b><br>Will only purchase prestiges when they are more efficient than leveling the piece of equipment further.</p>`;
+				description += `<p><b>AE: Prestige: Maybe</b><br>Will only purchase prestiges when they are more efficient than leveling the piece of equipment further.</p>`;
 				description += `<p><b>AE: Prestige: ${trimpleShortened}</b><br>Overrides the need for levels in your current equips before a prestige will be purchased. Will purchase equipment levels again when you have run ${trimple}.`;
 				description += `<br>If <b>${trimple}</b> has been run it will buy any prestiges that cost less than what you have input in the <b>AE: Prestige Pct</b> setting then spend your remaining resources on equipment levels.</p>`;
 				description += `<p><b>AE: Prestige: Always</b><br>Always buys weapons and armor prestiges regardless of efficiency when they're available.</p>`;
@@ -478,7 +477,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Recommended:</b> 6</p>";
 				return description;
 			}, 'value', 6, null, displayTab, [1, 2],
-			function () { return (getPageSetting('equipOn', atConfig.settingUniverse) && getPageSetting('equipPrestige', atConfig.settingUniverse) === 2) });
+			function () { return (getPageSetting('equipOn', atConfig.settingUniverse) && getPageSetting('equipPrestige', atConfig.settingUniverse) === 1) });
 
 		createSetting('equipShieldBlock',
 			function () { return ('Buy Shieldblock') },
@@ -1842,23 +1841,15 @@ function initialiseAllSettings() {
 		createSetting('c2RunnerSettings',
 			function () { return (`${_getChallenge2Info()} Runner Settings`) },
 			function () {
-				let description = `<p>Here you can enable the challenges you would like ${_getChallenge2Info()} Runner to complete and the zone you'd like the respective challenge to finish at.</p>`;
+				const c2Setting = getPageSetting('c2RunnerMode', atConfig.settingUniverse);
+				let description = `<p>Here you can enable the challenges you would like ${_getChallenge2Info()} Runner to complete `;
+				if (c2Setting === 0) description += `when they are below a set percentage of your highest zone reached`;
+				if (c2Setting === 1) description += `and the zone you'd like the respective challenge to finish at.</p>`;
 				description += `<p><b>Click to adjust settings.</b></p>`;
 				return description;
 			}, 'mazArray', {}, 'importExportTooltip("c2Runner")', displayTab, [1, 2],
 			function () {
-				return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 1) && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)
-			});
-
-		createSetting('c2RunnerSettingsPercent',
-			function () { return (`${_getChallenge2Info()} Runner Settings`) },
-			function () {
-				let description = `<p>Here you can enable the challenges you would like ${_getChallenge2Info()} Runner to complete.</p>`;
-				description += `<p><b>Click to adjust settings.</b></p>`;
-				return description;
-			}, 'mazArray', {}, 'importExportTooltip("c2Runner")', displayTab, [1, 2],
-			function () {
-				return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0) && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)
+				return getPageSetting('c2RunnerStart', atConfig.settingUniverse) && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)
 			});
 
 		createSetting('c2RunnerEndMode',
@@ -1878,18 +1869,6 @@ function initialiseAllSettings() {
 			}, 'multitoggle', 1, null, displayTab, [1, 2],
 			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)) });
 		
-		createSetting('c2RunnerPortal',
-			function () { return (_getChallenge2Info() + ' Runner: End Zone') },
-			function () {
-				let description = `<p>Automatically abandon ${_getChallenge2Info()}s when this zone is reached.</p>`;
-				description += `<p>Set to <b>0 or below</b> to disable this setting.</p>`;
-				description += `<p>Disabling this setting stops ${_getChallenge2Info()} Runner from starting challenges.</p>`;
-				description += `<p>${_getChallenge2Info()} Runner won't run challenges that are already at or below this value.</p>`;
-				description += `<p><b>Recommended:</b> Desired challenge end goal</p>`;
-				return description;
-			}, 'value', -1, null, displayTab, [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && getPageSetting('c2RunnerMode', atConfig.settingUniverse) === 0 && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)) });
-
 		createHeading('dailyDescription', 'Daily Auto Portal Settings', displayTab)
 
 		createSetting('dailyPortalStart',
@@ -5361,7 +5340,7 @@ function _autoPortalTimeoutCheck(id) {
 	const portalSettings = ['autoPortal', 'heliumChallenge', 'heliumHourChallenge', 'heliumOneOffChallenge', 'heliumC2Challenge', 'autoPortalZone', 'heliumDontPortalBefore', 'heliumHrBuffer', 'heliumHrPortal', 'heliumHrExitSpire', 'autoPortalUniverseSwap'];
 	const challengePortalSettings = ['frigidAutoPortal', 'mayhemAutoPortal', 'pandemoniumAutoPortal', 'desolationAutoPortal'];
 	const dailyPortalSettings = ['dailyPortalStart', 'dailyPortal', 'dailyPortalZone', 'dailyAbandonZone', 'dailyDontPortalBefore', 'dailyHeliumHrBuffer', 'dailyHeliumHrPortal', 'dailyHeliumHrExitSpire', 'dailyPortalFiller', 'dailyPortalPreviousUniverse', 'dailyDontCap', 'dailyDontCapAmt', 'dailySkip'];
-	const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerPortal', 'c2RunnerEndMode'];
+	const c2PortalSettings = ['c2Finish', 'c2RunnerStart', 'c2RunnerMode', 'c2RunnerEndMode'];
 
 	if (portalSettings.includes(id) || challengePortalSettings.includes(id) || dailyPortalSettings.includes(id) || c2PortalSettings.includes(id)) {
 		_settingTimeout('autoPortal');
@@ -5934,7 +5913,7 @@ function _settingsToLineBreak() {
 	const Equipment = ['equipPortal', 'equipZone'];
 	const Combat = ['forceAbandon', 'scryerVoidMapsDaily', 'frenzyCalc', 'scryerEssenceOnly', 'scryerHealthy', 'windStackingLiq', 'windStackingLiqDaily'];
 	const Maps = ['recycleExplorer', 'mapBonusPrestige', 'mapBonusLevelType', 'prestigeClimbPriority', 'uniqueMapEnoughHealth'];
-	const Portal = ['autoPortalForce', 'autoPortalUniverseSwap', 'c2Finish', 'c2RunnerPortal', 'dailyHeliumHrPortal'];
+	const Portal = ['autoPortalForce', 'autoPortalUniverseSwap', 'c2Finish', 'c2RunnerEndMode', 'dailyHeliumHrPortal'];
 	const Challenges = ['balanceImprobDestack', 'buble', 'decayStacksToAbandon', 'lifeStacks', 'experienceC2', 'toxicitySettings', 'archaeologyString3'];
 	const OneOff = ['oneOffFiller', 'frigidAutoPortal', 'mayhemAutoPortal', 'exterminateWorldStaff', 'pandemoniumAutoPortal'];
 	const C2 = ['c2Table', 'duelShield', 'trapperWorldStaff', 'mapologyMapOverrides', 'lead', 'witherMutatorPreset', 'questSmithySpire', 'stormDestackTo', 'berserkDisableMapping', 'glassStacks'];

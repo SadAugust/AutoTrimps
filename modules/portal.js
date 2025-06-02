@@ -399,10 +399,8 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 	/* insert dual challenges into the item list */
 	challengeOrders[universe] = [...challengeOrders[`dualC${universe + 1}`].filter((item) => !challengeOrders[universe].includes(item)), ...challengeOrders[universe]];
 
+	const hze = universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
 	const runType = getPageSetting('c2RunnerMode', universe);
-	const c2RunnerPortal = getPageSetting('c2RunnerPortal', universe);
-	if (runType === 0 && c2RunnerPortal <= 0) return;
-
 	const unlockedC2s = filterAndSortChallenges(challengesUnlockedObj(universe, false, false), 'c2');
 	const c2Setting = getPageSetting('c2RunnerSettings', universe);
 
@@ -438,7 +436,8 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 
 		let shouldRun = false;
 		if (runType === 0) {
-			if (challengeLevel >= c2RunnerPortal) continue;
+			const portalZone = hze * c2Setting[challengeName].zoneHZE;
+			if (challengeLevel >= portalZone) continue;
 			const runPercent = c2Setting[challengeName].percent / 100 || 0.85;
 			shouldRun = challengeLevel / highestZone < runPercent;
 		} else {
@@ -732,11 +731,11 @@ function c2FinishZone() {
 	let finishChallenge = Infinity;
 
 	if (getPageSetting('c2RunnerStart')) {
+		const hze = game.global.universe === 1 ? game.stats.highestLevel.valueTotal() : game.stats.highestRadLevel.valueTotal();
 		const c2RunnerMode = getPageSetting('c2RunnerMode');
-		const c2RunnerPortal = getPageSetting('c2RunnerPortal');
 		const c2RunnerSettings = getPageSetting('c2RunnerSettings')[game.global.challengeActive];
 
-		finishChallenge = c2RunnerMode === 0 ? c2RunnerPortal : c2RunnerSettings && c2RunnerSettings.enabled ? c2RunnerSettings.zone : Infinity;
+		if (c2RunnerSettings && c2RunnerSettings.enabled) finishChallenge = c2RunnerMode === 0 ? hze * c2RunnerSettings.zoneHZE : c2RunnerSettings.zone;
 	} else {
 		finishChallenge = getPageSetting('c2Finish');
 	}
