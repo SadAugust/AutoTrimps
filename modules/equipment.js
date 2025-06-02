@@ -85,11 +85,13 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 	const noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal');
 
 	const equipSettingsArray = getPageSetting('autoEquipSettingsArray');
+	if (ignoreShield) equipSettingsArray.Shield.enabled = false;
+
 	const baseEquipmentObj = _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge);
 	const [highestPrestige, prestigesAvailableObj] = _getHighestPrestige(baseEquipmentObj, prestigeSetting, canAncientTreasure, noPrestigeChallenge);
 
 	const buyPrestigesObj = _populateBuyPrestiges(equipSettingsArray, baseEquipmentObj);
-	const mostEfficientObj = _populateMostEfficientEquipment(equipSettingsArray, baseEquipmentObj, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj, ignoreShield);
+	const mostEfficientObj = _populateMostEfficientEquipment(equipSettingsArray, baseEquipmentObj, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj);
 
 	return mostEfficientObj;
 }
@@ -177,7 +179,7 @@ function _populateBuyPrestiges(equipSettingsArray, mostEfficient) {
 	return buyPrestiges;
 }
 
-function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj, ignoreShield) {
+function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj) {
 	const mostEfficientOrig = { ...mostEfficient };
 	const { prestigeTypes, prestigesAvailable } = prestigesAvailableObj;
 	const prestigeSkip = { attack: false, health: false };
@@ -198,8 +200,6 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 			if (!equipSettingsArray[equipName].enabled) continue;
 
 			if (equipName === 'Shield') {
-				if (ignoreShield) continue;
-
 				if (game.global.universe === 1 && !game.buildings.Gym.locked) {
 					if (needGymystic()) continue;
 					const { Gym } = getPageSetting('buildingSettingsArray');
@@ -218,7 +218,7 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 			const equipType = equipModule.stat;
 			const zoneGo = mostEfficient[equipType].zoneGo;
 			const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct !== 1 ? equipSettingsArray[equipName].percent / 100 : 1;
-			const forcePrestige = (prestigeSetting === 1 && zoneGo) || (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
+			const forcePrestige = (prestigeSetting === 2 && canAncientTreasure) || prestigeSetting === 3;
 			if (forcePrestige && equipName !== 'Shield') {
 				if (prestigesAvailable && allowPrestigeSkip && !maybeBuyPrestige.prestigeAvailable) {
 					const otherEquipType = equipType === 'attack' ? 'health' : 'attack';
