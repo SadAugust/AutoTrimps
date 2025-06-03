@@ -84,7 +84,7 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 	const prestigeSetting = getPageSetting('equipPrestige');
 	const noPrestigeChallenge = challengeActive('Scientist') || challengeActive('Frugal');
 
-	const equipSettingsArray = getPageSetting('autoEquipSettingsArray');
+	const equipSettingsArray = JSON.parse(JSON.stringify(getPageSetting('autoEquipSettingsArray')));
 	if (ignoreShield) equipSettingsArray.Shield.enabled = false;
 
 	const baseEquipmentObj = _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge);
