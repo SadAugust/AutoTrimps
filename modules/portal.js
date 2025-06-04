@@ -436,7 +436,7 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 
 		let shouldRun = false;
 		if (runType === 0) {
-			const portalZone = hze * c2Setting[challengeName].zoneHZE;
+			const portalZone = hze * (c2Setting[challengeName].zoneHZE / 100);
 			if (challengeLevel >= portalZone) continue;
 			const runPercent = c2Setting[challengeName].percent / 100 || 0.85;
 			shouldRun = challengeLevel / highestZone < runPercent;
@@ -735,7 +735,7 @@ function c2FinishZone() {
 		const c2RunnerMode = getPageSetting('c2RunnerMode');
 		const c2RunnerSettings = getPageSetting('c2RunnerSettings')[game.global.challengeActive];
 
-		if (c2RunnerSettings && c2RunnerSettings.enabled) finishChallenge = c2RunnerMode === 0 ? hze * c2RunnerSettings.zoneHZE : c2RunnerSettings.zone;
+		if (c2RunnerSettings && c2RunnerSettings.enabled) finishChallenge = c2RunnerMode === 0 ? hze * (c2RunnerSettings.zoneHZE / 100) : c2RunnerSettings.zone;
 	} else {
 		finishChallenge = getPageSetting('c2Finish');
 	}
