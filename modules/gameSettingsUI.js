@@ -1146,21 +1146,21 @@ function c2RunnerDisplay(elem) {
 				<span style="float: right;">z${challengeLevel}${!displayZone ? ' (' + (100 * (challengeLevel / hze)).toFixed(2).replace(/\.00$/, '') + '%)' : ''}</span>
 			</div>&nbsp;`;
 
-		rowData += `
-			<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
-				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>${displayZone ? 'Finish Zone:' : 'Below HZE%:'}
-				<input id='${item}Zone' type='number' step='1' value='${setting && setting[displayType] ? setting[displayType] : displayZone ? 0 : 90}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
-				</span>
-			</div>`;
-
 		if (!displayZone) {
 			rowData += `
 			<div id ='${item}PercentDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
-				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Percent").focus()'>Finish HZE%:
+				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Percent").focus()'>Below HZE%:
 				<input id='${item}Percent' type='number' step='1' value='${setting && setting.percent ? setting.percent : 85}' min='1' max='100' placeholder='100' style='color: white;' onfocus='this.select()'>
 				</span>
 			</div>`;
 		}
+
+		rowData += `
+			<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
+				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>${displayZone ? 'Finish Zone:' : 'Finish HZE%:'}
+				<input id='${item}Zone' type='number' step='1' value='${setting && setting[displayType] ? setting[displayType] : displayZone ? 0 : 90}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
+				</span>
+			</div>`;
 
 		total++;
 	}
