@@ -37,11 +37,21 @@ function allocatePerky(showTooltips = true) {
 	const xpDivStyle = document.querySelector('#weight-xpDiv').style;
 	if (game.global.spiresCompleted >= 2 && xpDivStyle.display !== 'flex') xpDivStyle.display = 'flex';
 
-	//Can't respec perks when running Hypothermia so don't try as it causes errors
+	/* can't respec perks when running Hypothermia so don't try as it causes errors */
 	if (/* !portalWindowOpen &&  */ challengeActive('Hypothermia')) {
 		const portalStoryElem = document.getElementById('portalStory');
 		if (portalStoryElem) portalStoryElem.innerHTML = "<span style='color: red'>You cannot change your perks while on the Hypothermia Challenge!</span>";
 		return;
+	}
+
+	/* can't respec perks when running Trapper so don't try as it causes crashes */
+	if (!portalWindowOpen && challengeActive('Trapper') && !game.global.respecActive) {
+		const totalHe = game.global.totalHeliumEarned;
+		const { totalHeliumEarned, heliumLeftover } = game.global;
+		if (totalHeliumEarned / 1e5 > heliumLeftover) {
+			tooltip('Trapper Respec', 'customText', 'lock', 'You must activate your Respec to allocate perks on this challenge!', false, `center`);
+			return;
+		}
 	}
 
 	if (showTooltips) {

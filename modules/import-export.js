@@ -829,8 +829,8 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 		<tr>
 			<td>Total ${type}</td>
 			<td></td>
-			<td id="regularC2${total}" data-value="${value}">${prettify(value)}%</td>
 			<td></td>
+			<td id="regularC2${total}" data-value="${value}">${prettify(value)}</td>
 			<td></td>
 			${whatIf ? `<td></td>` : ``}
 			${whatIf ? `<td id="whatIfC2${total}">${prettify(value)}%</td>` : ``}
