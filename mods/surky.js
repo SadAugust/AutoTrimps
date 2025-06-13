@@ -1214,18 +1214,16 @@ function clearAndAutobuyPerks() {
 		const origExpand = game.portal.Expansion.radLevel;
 		let carpWanted = 0;
 
-		if (challengeActive('Downsize') && props.specialChallenge === 'combat') {
-			/* impractical to know actual housing in downsize, just don't reduce Carp or Expansion level */
-			perks.Carpentry.level = origCarp;
-			perks.Expansion.level = origExpand;
-		} else if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
+		if (props.specialChallenge === 'combat' || props.specialChallenge === 'combatRadon') {
+			const maxTrimps = challengeActive('Downsize') ? game.global.totalGifts + game.unlocks.impCount.TauntimpAdded + 10 + countTotalHousingBuildings() : game.resources.trimps.max;
 			/* must have enough carp to sustain current coordination - or very conservatively for trappa, 10 more coords after final army send (should still be negligible radon spent on carp) */
 			const wantedArmySize = (props.runningTrappa ? Math.pow(1.25, 10) : 1) * game.resources.trimps.maxSoldiers;
 			const tauntBase = 1.003 + 0.0001 * origExpand;
 			const tauntMult = game.global.expandingTauntimp ? Math.pow(tauntBase, game.unlocks.impCount.Tauntimp) : 1;
 
-			carpWanted = Math.max(0, Math.ceil(Math.log((2.4 * wantedArmySize) / (tauntMult * (game.resources.trimps.max * game.resources.trimps.maxMod * props.scaffMult * props.mutationMult))) / Math.log(1.1)));
+			carpWanted = Math.max(0, Math.ceil(Math.log((2.4 * wantedArmySize) / (tauntMult * (maxTrimps * game.resources.trimps.maxMod * props.scaffMult * props.mutationMult))) / Math.log(1.1)));
 		}
+
 		/* setting this here since initial load clears variables and perk levels which is important for carp calculations */
 		[props, perks] = initialLoad(true);
 
