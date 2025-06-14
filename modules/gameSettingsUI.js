@@ -1150,7 +1150,7 @@ function c2RunnerDisplay(elem) {
 			rowData += `
 			<div id ='${item}PercentDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Percent").focus()'>Below HZE%:
-				<input id='${item}Percent' type='number' step='1' value='${setting && setting.percent ? setting.percent : 85}' min='1' max='100' placeholder='100' style='color: white;' onfocus='this.select()'>
+				<input id='${item}Percent' type='number' step='1' value='${setting && Number.isInteger(setting.percent) ? setting.percent : 85}' min='0' max='100' placeholder='100' style='color: white;' onfocus='this.select()'>
 				</span>
 			</div>`;
 		}
@@ -1158,7 +1158,7 @@ function c2RunnerDisplay(elem) {
 		rowData += `
 			<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>${displayZone ? 'Finish Zone:' : 'Finish HZE%:'}
-				<input id='${item}Zone' type='number' step='1' value='${setting && setting[displayType] ? setting[displayType] : displayZone ? 0 : 90}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
+				<input id='${item}Zone' type='number' step='1' value='${setting && Number.isInteger(setting[displayType]) ? setting[displayType] : displayZone ? 0 : 90}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
 				</span>
 			</div>`;
 
@@ -1194,14 +1194,17 @@ function _c2RunnerSave() {
 		setting[name].enabled = item.classList.contains('btnItemEquipped');
 
 		const zoneElem = document.getElementById(name + 'Zone');
+		const maxZone = checkZone ? getObsidianStart() : 100;
 		let zone = parseInt(zoneElem.value, 10);
-		if (zone > 810) zone = 810;
+		if (zone > maxZone) zone = maxZone;
+		if (zone < 0) zone = 0;
 		zone = Number.isInteger(zone) ? zone : 0;
 
 		if (!checkZone) {
 			const percentElem = document.getElementById(name + 'Percent');
 			let percent = parseInt(percentElem.value, 10);
 			if (percent > 100) percent = 100;
+			if (percent < 0) percent = 0;
 			percent = Number.isInteger(percent) ? percent : 85;
 
 			setting[name].percent = percent;

@@ -409,7 +409,10 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 		if (typeof c2Setting[challenge] === 'undefined') continue;
 		if (unlockedC2s.indexOf(challenge) === -1) continue;
 		if (!c2Setting[challenge].enabled) continue;
-		if (runType === 1 && c2Setting[challenge].zone <= 0) continue;
+
+		const { percent, zone, zoneHZE } = c2Setting[challenge];
+		if (runType === 0 && (zoneHZE === 0 || percent === 0)) continue;
+		if (runType === 1 && zone <= 0) continue;
 		challengeArray.push(challenge);
 	}
 	challengeArray = challengeOrders[universe].filter((item) => challengeArray.includes(item) && unlockedC2s.includes(item));
@@ -435,13 +438,16 @@ function _c2RunnerCheck(portalCheck = false, universe = portalUniverse) {
 		}
 
 		let shouldRun = false;
+		const { percent, zone, zoneHZE } = c2Setting[challengeName];
+
 		if (runType === 0) {
-			const portalZone = hze * (c2Setting[challengeName].zoneHZE / 100);
+			const portalZone = hze * (zoneHZE / 100 || 0.95);
 			if (challengeLevel >= portalZone) continue;
-			const runPercent = c2Setting[challengeName].percent / 100 || 0.85;
+
+			const runPercent = percent / 100 || 0.85;
 			shouldRun = challengeLevel / highestZone < runPercent;
 		} else {
-			shouldRun = challengeLevel < c2Setting[challengeName].zone;
+			shouldRun = challengeLevel < zone;
 		}
 
 		if (!shouldRun || challengeActive(challengeName)) continue;
