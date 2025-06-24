@@ -78,7 +78,7 @@ function _autoStructureTable(settingGroup, hze) {
 		rowData += `
 		<div id ='${item}BuyMaxDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 			<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw; margin-right: ${item === 'Nursery' ? '0.4em' : '1.61vw;'}' onclick='document.getElementById("${item}BuyMax").focus()'>Up to:
-			<input id='${item}BuyMax' type='number' step='1' value='${setting && setting.buyMax ? setting.buyMax : 0}' min='0' max='9999' placeholder='0' style='color: white;' onfocus='this.select()'>
+			<input id='${item}BuyMax' type='number' step='1' value='${setting && setting.buyMax ? setting.buyMax : 0}' min='0' max='99999' placeholder='0' style='color: white;' onfocus='this.select()'>
 			</span>
 		</div>`;
 
@@ -86,7 +86,7 @@ function _autoStructureTable(settingGroup, hze) {
 			rowData += `
 			<div id ='${item}FromZDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw; margin-right: 1.61vw;' onclick='document.getElementById("${item}FromZ").focus()'>From Z:
-				<input id='${item}FromZ' type='number' step='1' value='${setting && setting.fromZ ? setting.fromZ : 0}' min='0' max='9999' placeholder='0' style='color: white;' onfocus='this.select()'>
+				<input id='${item}FromZ' type='number' step='1' value='${setting && setting.fromZ ? setting.fromZ : 0}' min='0' max='999' placeholder='0' style='color: white;' onfocus='this.select()'>
 				</span>
 			</div>`;
 		}
@@ -196,7 +196,7 @@ function _autoStructureSave() {
 
 		const buyMaxElem = document.getElementById(name + 'BuyMax');
 		let buyMax = parseInt(buyMaxElem.value, 10);
-		buyMax = isNumberBad(buyMax) ? 0 : Math.max(Math.min(buyMax, 9999), 0);
+		buyMax = isNumberBad(buyMax) ? 0 : Math.max(Math.min(buyMax, 99999), 0);
 		setting[name].buyMax = buyMax;
 
 		if (name === 'Nursery') {
@@ -1106,6 +1106,23 @@ function c2RunnerDisplay(elem) {
 	const displayType = displayZone ? 'zone' : 'zoneHZE';
 
 	const itemsPerRow = !displayZone ? 2 : 3;
+
+	const difficultyObj = {
+		Trimp: 30,
+		Trapper: 50,
+		Coordination: 30,
+		Mapology: 75,
+		Topology: 75,
+		Obliterated: 20,
+		Eradicated: 10,
+		Downsize: 75,
+		Duel: 75,
+		Trappapalooza: 50,
+		Wither: 75,
+		Berserk: 75,
+		Smithless: 75
+	};
+
 	let rowData = '';
 	let rows = 0;
 	let total = 0;
@@ -1150,7 +1167,7 @@ function c2RunnerDisplay(elem) {
 			rowData += `
 			<div id ='${item}PercentDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Percent").focus()'>Below HZE%:
-				<input id='${item}Percent' type='number' step='1' value='${setting && Number.isInteger(setting.percent) ? setting.percent : 85}' min='0' max='100' placeholder='100' style='color: white;' onfocus='this.select()'>
+				<input id='${item}Percent' type='number' step='1' value='${setting && Number.isInteger(setting.percent) ? setting.percent : difficultyObj[item] ? difficultyObj[item] : 85}' min='0' max='100' placeholder='100' style='color: white;' onfocus='this.select()'>
 				</span>
 			</div>`;
 		}
@@ -1158,7 +1175,7 @@ function c2RunnerDisplay(elem) {
 		rowData += `
 			<div id ='${item}ZoneDiv' style='display: flex; align-items: center; margin-bottom: 0.1em;'>
 				<span id='${item}TextBox' class='textbox' style='text-align: left; height: 1.5vw; max-width: 9vw; min-width: 9vw; font-size: 0.7vw;' onclick='document.getElementById("${item}Zone").focus()'>${displayZone ? 'Finish Zone:' : 'Finish HZE%:'}
-				<input id='${item}Zone' type='number' step='1' value='${setting && Number.isInteger(setting[displayType]) ? setting[displayType] : displayZone ? 0 : 90}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
+				<input id='${item}Zone' type='number' step='1' value='${setting && Number.isInteger(setting[displayType]) ? setting[displayType] : displayZone ? 0 : difficultyObj[item] ? difficultyObj[item] + 5 : 90}' min='0' max='${obsidianZone}' placeholder='0' style='color: white;' onfocus='this.select()'>
 				</span>
 			</div>`;
 

@@ -1216,9 +1216,17 @@ function mapDestacking(lineCheck) {
 		const balanceHD = getPageSetting('balanceDestack') > 0 ? getPageSetting('balanceDestack') : Infinity;
 		const balanceZone = getPageSetting('balanceZone') > 0 ? getPageSetting('balanceZone') : Infinity;
 		const balanceStacks = getPageSetting('balanceStacks') > 0 ? getPageSetting('balanceStacks') : Infinity;
-		shouldMap = game.global.world >= balanceZone && (challengeStacks >= balanceStacks || (getPageSetting('balanceImprobDestack') && game.global.lastClearedCell + 2 === 100 && challengeStacks !== 0));
-		if (hdStats.hdRatio > balanceHD && challengeStacks >= balanceStacks) shouldMap = true;
-		if (shouldMap && gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks === 0) shouldMap = false;
+
+		shouldMap = game.global.world >= balanceZone && (challengeStacks >= balanceStacks || (game.global.lastClearedCell + 2 === 100 && challengeStacks !== 0 && getPageSetting('balanceImprobDestack')));
+
+		if (hdStats.hdRatio > balanceHD && challengeStacks >= balanceStacks) {
+			shouldMap = true;
+		}
+
+		if (shouldMap && gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks === 0) {
+			shouldMap = false;
+		}
+
 		destackValue = challengeStacks;
 	}
 

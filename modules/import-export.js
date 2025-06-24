@@ -813,8 +813,8 @@ function _displayC2Table(tooltipDiv, unusedVar, universe = atConfig.settingUnive
 
 	const createTableRow = (key, { number, percent, zone, color, percentzone, c2runner, runChallenge, zoneWhatIf, percentWhatIf }) => `
 		<tr>
-			<td>${key}</td>
 			<td>${number}</td>
+			<td>${key}</td>
 			<td>${zone}</td>
 			<td>${percent}</td>
 			<td${!['C2', 'C3'].includes(key) ? ` bgcolor='black'><font color=${color}>${percentzone}</font>` : `>${percentzone}`}</td>

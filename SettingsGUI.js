@@ -206,7 +206,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Click to adjust settings.</b></p>";
 				return description;
 			}, 'mazArray', [], 'importExportTooltip("mapSettings", "Auto Golden")', displayTab, [1, 2],
-			function () { return (getAchievementStrengthLevel() > 0) });
+			function () { return (game.stats.goldenUpgrades.valueTotal > 0) });
 		
 		createSetting('pauseScript',
 			function () { return ('Pause AutoTrimps') },
@@ -1080,7 +1080,7 @@ function initialiseAllSettings() {
 			function () { return ('Remaining Essence Only') },
 			function () {
 				let description = "<p>Will disable Scryer stance whilst in the world if there are no remaining enemies that hold dark essence.</p>";
-				description += "<p><b>Recommended:</b> Off</p>";
+				description += "<p><b>Recommended:</b> On</p>";
 				return description;
 			}, 'boolean', false, null, displayTab, [1],
 			function () { return (getPageSetting('autoStanceScryer', atConfig.settingUniverse)) });
@@ -1836,7 +1836,7 @@ function initialiseAllSettings() {
 				description += `<p><b>Recommended:</b> ${c2Name} Runner: Percent</p>`;
 				return description;
 			}, 'multitoggle', 0, null, displayTab, [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)) });
+			function () { return (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65) });
 
 		createSetting('c2RunnerSettings',
 			function () { return (`${_getChallenge2Info()} Runner Settings`) },
@@ -1848,9 +1848,7 @@ function initialiseAllSettings() {
 				description += `<p><b>Click to adjust settings.</b></p>`;
 				return description;
 			}, 'mazArray', {}, 'importExportTooltip("c2Runner")', displayTab, [1, 2],
-			function () {
-				return getPageSetting('c2RunnerStart', atConfig.settingUniverse) && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)
-			});
+			function () { return (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65) });
 
 		createSetting('c2RunnerEndMode',
 			function () {
@@ -1867,7 +1865,7 @@ function initialiseAllSettings() {
 				description += `<p><b>Recommended:</b> ${_getChallenge2Info()} Runner: Portal</p>`;
 				return description;
 			}, 'multitoggle', 1, null, displayTab, [1, 2],
-			function () { return (getPageSetting('c2RunnerStart', atConfig.settingUniverse) && (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65)) });
+			function () { return (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 65) });
 		
 		createHeading('dailyDescription', 'Daily Auto Portal Settings', displayTab)
 
@@ -1983,7 +1981,7 @@ function initialiseAllSettings() {
 			function () { return (atConfig.settingUniverse === 2 || game.stats.highestLevel.valueTotal() >= 100) });
 
 		createSetting('dailyDontCap',
-			function () { return ('Daily: Use When Capped') },
+			function () { return ('Daily: Run When Capped') },
 			function () {
 				let description = "<p>Will cause the script to only start dailies when you have at least the amount of dailies input in the <b>UWC: Amount</b> setting available to run.</p>";
 				description += "<p><b>Recommended:</b> Off</p>";
@@ -3336,7 +3334,7 @@ function initialiseAllSettings() {
 				description += `<p><b>Yellow</b><br>You should consider updating yellow challenges.</p>`;
 				description += `<p><b>Red</b><br>Updating red challenges is typically worthwhile.</p>`;
 				description += `<p><b>Blue</b><br>This challenge hasn't been run yet and should be done as soon as possible.</p>`;
-				description += `<p>The <b>${_getChallenge2Info()} Runner</b> heading indicates which challenges <b>${_getChallenge2Info()} Runner</b> will run. These can be enabled or disabled using the <b>${_getChallenge2Info()} Runner Settings</b> setting.</p>`;
+				description += `<p>The <b>${_getChallenge2Info()} Runner</b> heading indicates which challenges <b>${_getChallenge2Info()} Runner</b> will run. These can be enabled or disabled using the <b>${_getChallenge2Info()} Runner Settings</b> setting in the <b>Portal</b> tab.</p>`;
 				description += `<p>The <b>Auto Portal</b> heading indicates which challenges will be started when Auto Portaling. They run in order of the difficulty displayed in this table.</p>`;
 				return description;
 			}, 'infoclick', null, 'importExportTooltip("c2table")', displayTab, [0]);
