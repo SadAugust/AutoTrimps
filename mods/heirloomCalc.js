@@ -46,23 +46,17 @@ function runHeirlooms() {
 	const selectedLoom = game.global.selectedHeirloom;
 	if (selectedLoom.length === 0) return;
 
-	if (game.global.universe === 2 && !Fluffy.isRewardActive('heirloopy')) {
-		if (portalWindowOpen) return;
-		const description = '<p>The Allocate Nullifium button is disabled in this universe until you unlock the Scruffy (level 2) heirloom ability.</p>';
-		const title = '<b>Heirloom Calc</b>';
-		tooltip('confirm', null, 'update', description, undefined, title, 'Confirm', 'center');
-		return;
-	}
-
 	const heirlooms = calculate(true);
+	const newLoomData = heirlooms.newLoom;
+
 	let startingHeirloom;
 	if (selectedLoom[1].includes('Equipped')) startingHeirloom = game.global[selectedLoom[1]];
 	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
-	startingHeirloom.mods = heirlooms.newLoom.mods;
+	startingHeirloom.mods = newLoomData.mods;
 
 	displaySelectedHeirloom(undefined, undefined, undefined, undefined, undefined, undefined, true);
 	setupHeirloomHelpBtn();
-	updateModContainer('heirloomHelpBtn', heirlooms.newLoom);
+	updateModContainer('heirloomHelpBtn', newLoomData);
 	recalculateHeirloomBonuses();
 	return;
 }
@@ -443,6 +437,13 @@ function saveHeirloomSettings() {
 	if (heirloomInputs === null) heirloomInputs = {};
 	let update = heirloomInputs;
 
+	heirloomInputs.VMWeight = heirloomInputs.VMWeight || 12;
+	heirloomInputs.XPWeight = heirloomInputs.XPWeight || 11.25;
+	heirloomInputs.HPWeight = heirloomInputs.HPWeight || 1;
+	heirloomInputs.equipLevels = heirloomInputs.equipLevels || 90;
+	heirloomInputs.equalityTarget = heirloomInputs.equalityTarget || 100;
+	heirloomInputs.seedDrop = heirloomInputs.seedDrop || 2;
+
 	const selectedHeirloom = _getSelectedHeirloom() && _getSelectedHeirloom().id;
 	const customRatio = JSON.parse(document.getElementById('heirloomCustomRatioBtn').className.split(' ')[1].slice(10));
 	if (customRatio && selectedHeirloom) {
@@ -518,7 +519,20 @@ class Heirloom {
 				this.inputs[key] = Number(value);
 			}
 
-			if (typeof this.inputs.seedDrop === 'undefined') this.inputs.seedDrop = 2;
+			const defaultKeys = {
+				equipLevels: 90,
+				VMWeight: 12,
+				XPWeight: 11.25,
+				HPWeight: 1,
+				equalityTarget: Math.min(game.portal.Equality.radLevel, 100),
+				seedDrop: 2
+			};
+
+			for (const key in defaultKeys) {
+				if (typeof this.inputs[key] === 'undefined') {
+					this.inputs[key] = defaultKeys[key];
+				}
+			}
 
 			this.isCore = this.type === 'Core';
 
@@ -575,21 +589,30 @@ class Heirloom {
 	}
 
 	getStepAmount(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].stepAmounts[rarity];
-		if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return this.heirloomInfo[type].stepAmounts[rarity] / 10;
-		return this.heirloomInfo[type].stepAmounts[rarity];
+		const modData = this.heirloomInfo[type];
+		if (game.global.universe === 1 || modData.immutable || modData.noScaleU2) return modData.stepAmounts[rarity];
+
+		if (!(modData.heirloopy && this.fluffyRewards.heirloopy)) return modData.stepAmounts[rarity] / 10;
+
+		return modData.stepAmounts[rarity];
 	}
 
 	getSoftCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].softCaps[rarity];
-		if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return this.heirloomInfo[type].softCaps[rarity] / 10;
-		return this.heirloomInfo[type].softCaps[rarity];
+		const modData = this.heirloomInfo[type];
+		if (game.global.universe === 1 || modData.immutable || modData.noScaleU2) return modData.softCaps[rarity];
+
+		if (!(modData.heirloopy && this.fluffyRewards.heirloopy)) return modData.softCaps[rarity] / 10;
+
+		return modData.softCaps[rarity];
 	}
 
 	getHardCap(type, rarity) {
-		if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return this.heirloomInfo[type].hardCaps[rarity];
-		if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return this.heirloomInfo[type].hardCaps[rarity] / 10;
-		return this.heirloomInfo[type].hardCaps[rarity];
+		const modData = this.heirloomInfo[type];
+		if (game.global.universe === 1 || modData.immutable || modData.noScaleU2) return modData.hardCaps[rarity];
+
+		if (!(modData.heirloopy && this.fluffyRewards.heirloopy)) return modData.hardCaps[rarity] / 10;
+
+		return modData.hardCaps[rarity];
 	}
 
 	getCritStats() {
@@ -699,8 +722,11 @@ class Heirloom {
 	getModValue(type) {
 		for (const mod of this.mods) {
 			if (mod[0] === type) {
-				if ((this.heirloomInfo[type].heirloopy && this.fluffyRewards.heirloopy) || this.heirloomInfo[type].immutable || type === 'inequality') return mod[1];
-				if (game.global.universe === 2 && !this.heirloomInfo[type].noScaleU2) return mod[1] / 10;
+				const modData = this.heirloomInfo[type];
+				if (game.global.universe === 1 || modData.immutable || modData.noScaleU2) return mod[1];
+
+				if (!(modData.heirloopy && this.fluffyRewards.heirloopy)) return mod[1] / 10;
+
 				return mod[1];
 			}
 		}
@@ -1120,6 +1146,11 @@ class Heirloom {
 				continue;
 			}
 
+			if (game.global.universe === 1 || heirloom.heirloomInfo[name].immutable || heirloom.heirloomInfo[name].noScaleU2) {
+			} else if (!(heirloom.heirloomInfo[name].heirloopy && heirloom.fluffyRewards.heirloopy)) {
+				if (this.hardCaps[name]) this.hardCaps[name] *= 10;
+			}
+
 			index = heirloom.mods.indexOf(mod);
 			if (this.hardCaps[name] && heirloom.mods[index][1] > this.hardCaps[name]) {
 				heirloom.mods[index][1] = this.hardCaps[name];
@@ -1310,8 +1341,12 @@ function calculate(autoUpgrade) {
 		}
 
 		function getModValue(mod) {
-			if ((heirloomData[mod[0]].heirloopy && heirloopy) || heirloomData[mod[0]].immutable || heirloomData[mod[0]].name === 'inequality') return mod[1];
-			if (game.global.universe === 2 && !heirloomData[mod[0]].noScaleU2) return mod[1] / 10;
+			const modData = heirloomData[mod[0]];
+
+			if (game.global.universe === 1 || modData.immutable || modData.noScaleU2) return mod[1];
+
+			if (!(modData.heirloopy && heirloopy)) return mod[1] / 10;
+
 			return mod[1];
 		}
 
@@ -2226,7 +2261,8 @@ function heirloomInfo(type) {
 				noScaleU2: true,
 				stepAmounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.02],
 				softCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.3],
-				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25]
+				hardCaps: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25],
+				immutable: true
 			}
 		};
 	else if (type === 'Staff')
