@@ -844,7 +844,12 @@ function togglePerkLock(id, calcName) {
 
 	settingInputs['lockedPerks'][id] = !settingInputs['lockedPerks'][id];
 	localStorage.setItem(`${calcName.toLowerCase()}Inputs`, JSON.stringify(settingInputs));
-	document.getElementById(`lock${id}`).classList = `icomoon ${settingInputs['lockedPerks'][id] ? 'icon-locked' : 'icon-unlocked'}`;
+
+	const lockIcon = document.getElementById(`lock${id}`);
+	if (!lockIcon) return;
+
+	lockIcon.classList = `icomoon ${settingInputs['lockedPerks'][id] ? 'icon-locked' : 'icon-unlocked'}`;
+	lockIcon.style.color = settingInputs['lockedPerks'][id] ? 'red' : 'white';
 }
 
 function _setSelect2PerkyDropdowns() {
@@ -1004,6 +1009,7 @@ atData.autoPerks = {
 					const iconScale = game.options.menu.detailedPerks.enabled ? 1.05 : 0.65;
 					tempDiv.style = `display: block; position: absolute; bottom: ${iconOffsetBottom}px; right: ${iconOffsetRight}px; width: 10%; background: none; transform: scale(${iconScale});`;
 					tempDiv.classList = `icomoon ${perkLocks && perkLocks['lockedPerks'] && perkLocks['lockedPerks'][$perkIcon.id] ? 'icon-locked' : 'icon-unlocked'}`;
+					tempDiv.style.color = perkLocks && perkLocks['lockedPerks'] && perkLocks['lockedPerks'][$perkIcon.id] ? 'red' : 'white';
 
 					tempDiv.addEventListener('click', (event) => {
 						event.stopPropagation();
