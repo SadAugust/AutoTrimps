@@ -1791,42 +1791,67 @@ function wither(lineCheck) {
 		mapName
 	};
 
-	if (!challengeActive('Wither') || !getPageSetting('wither') || !getPageSetting('witherFarm') || game.challenges.Wither.healImmunity > 0) return farmingDetails;
+	if (!challengeActive('Wither') || !getPageSetting('wither') || game.challenges.Wither.healImmunity > 0) return farmingDetails;
+
+	const witherFarm = getPageSetting('witherFarm');
+	if (!witherFarm) return farmingDetails;
+
 	const witherZones = getPageSetting('witherZones');
 	if (witherZones.indexOf(game.global.world) >= 0) return farmingDetails;
 
 	const mapSpecial = getAvailableSpecials('lmc', true);
-	const mapLevel = autoLevelCheck(mapName, mapSpecial);
+	let mapLevel = autoLevelCheck(mapName, mapSpecial);
 	const cell = game.global.lastClearedCell + 2;
 	let equalityAmt,
 		ourDmg,
 		enemyHealth = false;
 
-	//Checking if we can clear to the speedbook on the next zone.
-	if (cell === 100 && witherZones.indexOf(game.global.world + 1) === -1) {
+	/* checking if we can clear to the speedbook on the next zone. */
+	if (witherFarm === 2 && cell === 100 && witherZones.indexOf(game.global.world + 1) === -1) {
 		let dmgBuff = 1;
 		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 60, 'world', 1, 'gamma', false, 4);
 
 		if (canAffordCoordinationTrimps()) {
 			dmgBuff = 1.25;
-			equalityAmt = Math.max(0, equalityAmt - 2);
+			equalityAmt = Math.max(0, equalityAmt - 3);
 		}
 
 		ourDmg = calcOurDmg('min', equalityAmt, true, 'world', 'never', 0, false) * dmgBuff;
 		enemyHealth = calcEnemyHealthCore('world', game.global.world + 1, 60, 'Snimp', calcMutationStats(game.global.world + 1, 'health'));
 		shouldMap = ourDmg * 4 < enemyHealth;
 	}
-	//Checking if we can clear current cell.
+
+	/* checking if we can clear current cell. */
 	if (!shouldMap) {
 		const gammaToTrigger = gammaMaxStacks(true) - game.heirlooms.Shield.gammaBurst.stacks;
+		const gammaMult = !game.global.mapsActive && gammaToTrigger <= 1 ? MODULES.heirlooms.gammaBurstPct : 1;
+		const cellArray = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1] : [];
 		const name = game.global.gridArray && game.global.gridArray[0] ? game.global.gridArray[cell - 1].name : undefined;
 		equalityAmt = equalityQuery(name, game.global.world, cell, 'world', 1, 'gamma', false, 4);
 		ourDmg = calcOurDmg('min', equalityAmt, true, 'world', 'never', 0, false);
 		enemyHealth = calcEnemyHealthCore('world', game.global.world, cell, name, calcMutationStats(game.global.world, 'health'));
-		shouldMap = ourDmg * (gammaToTrigger <= 1 ? MODULES.heirlooms.gammaBurstPct : 1) * 4 < enemyHealth;
+		shouldMap = cellArray && cellArray.health > 0 && ourDmg * gammaMult * 4 < enemyHealth;
 	}
 
-	if (lineCheck && shouldMap) return (setting = { priority: Infinity });
+	if (shouldMap && game.global.mapBonus < 10 && mapLevel < 0 && getPageSetting('witherMapLevel') > 0) {
+		const autoLevelData = hdStats.autoLevelInitial[0];
+		const willCapMapBonus = game.global.mapsActive && game.global.mapBonus === 9 && getCurrentMapObject().level >= game.global.world;
+
+		if (!willCapMapBonus && autoLevelData) {
+			for (const item in autoLevelData) {
+				const { mapLevel: dataMapLevel } = autoLevelData[item] || {};
+				if (typeof dataMapLevel === 'number' && dataMapLevel > mapLevel) {
+					mapLevel = dataMapLevel;
+				}
+			}
+		}
+
+		if (mapLevel > 0) mapLevel = 0;
+	}
+
+	if (lineCheck && shouldMap) {
+		return (setting = { priority: Infinity });
+	}
 
 	const damageTarget = enemyHealth / 4;
 	const status = `Wither Farm: Curr&nbsp;Dmg:&nbsp;${prettify(ourDmg)} Goal&nbsp;Dmg:&nbsp;${prettify(damageTarget)}`;
@@ -2563,7 +2588,7 @@ function glass(lineCheck) {
 	let glassStacks = getPageSetting('glassStacks');
 	if (glassStacks <= 0) glassStacks = Infinity;
 
-	//Gamma burst info
+	/* gamma burst info */
 	const glassFarm = getPageSetting('glassFarm');
 	const gammaTriggerStacks = gammaMaxStacks();
 	const gammaToTrigger = game.global.mapsActive ? Infinity : gammaTriggerStacks - game.heirlooms.Shield.gammaBurst.stacks;
@@ -2576,31 +2601,29 @@ function glass(lineCheck) {
 	let enemyHealth = calcEnemyHealthCore('map', game.global.world, 20, 'Snimp') * 0.75;
 	if (glassStacks <= gammaTriggerStacks) ourDmg *= gammaDmg;
 
-	//Destacking
+	/* destacking */
 	if ((!canGamma && mapSettings.mapName === 'Glass Destacking') || (ourDmg * damageGoal > enemyHealth && game.challenges.Glass.shards >= glassStacks)) {
 		mapSpecial = getAvailableSpecials('fa');
 		shouldMap = true;
 		mapLevel = 0;
 		mapName += 'Destacking';
-	}
-	//Farming if we don't have enough damage to clear stacks!
-	else if (glassFarm && !canGamma && ourDmg * damageGoal < enemyHealth) {
+	} else if (glassFarm && !canGamma && ourDmg * damageGoal < enemyHealth) {
+		/* farming if we don't have enough damage to clear stacks */
 		mapName += 'Farming';
 		shouldMap = true;
-	}
-	//Checking if we can clear +0 maps on the next zone.
-	else if (glassFarm && game.global.lastClearedCell + 2 === 100) {
+	} else if (glassFarm === 2 && game.global.lastClearedCell + 2 === 100) {
+		/* checking if we can clear +0 maps on the next zone. */
 		equalityAmt = equalityQuery('Snimp', game.global.world + 1, 20, 'map', 0.75, 'gamma');
 		ourDmg = calcOurDmg('min', equalityAmt, false, 'map', 'maybe', mapLevel, false);
 		enemyHealth = calcEnemyHealthCore('map', game.global.world + 1, 20, 'Snimp') * 0.75;
 		mapName += 'Farming';
-		//Checking if we can clear current zone.
+
 		if (ourDmg * damageGoal < enemyHealth) {
 			shouldMap = true;
 		}
 	}
 
-	//As we need to be able to add this to the priority list and it should always be the highest priority then need to return this here
+	/* as we need to be able to add this to the priority list and it should always be the highest priority then need to return this here */
 	if (lineCheck && shouldMap) return (setting = { priority: 1 });
 
 	if ((game.global.mapsActive || game.challenges.Glass.shards > 0) && mapSettings.mapName === 'Glass Destacking') {
@@ -3854,16 +3877,22 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			message += `${mapSettings.dropdown.name} (Start: ${prettify(mapSettings.dropdown.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown.name])})<br>\n`;
 			if (mapSettings.dropdown2) message += `${mapSettings.dropdown2.name} (Start: ${prettify(mapSettings.dropdown2.hdRatio)} | End: ${prettify(hdObject[mapSettings.dropdown2.name])})`;
 		}
-	} else if (mapName === 'Hits Survived') message += ` Finished with hits survived at ${prettify(whichHitsSurvived())}/${targetHitsSurvived()}.`;
-	else if (mapName === 'HD Farm' && extra !== null) message += ` Finished with a HD Ratio of ${extra.toFixed(2)}/${extra2.toFixed(2)}.`;
-	else if (mapName === 'HD Farm') {
+	} else if (mapName === 'Hits Survived') {
+		message += ` Finished with hits survived at ${prettify(whichHitsSurvived())}/${targetHitsSurvived()}.`;
+	} else if (mapName === 'HD Farm' && extra !== null) {
+		message += ` Finished with a HD Ratio of ${extra.toFixed(2)}/${extra2.toFixed(2)}.`;
+	} else if (mapName === 'HD Farm') {
 		const autoLevel = whichAutoLevel();
 		message += ` Finished with an auto level of ${autoLevel > 0 ? '+' : ''}${autoLevel}.`;
-	} else if (mapName === 'Tribute Farm') message += ` Finished with ${game.buildings.Tribute.purchased} tributes and ${game.jobs.Meteorologist.owned} meteorologists.`;
-	else if (mapName === 'Smithy Farm') message += ` Finished with ${game.buildings.Smithy.purchased} smithies.`;
-	else if (mapName === 'Insanity Farm') message += ` Finished with ${game.challenges.Insanity.insanity} stacks.`;
-	else if (mapName === 'Alchemy Farm') message += ` Finished with ${extra} ${extra2}.`;
-	else if (mapName === 'Hypothermia Farm') {
+	} else if (mapName === 'Tribute Farm') {
+		message += ` Finished with ${game.buildings.Tribute.purchased} tributes and ${game.jobs.Meteorologist.owned} meteorologists.`;
+	} else if (mapName === 'Smithy Farm') {
+		message += ` Finished with ${game.buildings.Smithy.purchased} smithies.`;
+	} else if (mapName === 'Insanity Farm') {
+		message += ` Finished with ${game.challenges.Insanity.insanity} stacks.`;
+	} else if (mapName === 'Alchemy Farm') {
+		message += ` Finished with ${extra} ${extra2}.`;
+	} else if (mapName === 'Hypothermia Farm') {
 		let bonfireCostTotal = 0;
 		let bonfires = game.challenges.Hypothermia.totalBonfires;
 		for (let x = bonfires; x < Infinity; x++) {
@@ -3872,7 +3901,9 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 			bonfires++;
 		}
 		message += ` Finished with enough wood (${prettify(game.resources.wood.owned)}/${prettify(extra.toFixed(2))}) to reach ${bonfires} total bonfires.`;
-	} else if (mapName === 'Smithless Farm') message += ` Finished with enough damage to get ${extra}/3 stacks.`;
+	} else if (mapName === 'Smithless Farm') {
+		message += ` Finished with enough damage to get ${extra}/3 stacks.`;
+	}
 
 	MODULES.maps.mapRepeats = 0;
 	delete mapSettings.mapBonus;

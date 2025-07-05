@@ -3518,14 +3518,16 @@ function initialiseAllSettings() {
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 70) });
 
 		createSetting('witherFarm',
-			function () { return ('W: Farm') },
+			function () { return (['W: Farm: Off', 'W: Farm: Zone', 'W: Farm: Speedbook']) },
 			function () {
-				let description = "<p>Enable this to force farming until you are guaranteed to not Wither on your current world enemy.</p>";
-				description += "<p>When at cell 100 it will identify the damage required for reaching the speedbook on the next zone and if you don't have enough damage it will farm until you do.</p>";
-				description += "<p>This setting will usually overfarm as it assumes a minimum damage roll with no crits.</p>";
+				let description = "<p>This setting allows you to farm additional stats when required to avoid withering when fighting world enemies.</p>";
+				description += `<p><b>W: Map Level: Off</b><br>Disables farming for additional stats to ensure that you don't Wither in your current world zone.</p>`;
+				description += `<p><b>W: Map Level: Zone</b><br>This will force farming until you have enough stats to guarantee that you won't Wither on your current world enemy.</p>`;
+				description += `<p><b>W: Map Level: Speedbook</b><br>In addition to the farming done with <b>W: Map Level: Zone</b> this will also farm when at cell 100 and it will farm until you have enough damage to reach the speedbook on the next zone.</p>`;
+				description += "<p>This setting will usually overfarm as it assumes a minimum damage roll with no crits and doesn't factor in stats gained from additional prestiges.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', false, null, displayTab, [2],
+			}, 'multitoggle', 0, null, displayTab, [2],
 			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
 
 		createSetting('witherMapLevel',
@@ -3533,9 +3535,9 @@ function initialiseAllSettings() {
 			function () {
 				let description = "<p>This allows map settings to use positive map levels during Wither when using Auto Level. In most situations this is detrimental as enemies will gain more stacks of Horror so use at your own risk.</p>";
 				description += `<p><b>W: Map Level: Negative</b><br>Stops the script from using positive map levels outside of the <b>Map Bonus</b> setting during Wither.</p>`;
-				description += `<p><b>W: Map Level: Map Bonus</b><br>Allows the <b>Hits Survived & HD Farm</b>, <b>Hits Survived</b> and the <b>Map Bonus Stacks</b> settings to run positive map levels until you have max map bonus stacks.</p>`;
-				description += `<p><b>W: Map Level: Positive</b><br>Lets all map settings use positive maps.</p>`;
-				description += "<p><b>Recommended:</b> W: Map Level: Negative</p>";
+				description += `<p><b>W: Map Level: Map Bonus</b><br>Allows <b>Wither Farm</b>, <b>Hits Survived & HD Farm</b>, <b>Hits Survived</b> and the <b>Map Bonus Stacks</b> settings to run positive map levels until you have max map bonus stacks.</p>`;
+				description += `<p><b>W: Map Level: Positive</b><br>In addition to the map bonus changes that <b>W: Map Level: Map Bonus</b> does, this lets all map settings use positive maps.</p>`;
+				description += "<p><b>Recommended:</b> W: Map Level: Map Bonus</p>";
 				return description;
 			}, 'multitoggle', 0, null, displayTab, [2],
 			function () { return (getPageSetting('wither', atConfig.settingUniverse) && autoTrimpSettings.wither.require()) });
@@ -3723,14 +3725,16 @@ function initialiseAllSettings() {
 			function () { return (game.stats.highestRadLevel.valueTotal() >= 175) });
 
 		createSetting('glassFarm',
-			function () { return ('G: Farm') },
+			function () { return (['G: Farm: Off', 'G: Farm: World Map', 'G: Farm: World Map + 1']) },
 			function () {
-				let description = "<p>Enable this to automate damage farming when you don't have enough damage to clear Glass stacks in a world level map.</p>";
-				description += "<p>When at cell 100 of a zone it will identify the damage required to kill enemies in a world level map on the next zone and farms if you can't.</p>";
-				description += "<p>This setting will usually overfarm as it assumes a minimum damage roll with no crits.</p>";
+				let description = "<p>This setting allows you to farm additional stats when required to ensure you won't gain Glass stacks in a world level map.</p>";
+				description += `<p><b>W: Map Level: Off</b><br>Disables farming for additional stats to ensure that you don't Wither in your current world zone.</p>`;
+				description += `<p><b>W: Map Level: Zone</b><br>This will force farming until you have enough stats to guarantee that you can kill world level map enemies in 1 hit.</p>`;
+				description += `<p><b>W: Map Level: World Map + 1</b><br>In addition to the farming done with <b>G: Map Level: World Map</b> this will also farm when at cell 100, it will farm there until you have enough damage to kill enemies fast enough on a world level map on your next zone.</p>`;
+				description += "<p>This setting will usually overfarm as it assumes a minimum damage roll with no crits and doesn't factor in stats gained from additional prestiges.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
-			}, 'boolean', true, null, displayTab, [2],
+			}, 'multitoggle', 0, null, displayTab, [2],
 			function () { return (getPageSetting('glass', atConfig.settingUniverse) && autoTrimpSettings.glass.require()) });
 
 		createSetting('glassStacks',
@@ -3927,7 +3931,7 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, displayTab, [1, 2]);
 			
 		createSetting('spireSkipMapping',
-			function () { return ('Skip Spires') },
+			function () { return ('Skip Spire Mapping*') },
 			function () {
 				let description = "<p>Will disable all of the scripts mapping if you have max (10) map bonus stacks while in a Spire.</p>";
 				description += "<p><b>This setting will only work in active Spires.</b></p>";
@@ -4001,7 +4005,7 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, displayTab, [1, 2]);
 			
 		createSetting('spireSkipMappingOneOff',
-			function () { return ('One Off: Skip Spires') },
+			function () { return ('One Off: Skip Spire Mapping*') },
 			function () {
 				let description = "<p>Will disable all of the scripts mapping if you have max (10) map bonus stacks while in a Spire.</p>";
 				description += "<p><b>This setting will only work in active Spires.</b></p>";
@@ -4073,7 +4077,7 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, displayTab, [1, 2]);
 			
 		createSetting('spireSkipMappingC2',
-			function () { return (`${_getChallenge2Info()}: Skip Spires`) },
+			function () { return (`${_getChallenge2Info()}: Skip Spire Mapping*`) },
 			function () {
 				let description = "<p>Will disable all of the scripts mapping if you have max (10) map bonus stacks while in a Spire.</p>";
 				description += "<p><b>This setting will only work in active Spires.</b></p>";
@@ -4147,7 +4151,7 @@ function initialiseAllSettings() {
 			}, 'value', -1, null, displayTab, [1, 2]);
 			
 		createSetting('spireSkipMappingDaily',
-			function () { return ('Daily: Skip Spires') },
+			function () { return ('Daily: Skip Spire Mapping*') },
 			function () {
 				let description = "<p>Will disable all of the scripts mapping if you have max (10) map bonus stacks while in a Spire.</p>";
 				description += "<p><b>This setting will only work in active Spires.</b></p>";

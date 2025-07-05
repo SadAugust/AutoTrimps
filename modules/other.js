@@ -1516,6 +1516,24 @@ function updateATVersion() {
 
 			saveSettings();
 		}
+
+		if (versionNumber < '7.2.4') {
+			const tempSettings = JSON.parse(localStorage.getItem('atSettings'));
+
+			if (typeof tempSettings['witherFarm'] !== 'undefined') {
+				if (tempSettings.witherFarm.enabledU2 || autoTrimpSettings.witherFarm.valueU2 === 0) {
+					autoTrimpSettings.witherFarm.valueU2 = 2;
+				}
+			}
+
+			if (typeof tempSettings['glassFarm'] !== 'undefined') {
+				if (tempSettings.glassFarm.enabledU2 || autoTrimpSettings.glassFarm.valueU2 === 0) {
+					autoTrimpSettings.glassFarm.valueU2 = 2;
+				}
+			}
+
+			saveSettings();
+		}
 	}
 
 	/* 	Print link to changelog if the user is in TW when they first load the update so that they can look at any relevant notes.

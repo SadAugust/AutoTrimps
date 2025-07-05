@@ -473,7 +473,9 @@ function _calculateEquality(mapping, worldType, enemy, enemyDmg, enemyDmgMult, f
 	let ourDmgEquality = 0;
 	const enemyEqualityModifier = game.portal.Equality.getModifier();
 	const ourEqualityModifier = game.portal.Equality.getModifier(1);
+
 	const runningUnlucky = challengeActive('Unlucky');
+
 	const runningMayhem = challengeActive('Mayhem') && game.challenges.Mayhem.poison > 0;
 	const enemyCanPoison = runningMayhem && (mapping || enemy.level === 100);
 
