@@ -52,6 +52,16 @@ function runHeirlooms() {
 	let startingHeirloom;
 	if (selectedLoom[1].includes('Equipped')) startingHeirloom = game.global[selectedLoom[1]];
 	else startingHeirloom = game.global[selectedLoom[1]][selectedLoom[0]];
+
+	const heirloomCost = getTotalHeirloomRefundValue(startingHeirloom, true);
+	const newLoomCost = getTotalHeirloomRefundValue(newLoomData, true);
+	const spendableNu = newLoomData.type === 'Core' ? playerSpire.spirestones : Math.floor(game.global.nullifium * getNuSpendMult());
+
+	if (heirloomCost !== newLoomCost && newLoomCost > spendableNu) {
+		tooltip(`Heirloom Allocation Issue`, 'customText', 'lock', `There has been an issue with the heirloom calculator, you don't have enough Nullifium to do the recommended upgrades for this heirloom. You would need ${prettify(newLoomCost)} Nullifium, but you only have ${prettify(spendableNu)} available.<br><br>Please report this error and send your save (and AutoTrimps settings too if applicable) to me in the <b>#trimps_tools</b> channel of the <b>Trimps</b> discord.`, false, 'center');
+		return;
+	}
+
 	startingHeirloom.mods = newLoomData.mods;
 
 	displaySelectedHeirloom(undefined, undefined, undefined, undefined, undefined, undefined, true);
