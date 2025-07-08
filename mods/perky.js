@@ -45,11 +45,11 @@ function allocatePerky(showTooltips = true) {
 	}
 
 	/* can't respec perks when running Trapper so don't try as it causes crashes */
-	if (!portalWindowOpen && challengeActive('Trapper') && !game.global.respecActive) {
-		const totalHe = game.global.totalHeliumEarned;
-		const { totalHeliumEarned, heliumLeftover } = game.global;
-		if (totalHeliumEarned / 1e5 > heliumLeftover) {
-			tooltip('Trapper Respec', 'customText', 'lock', 'You must activate your Respec to allocate perks on this challenge!', false, `center`);
+	if (!portalWindowOpen && !game.global.respecActive && !game.portal.Carpentry_II.locked) {
+		const carpPerks = game.portal.Carpentry.heliumSpent + game.portal.Carpentry_II.heliumSpent;
+
+		if (carpPerks > game.global.totalHeliumEarned * 0.9) {
+			tooltip('Respec Error', 'customText', 'lock', 'You must activate your Respec to allocate perks!', false, `center`);
 			return;
 		}
 	}
