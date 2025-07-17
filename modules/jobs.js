@@ -247,7 +247,11 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps) {
 	ratioWorkers.forEach((worker, workerIndex) => {
 		if (!game.jobs[worker].locked) {
 			if (worker === 'Scientist') {
-				if (desiredRatios[workerIndex] === 0) desiredRatios[workerIndex] = 1;
+				if (desiredRatios[workerIndex] === 0) {
+					if (desiredRatios.reduce((a, b) => a + b, 0) > 0) {
+						desiredRatios[workerIndex] = scientistMod;
+					}
+				}
 			} else {
 				desiredRatios[workerIndex] = scientistMod * parseFloat(desiredRatios[workerIndex]);
 			}
@@ -316,22 +320,22 @@ function _handleJobRatios(desiredRatios, freeWorkers, maxTrimps) {
 
 	const totalFraction = desiredRatios.reduce((a, b) => a + b, 0) || 1;
 
-	//Calculates both the decimal and the floored number of desired workers
+	/* calculates both the decimal and the floored number of desired workers */
 	const fDesiredWorkers = desiredRatios.map((r) => (r * freeWorkers) / totalFraction);
 	let desiredWorkers = fDesiredWorkers.map((w) => Math.floor(w));
 
-	//Calculates how many workers will be left out of the initial distribution
+	/* calculates how many workers will be left out of the initial distribution */
 	const remainder = freeWorkers > 10e6 ? 0 : freeWorkers - desiredWorkers.reduce((partialSum, value) => partialSum + value, 0);
 
-	//Decides where to put them
+	/* decides where to put them */
 	const diff = fDesiredWorkers.map((w, idx) => w - desiredWorkers[idx]);
 	const whereToIncrement = argSort(diff, true).slice(diff.length - remainder);
 	whereToIncrement.forEach((idx) => (hireWorkers[idx] ? desiredWorkers[idx]++ : null)); //TODO Fix hireWorkers messing with the remainder
 
-	//Calculates the actual number of workers to buy or fire
+	/* calculates the actual number of workers to buy or fire */
 	desiredWorkers = desiredWorkers.map((w, idx) => w - game.jobs[ratioWorkers[idx]].owned);
 
-	//Prevents scientist from being fired very early on
+	/* prevents scientist from being fired very early on */
 	if (desiredWorkers[3] === -1 && maxTrimps < 400 && remainder > 0) {
 		desiredWorkers[whereToIncrement[0]]--;
 		desiredWorkers[3]++;

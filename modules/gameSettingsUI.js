@@ -463,7 +463,7 @@ function _autoJobsSave() {
 		if (name === 'FarmersUntil') {
 			const zoneElem = document.getElementById(name + 'Zone');
 			let zone = parseInt(zoneElem.value, 10);
-			zone = isNumberBad(zone) ? 0 : Math.max(Math.min(zone, 999), 1);
+			zone = isNumberBad(zone) ? 0 : Math.max(Math.min(zone, 999), 0);
 
 			setting[name].zone = zone;
 			return;
@@ -472,7 +472,7 @@ function _autoJobsSave() {
 		if (ratioJobs.includes(name)) {
 			const ratioElem = document.getElementById(name + 'Ratio');
 			let ratio = parseInt(ratioElem.value, 10);
-			ratio = isNumberBad(ratio) ? 0 : Math.max(Math.min(ratio, 1000), 1);
+			ratio = isNumberBad(ratio) ? 0 : Math.max(Math.min(ratio, 1000), 0);
 			setting[name].ratio = ratio;
 
 			return;
