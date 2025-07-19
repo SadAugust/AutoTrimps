@@ -249,7 +249,7 @@ function _getDesiredRatios(forceRatios, jobType, jobSettings, maxTrimps) {
 			if (worker === 'Scientist') {
 				if (desiredRatios[workerIndex] === 0) {
 					if (desiredRatios.reduce((a, b) => a + b, 0) > 0) {
-						desiredRatios[workerIndex] = scientistMod;
+						desiredRatios[workerIndex] = 1;
 					}
 				}
 			} else {
