@@ -3361,25 +3361,34 @@ function farmingDecision() {
 	let farmingDetails = {
 		shouldRun: false,
 		mapName: '',
+		mapBought: '',
 		levelCheck: Infinity,
 		levelData: []
 	};
 
-	if (!game.global.mapsUnlocked || _leadDisableMapping() || _witherDisableMapping()) return (mapSettings = farmingDetails);
+	if (!game.global.mapsUnlocked || _leadDisableMapping() || _witherDisableMapping()) {
+		return (mapSettings = farmingDetails);
+	}
 
 	let mapTypes = [];
 
 	if (game.global.universe === 1) {
 		mapTypes = [mapDestacking, prestigeClimb, prestigeRaiding, bionicRaiding, mapFarm, voidMaps, mapBonus, hdFarm, experience, toxicity, _obtainUniqueMap];
 
-		if (challengeActive('Mapology') && getPageSetting('mapology') && getPageSetting('mapologyMapOverrides')) mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
+		if (challengeActive('Mapology') && getPageSetting('mapology') && getPageSetting('mapologyMapOverrides')) {
+			mapTypes = [prestigeClimb, prestigeRaiding, bionicRaiding, voidMaps, _obtainUniqueMap];
+		}
 
-		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) mapTypes = [voidMaps];
+		if (challengeActive('Frigid') && getPageSetting('frigid') && game.challenges.Frigid.warmth > 0) {
+			mapTypes = [voidMaps];
+		}
 	}
 
 	if (game.global.universe === 2) {
 		/* disable mapping if we have Withered as it's more beneficial to just push through the zone(s). */
-		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) return (mapSettings = farmingDetails);
+		if (game.challenges.Wither.healImmunity > 0 && getPageSetting('wither') && getPageSetting('witherFarm')) {
+			return (mapSettings = farmingDetails);
+		}
 
 		mapTypes = [mapDestacking, quest, archaeology, berserk, pandemoniumDestack, pandemoniumEquipFarm, desolation, prestigeClimb, prestigeRaiding, smithyFarm, mapFarm, tributeFarm, worshipperFarm, quagmire, insanity, alchemy, hypothermia, voidMaps, mapBonus, hdFarm, wither, mayhem, glass, smithless, _obtainUniqueMap];
 	}
@@ -3458,6 +3467,7 @@ function farmingDecision() {
 	//Setup level check so that we can compare if we need to do some work with map run counters
 	farmingDetails.levelCheck = farmingDetails.autoLevel ? farmingDetails.mapLevel : Infinity;
 	farmingDetails.levelData = mapSettings.levelData;
+	farmingDetails.mapBought = mapSettings.mapBought;
 	mapSettings = farmingDetails;
 }
 
@@ -3803,6 +3813,7 @@ function resetMapVars(setting, settingName) {
 	mapSettings.levelCheck = Infinity;
 	mapSettings.levelData = [];
 	mapSettings.mapName = '';
+	mapSettings.mapBought = '';
 	MODULES.maps.mapTimer = 0;
 	MODULES.maps.mapRepeats = 0;
 	MODULES.maps.slowScumming = false;

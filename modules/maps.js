@@ -587,6 +587,12 @@ function _autoMapsCreate(mapObj) {
 	} else {
 		_runSelectedMap(mapObj.selectedMap, mapObj.runUnique);
 	}
+
+	if (mapSettings.mapBought === mapSettings.mapName) {
+		MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
+	}
+
+	mapSettings.mapBought = mapSettings.mapName;
 }
 
 //Before we create a map check if we are currently in a map and if it doesn't match our farming type then recycle it.
