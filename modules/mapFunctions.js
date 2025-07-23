@@ -1098,6 +1098,7 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 			if (!farmStatus[resources[index]]) {
 				MODULES.maps.mapRepeatsSmithy[index] = Number(mappingLength);
 				recycleMap_AT();
+				game.global.mapRunCounter = 0;
 			}
 		}
 	}
@@ -3781,28 +3782,7 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 }
 
 function autoLevelCheck(mapName, mapSpecial, biome = undefined) {
-	const isSmithyFarm = mapName === 'Smithy Farm';
-	const isHDFarm = (mapName === 'HD Farm' || mapName === 'Hits Survived') && mapSettings.mapName.includes(mapName);
-
-	const mapObj = isSmithyFarm || isHDFarm ? getCurrentMapObject() : null;
-	const mapBonus = isSmithyFarm && game.global.mapsActive && typeof mapObj.bonus !== 'undefined' ? mapObj.bonus.slice(1) : '0';
-	const index = isSmithyFarm ? ['sc', 'wc', 'mc'].indexOf(mapBonus) : null;
-
-	const incorrectBiome = isHDFarm && game.global.mapsActive && ((biome === 'Any' && mapObj.location === 'Forest') || biome !== mapObj.location);
-
-	let repeatCounter = isSmithyFarm ? MODULES.maps.mapRepeatsSmithy[index] : MODULES.maps.mapRepeats;
 	const mapLevel = callAutoMapLevel(mapName, mapSpecial);
-
-	if (game.global.mapRunCounter === 0 && game.global.mapsActive) {
-		if (repeatCounter !== 0 && isFinite(repeatCounter)) game.global.mapRunCounter = repeatCounter;
-		repeatCounter = 0;
-	}
-
-	if ((mapLevel !== mapSettings.levelCheck && mapSettings.levelCheck !== Infinity) || incorrectBiome) {
-		repeatCounter = game.global.mapRunCounter + 1;
-	}
-
-	isSmithyFarm ? (MODULES.maps.mapRepeatsSmithy[index] = repeatCounter) : (MODULES.maps.mapRepeats = repeatCounter);
 
 	return mapLevel;
 }
@@ -3917,6 +3897,7 @@ function mappingDetails(mapName, mapLevel, mapSpecial, extra, extra2, extra3) {
 	}
 
 	MODULES.maps.mapRepeats = 0;
+	MODULES.maps.mapRepeatsSmithy = [0, 0, 0];
 	delete mapSettings.mapBonus;
 	debug(message, mapType);
 }

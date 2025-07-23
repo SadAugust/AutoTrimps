@@ -276,8 +276,25 @@ function buildingsQueueReset() {
 if (typeof originalrunMap !== 'function') {
 	var originalrunMap = runMap;
 	runMap = function () {
+		const repeatCounter = mapSettings.mapBought === mapSettings.mapName && !MODULES.maps.fragmentFarming ? game.global.mapRunCounter : 0;
+		const newMap = !game.global.mapsActive;
 		originalrunMap(...arguments);
-		if (!MODULES.maps.lastMapWeWereIn || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+
+		if (!MODULES.maps.lastMapWeWereIn || MODULES.maps.lastMapWeWereIn.id !== game.global.currentMapId) {
+			MODULES.maps.lastMapWeWereIn = getCurrentMapObject();
+		}
+
+		if (newMap && game.global.mapsActive && mapSettings.mapBought === mapSettings.mapName && game.global.mapStarted === getGameTime()) {
+			const smithyFarming = mapSettings.mapName === 'Smithy Farm';
+			const mapObject = MODULES.maps.lastMapWeWereIn;
+			const mapSpecial = smithyFarming && typeof mapObject.bonus !== 'undefined' ? mapObject.bonus.slice(1) : '0';
+			const index = smithyFarming ? ['sc', 'wc', 'mc'].indexOf(mapSpecial) : null;
+
+			if (smithyFarming) MODULES.maps.mapRepeatsSmithy[index] = repeatCounter;
+			else MODULES.maps.mapRepeats = repeatCounter;
+			game.global.mapRunCounter = repeatCounter;
+		}
+
 		spireAssaultAcceptContract();
 		const arrayCap = 12;
 		mapSettings.levelData = new Array(arrayCap).fill(mapSettings.mapLevel);

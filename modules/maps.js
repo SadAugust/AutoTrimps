@@ -588,10 +588,6 @@ function _autoMapsCreate(mapObj) {
 		_runSelectedMap(mapObj.selectedMap, mapObj.runUnique);
 	}
 
-	if (mapSettings.mapBought === mapSettings.mapName) {
-		MODULES.maps.mapRepeats = game.global.mapRunCounter + 1;
-	}
-
 	mapSettings.mapBought = mapSettings.mapName;
 }
 
