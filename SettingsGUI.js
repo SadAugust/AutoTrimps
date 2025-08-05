@@ -976,7 +976,7 @@ function initialiseAllSettings() {
 		createSetting('autoLevelScryer',
 			function () { return ('Auto Level Scryer') },
 			function () {
-				let description = "<p>Allows the Auto Level system to use Scryer and Wind stances.</p>";
+				let description = `<p>Allows the Auto Level system to use Scryer ${game.empowerments.Wind.getLevel() >= 50 ? "and Wind stances" : "stance"}.</p>`;
 				description += "<p>If Scryer stance has been unlocked then when the most optimal stance to use during a map is Scryer this will override all other stance settings when mapping with <b>Auto Maps</b> enabled.</p>";
 				description += "<p><b>Recommended:</b> On</p>";
 				return description;
@@ -987,7 +987,9 @@ function initialiseAllSettings() {
 			function () { return ('Auto Stance: Void Scryer') },
 			function () {
 				let description = "<p>Will override any stance settings and set your stance to Scryer during Void Maps if you have the <b>Scryhard II</b> talent.</p>";
-				description += "<p>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
+				if (game.empowerments.Wind.getLevel() >= 50) {
+					description += "<p>If you have <b>Wind Enlightenment</b> activated and aren't in a Wind empowerment zone then it will use Wind stance instead.</p>";
+				}
 				description += "<p><b>Recommended:</b> On</p>";
 				description += `<p><i>When running a <b>Daily</b>, the <b>D: Auto Stance: Void Scryer</b> setting will be used instead of this one.</i></p>`;
 				return description;
@@ -5276,7 +5278,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 
 	if (id === 'dailyPortal') {
 		parentAttributes.class = '_settingBtnParent toggleConfigBtnLocal';
-		parentAttributes.style += 'max-height: 3vh; border-bottom: 1px solid black !important;';
+		parentAttributes.style += 'max-height: 3vh; border-bottom:';
 	}
 
 	const btnParent = _createElement('DIV', parentAttributes);
@@ -5292,7 +5294,7 @@ function createSetting(id, name, description, type, defaultValue, list, containe
 			id: 'autoPortalSettingsBtn',
 			onclick: 'importExportTooltip("dailyAutoPortal")',
 			class: '_settingBtn settingsBtnLocalCogwheel',
-			style: 'margin-left:-1px; line-height: normal; font-size: 1.1vw;'
+			style: 'margin-left:-1px; line-height: normal; font-size: 1.05vw;'
 		});
 		const autoPortalSettingsButton = _createElement('SPAN', {
 			class: 'glyphicon glyphicon-cog',

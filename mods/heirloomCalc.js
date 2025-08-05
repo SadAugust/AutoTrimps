@@ -712,7 +712,6 @@ class Heirloom {
 		return this.getInnate(this.getTotalSpent());
 	}
 
-	// custom methods for ease of use
 	isEmpty() {
 		if (this.type === undefined) return true;
 
@@ -1452,7 +1451,7 @@ function runInformation() {
 
 function loadCore(core, overwrite, overwriteValue) {
 	if (!core.isEmpty()) {
-		// reset data
+		/* reset data */
 		traps.fire.coreMult = 1;
 		traps.poison.coreMult = 1;
 		traps.lightning.coreMult = 1;
@@ -1474,7 +1473,7 @@ function loadCore(core, overwrite, overwriteValue) {
 			traps[modNamesToTraps[mod[0]]].coreMult = 1 + bonus / 100;
 		}
 
-		// overwrite lets you overwrite one of the core values, to make it easier to calc upg gain
+		/* overwrite lets you overwrite one of the core values, to make it easier to calc upg gain */
 		if (overwrite !== undefined) {
 			traps[modNamesToTraps[overwrite]].coreMult = 1 + overwriteValue / 100;
 		}
@@ -1564,16 +1563,16 @@ function setTrap(number) {
 }
 
 function imAnEnemy(health = 0) {
-	// hey you're an enemy cool
+	/* hey you're an enemy cool */
 	atData.autoHeirlooms.ticks = 0;
 
-	// damage you've taken
+	/* damage you've taken */
 	let damageTaken = 0;
-	// chilled by Frost Trap
+	/* chilled by Frost Trap */
 	let chilledFor = 0;
-	// frozen by knowledge
+	/* frozen by knowledge */
 	let frozenFor = 0;
-	// current Poison Stack you have, will take damage at end of turn
+	/* current Poison Stack you have, will take damage at end of turn */
 	let poisonStack = 0;
 	let shockedFor = 0;
 	let addDamage = 0;
@@ -1666,16 +1665,16 @@ function imAnEnemy(health = 0) {
 		atData.autoHeirlooms.detailed[p].poisonStacks = poisonStack;
 		atData.autoHeirlooms.detailed[p].damageTaken = addDamage;
 		atData.autoHeirlooms.detailed[p].allDamageTaken = damageTaken + addDamage;
-		// turn new stacks into old stacks
+		/* turn new stacks into old stacks */
 		poisonStack += addStack;
 		addStack = 0;
 		atData.autoHeirlooms.ticks += 1;
 
-		// add additional ticks if needed to account for runestone buffs
+		/* add additional ticks if needed to account for runestone buffs */
 		if (atData.autoHeirlooms.detailed[p].chilled && atData.autoHeirlooms.detailed[p].type !== 'Knowledge' && atData.autoHeirlooms.detailed[p].type !== 'Frost') atData.autoHeirlooms.ticks += 1;
 		if (atData.autoHeirlooms.detailed[p].frozen && atData.autoHeirlooms.detailed[p].type !== 'Frost') atData.autoHeirlooms.ticks += 2;
 
-		// damage
+		/* damage */
 		damageTaken += addDamage;
 		addDamage = 0;
 
@@ -1690,7 +1689,7 @@ function imAnEnemy(health = 0) {
 		estimatedMaxDifficulty(0);
 	}
 
-	// turn new damage into old damage;
+	/* turn new damage into old damage */
 	return damageTaken;
 }
 
@@ -1718,11 +1717,11 @@ function getMaxEnemyHP() {
 
 function damageByHealth(hp, tally = false) {
 	let damageDealt = 0;
-	// chilled by Frost Trap
+	/* chilled by Frost Trap */
 	let chilledFor = 0;
-	// frozen by knowledge
+	/* frozen by knowledge */
 	let frozenFor = 0;
-	// current Poison Stack you have, will take damage at end of turn
+	/* current Poison Stack you have, will take damage at end of turn */
 	let poisonStack = 0;
 	let shockedFor = 0;
 	let addDamage = 0;
@@ -1792,11 +1791,11 @@ function damageByHealth(hp, tally = false) {
 
 		shockedFor -= subtractShocks(p, shockedFor);
 
-		// turn new stacks into old stacks
+		/* turn new stacks into old stacks */
 		poisonStack += addStack;
 		addStack = 0;
 
-		// damage
+		/* damage */
 		damageDealt += addDamage;
 		addDamage = 0;
 
@@ -2015,8 +2014,9 @@ function getStrengthDamage(data) {
 	return returnDamage * amountOfFire;
 }
 
-// developed with trial and error and curve fitting
-// Maximum known error of ~15% (e.g. 29.6% vs 25.8% around 2,300 damage)
+/* 	developed with trial and error and curve fitting
+	Maximum known error of ~15% (e.g. 29.6% vs 25.8% around 2,300 damage) 
+*/
 function escapePercent(damage) {
 	let est = 0;
 	if (damage < 1460) {
@@ -2037,7 +2037,7 @@ function getHealthWith(difficulty, killPct) {
 	let difPct = 0.00053 * difficulty;
 	if (difPct > 0.85) difPct = 0.85;
 	if (difPct < 0.15) difPct = 0.15;
-	// the (2/3) here an estimate for Math.random()
+	/* the (2/3) here an estimate for Math.random() */
 	health = health * (1 - difPct) + killPct * difPct * health;
 	return Math.floor(health);
 }
@@ -2146,7 +2146,7 @@ function lightColMult(cell) {
 	return traps.lightning.level >= 4 ? 1 + (traps.lightning.level >= 7 ? 0.2 : 0.1) * atData.autoHeirlooms.lightColStacks[cell % 5] * traps.lightning.coreMult : 1;
 }
 
-// Lists name of all mods and their step amounts, soft caps, and hard caps.
+/* lists names of all mods and their step amounts, soft caps, and hard caps. */
 function heirloomInfo(type) {
 	if (type === 'Shield')
 		return {

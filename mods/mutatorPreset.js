@@ -147,7 +147,7 @@ function tooltipAT(what, event, textString, headingName, use2 = '2') {
 	if (event !== 'update' && !what.includes('Spire Assault') && !what.includes('Auto Heirloom') && !what.includes('Mutator') && !what.includes('Reset') && !what.includes('Respec')) positionTooltip(elem, event);
 }
 
-// Correct function to call to cancel the current tooltip
+/* correct function to call to cancel the current tooltip */
 function cancelTooltip2(ignore1) {
 	tooltipAT('hide');
 

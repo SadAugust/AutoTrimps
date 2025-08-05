@@ -1430,7 +1430,7 @@ atData.autoPerks = {
 			},
 			'weight-xp': {
 				name: 'Fluffy Weight',
-				description: 'Weight for how much you value 1% more Fluffy xp.',
+				description: `Weight for how much you value 1% more Fluffy xp.<br>Fluffy XP perks will only be purchased when your <b>Target Zone</b> input is above 300${!game.portal.Classy.locked ? ' regardless of your <b>Classy</b> levels' : ''}.`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1

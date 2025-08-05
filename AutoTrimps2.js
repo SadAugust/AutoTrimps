@@ -122,7 +122,7 @@ function isModuleLoaded(fileName, prefix) {
 	return false;
 }
 
-//Loading modules from basepath that are required for the script to run.
+/* loading modules from basepath that are required for the script to run */
 function loadModules(fileName, prefix = '', retries = 10, timeStamp = `?${Date.now()}`) {
 	return new Promise((resolve, reject) => {
 		if (prefix && isModuleLoaded(fileName, prefix)) {

@@ -1262,7 +1262,7 @@ function simulationDebug(debugResults) {
 	`);
 }
 
-//Return info about the best zone for each stance
+/* return info about the best zone for each stance */
 function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 	const best = { loot: { mapLevel: 0 }, speed: { mapLevel: 0, value: 0, speed: 0, killSpeed: 0 } };
 	if (!popup && !game.global.mapsUnlocked) return best;

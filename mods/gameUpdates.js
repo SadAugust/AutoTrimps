@@ -71,7 +71,7 @@ function autoTrap() {
 }
 
 function simpleSeconds(what, seconds) {
-	//Come home to the impossible flavour of balanced resource gain. Come home, to simple seconds.
+	/* come home to the impossible flavour of balanced resource gain. Come home, to simple seconds. */
 	var jobName;
 	switch (what) {
 		case 'food':
