@@ -1408,7 +1408,7 @@ atData.autoPerks = {
 		row1: {
 			'weight-he': {
 				name: 'Helium Weight',
-				description: 'Weight for how much you value 1% more helium .',
+				description: 'Weight for how much you value 1% more helium.',
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 1
@@ -1431,7 +1431,7 @@ atData.autoPerks = {
 		row2: {
 			targetZone: {
 				name: 'Target Zone',
-				description: 'Target last zone to clear. Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).',
+				description: `Target last zone to clear. Always use your final cleared zone for the current challenge (afterpush zone for helium challenges, xx9 for c^2s, ${game.stats.highestLevel.valueTotal() >= 460 ? '460 for Frigid, ' : ''}etc).`,
 				minValue: 1,
 				maxValue: null,
 				defaultValue: game.global.highestLevelCleared || 1
@@ -1584,7 +1584,7 @@ atData.autoPerks = {
 			targetZone: {
 				name: 'Target Zone',
 				description: `<p>Target last zone to clear.</p>
-				<p>Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, 100 for Mayhem, etc).</p>`,
+				<p>Always use your final cleared zone for the current challenge (afterpush zone for radon challenges, xx9 for c^3s, ${game.stats.highestRadLevel.valueTotal() >= 100 ? '100 for Mayhem, ' : ''}etc).</p>`,
 				minValue: 1,
 				maxValue: null,
 				defaultValue: game.global.highestRadonLevelCleared || 20
@@ -1593,8 +1593,8 @@ atData.autoPerks = {
 				name: 'Coord Limited',
 				description: `Enter '0' if you can easily buy all coords with your population.</p>
 				<p>Enter '1' if you definitely can't buy all coords.</p>
-				<p>Enter something in between if you only need a bit more population to buy all coords.</p>
-				<p>You can also increase this value (even above 1) if you just want to weight population gain more highly for some reason.</p>`,
+				<p>Use an input between the two values if you only need a bit more population to buy all coords.</p>
+				<p>You can also increase this value (even above 1) if you just want to weight population gain higher.</p>`,
 				minValue: 0,
 				maxValue: null,
 				defaultValue: 0
