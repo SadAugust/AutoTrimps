@@ -38,14 +38,13 @@ function maxOneShotPower(planToMap, targetZone) {
 	if (!targetZone) targetZone = game.global.world;
 
 	if (game.global.universe === 1) {
-		//No overkill perk
 		if (game.portal.Overkill.level === 0) return 1;
-		//Mastery
+
 		if (masteryPurchased('overkill')) power++;
-		//Fluffy
+
 		const overkiller = Fluffy.isRewardActive('overkiller');
 		if (overkiller) power += overkiller;
-		//Ice
+
 		const empowerment = getEmpowerment() === 'Ice';
 		const iceLevel = game.empowerments.Ice.getLevel();
 		if (getUberEmpowerment() === 'Ice') power += 2;
@@ -107,7 +106,7 @@ function getSpecialTime(special, fullTime = false) {
 	return 0;
 }
 
-//I have no idea where loot > drops, hopefully somebody can tell me one day :)
+/* I have no idea where loot > drops, hopefully somebody can tell me one day :) */
 function getBiome(mapGoal, resourceGoal) {
 	const dropBased = (challengeActive('Trapper') && game.stats.highestLevel.valueTotal() < 800) || (challengeActive('Trappapalooza') && game.stats.highestRadLevel.valueTotal() < 220) || challengeActive('Metal');
 	if (dropBased && !resourceGoal && challengeActive('Metal')) resourceGoal = 'Mountain';
@@ -127,17 +126,17 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 	const fragmentsOwned = game.resources.fragments.owned;
 	mapLevel = mapLevel - game.global.world;
 
-	//Gradually reduce map sliders if not using frag max setting!
+	/* gradually reduce map sliders if not using frag max setting! */
 	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) perfect = false;
-	//Reduce map difficulty
+	/* reduce map difficulty */
 	while (sliders[2] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[2] -= 1;
-	//Reduce map loot
+	/* reduce map loot */
 	while (sliders[0] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[0] -= 1;
 
 	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && !challengeActive('Metal')) biome = 'Random';
 	if (mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned && (special === '0' || !mapSpecialModifierConfig[special].name.includes('Cache'))) special = '0';
 
-	//Reduce map size
+	/* reduce map size */
 	while (sliders[1] > 0 && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) sliders[1] -= 1;
 
 	if (special !== '0' && mapCost(mapLevel, special, biome, sliders, perfect) > fragmentsOwned) special = '0';
@@ -215,13 +214,13 @@ function getCurrentQuest() {
 	const questProgress = game.challenges.Quest.getQuestProgress();
 	const questDescription = game.challenges.Quest.getQuestDescription();
 	if (questProgress === 'Failed!' || questProgress === 'Quest Complete!') return 0;
-	//Resource multipliers
+	// resource multipliers
 	else if (questDescription.includes('food')) return 1;
 	else if (questDescription.includes('wood')) return 2;
 	else if (questDescription.includes('metal')) return 3;
 	else if (questDescription.includes('gems')) return 4;
 	else if (questDescription.includes('science')) return 5;
-	//Everything else
+	// everything else
 	else if (questDescription === 'Complete 5 Maps at Zone level') return 6;
 	else if (questDescription === 'One-shot 5 world enemies') return 7;
 	else if (questDescription === "Don't let your shield break before Cell 100") return 8;
@@ -230,7 +229,6 @@ function getCurrentQuest() {
 	else return 0;
 }
 
-//AutoLevel information
 function makeAdditionalInfo_Standalone() {
 	if (!game.global.mapsUnlocked) return `AL: Maps not unlocked!`;
 	if (typeof hdStats !== 'object') hdStats = {};

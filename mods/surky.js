@@ -108,9 +108,13 @@ function fillPresetSurky(specificPreset, forceDefault) {
 	const preset = $$('#preset').value;
 	const weights = localData[preset] === null || localData[preset] === undefined || forceDefault ? defaultWeights[preset] : localData[preset];
 
-	$$('#clearWeight').value = weights[0];
-	$$('#survivalWeight').value = weights[1];
-	$$('#radonWeight').value = weights[2];
+	const ids = ['clearWeight', 'survivalWeight', 'radonWeight'];
+	ids.forEach((id, index) => {
+		const elem = document.querySelector(`#${id}`);
+		elem.value = +weights[index] || 0;
+		elem.setAttribute('placeholder', defaultWeights[preset][index]);
+	});
+
 	saveSurkySettings();
 
 	$$('#trapHrsDiv').style.display = preset === 'trappa' ? 'flex' : 'none';

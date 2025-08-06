@@ -212,7 +212,9 @@ function fillPresetPerky(specificPreset, forceDefault) {
 
 	const ids = ['weight-he', 'weight-atk', 'weight-hp', 'weight-xp', 'weight-trimps'];
 	ids.forEach((id, index) => {
-		document.querySelector(`#${id}`).value = +weights[index] || 0;
+		const elem = document.querySelector(`#${id}`);
+		elem.value = +weights[index] || 0;
+		elem.setAttribute('placeholder', defaultWeights[preset][index]);
 	});
 
 	savePerkySettings();
@@ -1219,7 +1221,11 @@ atData.autoPerks = {
 				fillPresetPerky(presetToUse);
 				settingInputs = JSON.parse(localStorage.getItem(`${calcName.toLowerCase()}Inputs`));
 			}
-			document.querySelector('#preset').value = settingInputs.preset;
+
+			const preset = settingInputs.preset || 'early';
+			fillPresetPerky(preset);
+			document.querySelector('#preset').value = preset;
+
 			if (game.global.spiresCompleted < 2) document.querySelector('#weight-xpDiv').style.display = 'none';
 		} else if (calcName === 'Surky') {
 			if (!settingInputs) {
@@ -1229,7 +1235,9 @@ atData.autoPerks = {
 			}
 
 			const preset = settingInputs.preset || 'ezfarm';
+			fillPresetSurky(preset);
 			document.querySelector('#preset').value = preset;
+
 			document.querySelector('#radonPerRunDiv').style.display = 'none';
 			document.querySelector('#trapHrsDiv').style.display = preset === 'trappa' ? 'flex' : 'none';
 			document.querySelector('#exhaustedStacksDiv').style.display = preset === 'quagmire' ? 'flex' : 'none';
