@@ -174,7 +174,8 @@ function initPresetPerky() {
 		xpWeight: +$$('#weight-xp').value,
 		trimpsWeight: +$$('#weight-trimps').value,
 		...presets,
-		lockedPerks: settingInputs.lockedPerks || undefined
+		lockedPerks: settingInputs.lockedPerks || undefined,
+		updateInputs: settingInputs.updateInputs || undefined
 	};
 }
 
@@ -224,6 +225,7 @@ function savePerkySettings() {
 	const saveData = initPresetPerky();
 	const settingInputs = { preset: document.querySelector('#preset').value };
 	settingInputs.lockedPerks = saveData.lockedPerks || undefined;
+	settingInputs.updateInputs = saveData.updateInputs || undefined;
 
 	atData.autoPerks.GUI.inputs.forEach((item) => {
 		settingInputs[item] = document.querySelector(`#${item}`).value;
@@ -793,12 +795,17 @@ function toggleSettingInputProperty(propertyName, elemName) {
 
 	settingInputs[propertyName] = !settingInputs[propertyName];
 	localStorage.setItem(`${settingName}Inputs`, JSON.stringify(settingInputs));
+
+	if (propertyName === 'updateInputs' && settingInputs.updateInputs) {
+		updateInputFields();
+	}
 }
 
 function updateInputFields() {
 	const settingName = portalUniverse === 1 ? 'perky' : 'surky';
 	const settingInputs = JSON.parse(localStorage.getItem(`${settingName}Inputs`));
 	if (settingInputs && !settingInputs.updateInputs) return;
+
 	const universe = game.global.universe;
 
 	if (portalUniverse === 1) {
@@ -1257,8 +1264,8 @@ atData.autoPerks = {
 		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.5vw; vertical-align: middle; line-height: 1.3vw; margin-right: 0.7vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px; color: white;`;
 		apGUI.$updateInputsBtn.textContent = 'Update Input Fields';
 		if (document.getElementById(apGUI.$updateInputsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$updateInputsBtn);
-		document.getElementById('portalWrapper').style.setProperty('overflow-y', 'auto');
 
+		document.getElementById('portalWrapper').style.setProperty('overflow-y', 'auto');
 		_setSelect2PerkyDropdowns();
 	},
 
