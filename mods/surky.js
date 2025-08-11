@@ -126,7 +126,10 @@ function fillPresetSurky(specificPreset, forceDefault) {
 	$$('#findPotsDiv').style.display = preset === 'alchemy' ? 'flex' : 'none';
 
 	const elem = preset === 'trappa' ? $$('#trapHrs') : preset === 'quagmire' ? $$('#exhaustedStacks') : preset === 'archaeology' ? $$('#breedRelics') : preset === 'alchemy' ? $$('#findPots') : null;
-	if (elem && elem.style.width === '') atData.autoPerks.displayGUI(2, true);
+
+	if (elem && elem.style.width === '' && $$('#clearWeight').style.width !== '') {
+		atData.autoPerks.displayGUI(2, true);
+	}
 }
 
 // initialise perks object to default values
