@@ -25,6 +25,8 @@ function allocateSurky(perks) {
 	document.getElementById('perkImportBox').value = perkString;
 	importPerks();
 	cancelTooltip();
+
+	localStorage.setItem(`perkCalcSave`, save(true));
 }
 
 function initPresetSurky() {

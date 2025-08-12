@@ -74,6 +74,8 @@ function allocatePerky(showTooltips = true) {
 	document.getElementById('perkImportBox').value = perkString;
 	importPerks();
 	cancelTooltip();
+
+	localStorage.setItem(`perkCalcSave`, save(true));
 }
 
 const Perk = /** @class */ (function () {
@@ -1264,6 +1266,21 @@ atData.autoPerks = {
 		apGUI.$updateInputsBtn.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.5vw; vertical-align: middle; line-height: 1.3vw; margin-right: 0.7vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px; color: white;`;
 		apGUI.$updateInputsBtn.textContent = 'Update Input Fields';
 		if (document.getElementById(apGUI.$updateInputsBtn.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$updateInputsBtn);
+
+		apGUI.$saveHistory = document.createElement('DIV');
+		apGUI.$saveHistory.id = 'saveHistory';
+		apGUI.$saveHistory.setAttribute('class', `noselect challengeThing settingBtnfalse`);
+		apGUI.$saveHistory.setAttribute('onclick', `importExportTooltip("perkCalcSave", "${calcName}");`);
+		apGUI.$saveHistory.setAttribute('onmouseover', 'tooltip("Last Allocation Save", "customText", event, "This will allow you to copy the save from the last time you pressed the <b>Allocate Perks</b> button.")');
+		apGUI.$saveHistory.setAttribute('onmouseout', 'tooltip("hide")');
+		apGUI.$saveHistory.style.cssText = `height: 1.5vw; font-size: 0.8vw; width: 13.5vw; vertical-align: middle; line-height: 1.3vw; margin-right: 0.7vw; border: 1px solid rgb(119, 119, 119); border-radius: 1px; padding: 0px; color: white;`;
+		apGUI.$saveHistory.textContent = 'Last Allocation Save';
+		if (document.getElementById(apGUI.$saveHistory.id) === null) apGUI.$ratiosLine[3].appendChild(apGUI.$saveHistory);
+
+		const allocatedSave = localStorage.getItem(`perkCalcSave`);
+		if (!allocatedSave) {
+			localStorage.setItem(`perkCalcSave`, save(true));
+		}
 
 		document.getElementById('portalWrapper').style.setProperty('overflow-y', 'auto');
 		_setSelect2PerkyDropdowns();

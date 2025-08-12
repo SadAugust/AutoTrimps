@@ -26,6 +26,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		timeWarp: typeof _displayTimeWarp === 'function' ? _displayTimeWarp : null,
 		resetPerkPreset: typeof _displayResetPerkPreset === 'function' ? _displayResetPerkPreset : null,
 		hideAutomation: typeof hideAutomationDisplay === 'function' ? hideAutomationDisplay : null,
+		perkCalcSave: typeof _displayPerkCalcSave === 'function' ? _displayPerkCalcSave : null,
 		display: typeof _displayFarmCalcTable === 'function' ? _displayFarmCalcTable : null
 	};
 
@@ -57,6 +58,7 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		timeWarp: 'Time Warp Hours',
 		resetPerkPreset: 'Reset Perk Preset Weights',
 		hideAutomation: 'Hide Automation Buttons',
+		perkCalcSave: 'Last Allocation Save String',
 		display: 'Farm Calc Table'
 	};
 
@@ -1726,6 +1728,142 @@ function _displayDonate(tooltipDiv) {
 	let costText = "<div class='maxCenter'>";
 	costText += "<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip();'>Confirm</div>";
 	costText += '</div>';
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function _displayPerkCalcSave(tooltipDiv) {
+	const settings = localStorage.getItem(`perkCalcSave`);
+
+	const saveSettings = JSON.parse(LZString.decompressFromBase64(settings));
+
+	const rightNow = new Date().getTime();
+	const offlineTime = rightNow - saveSettings.global.lastOnline;
+	const dif = Math.floor(offlineTime / 1000);
+	const timeSince = offlineProgress.formatTime(dif);
+	console.log(`Time since last online: ${timeSince}`);
+
+	let tooltipText = `<p>This is the save string from the last time you pressed the <b>Allocate Perks</b> button</p>`;
+	tooltipText += `<p>It is from is from <b>${timeSince} ago</b>`;
+
+	if (offlineTime >= 300000) {
+		tooltipText += ` and will trigger offline progress if loaded.`;
+	} else {
+		tooltipText += ` and will not trigger offline progress if loaded, you would need to wait a further <b>${offlineProgress.formatTime(Math.floor((300000 - offlineTime) / 1000))}</b> to trigger it.`;
+	}
+	tooltipText += `</p>`;
+
+	const nameKey = {
+		portals: 'Portals',
+		portalsU2: 'Portals (U2)',
+		helium: 'Total Helium',
+		radon: 'Total Radon',
+		universe: 'Universe',
+		world: 'Zone',
+		cell: 'Cell',
+		cinf: 'Total C∞ Reward',
+		highestLevel: 'HZE',
+		highestRadLevel: 'HZE (U2)',
+		challenge: 'Challenge Active',
+		c2: 'C2 Active'
+	};
+
+	const gameObj = {
+		portals: game.global.totalPortals,
+		portalsU2: game.global.totalRadPortals,
+		helium: prettify(game.global.totalHeliumEarned),
+		radon: prettify(game.global.totalRadonEarned),
+		universe: game.global.universe,
+		world: game.global.world,
+		cell: game.global.lastClearedCell + 2,
+		cinf: prettify(game.global.totalSquaredReward),
+		highestLevel: game.global.highestLevelCleared + 1,
+		highestRadLevel: game.global.highestRadonLevelCleared + 1,
+		challenge: game.global.challengeActive,
+		c2: game.global.runningChallengeSquared
+	};
+
+	const settingsObj = {
+		portals: saveSettings.global.totalPortals,
+		portalsU2: saveSettings.global.totalRadPortals,
+		helium: prettify(saveSettings.global.totalHeliumEarned),
+		radon: prettify(saveSettings.global.totalRadonEarned),
+		universe: saveSettings.global.universe,
+		world: saveSettings.global.world,
+		cell: saveSettings.global.lastClearedCell + 2,
+		cinf: prettify(saveSettings.global.totalSquaredReward),
+		highestLevel: saveSettings.global.highestLevelCleared + 1,
+		highestRadLevel: saveSettings.global.highestRadonLevelCleared + 1,
+		challenge: saveSettings.global.challengeActive,
+		c2: saveSettings.global.runningChallengeSquared
+	};
+
+	const differences = {};
+	for (const key in gameObj) {
+		if (gameObj[key] !== settingsObj[key]) {
+			differences[key] = { new: gameObj[key], old: settingsObj[key] };
+		}
+	}
+
+	if (Object.keys(differences).length > 0) {
+		tooltipText += `<p style='color: red;'>The following things differ from your current game state:</p>`;
+
+		tooltipText += `<table class='bdTableSm table table-striped'>`;
+		tooltipText += `
+			<tr>
+				<td></td>
+				<td>Current</td>
+				<td>Old Save</td>
+			</tr>`;
+
+		for (const item in differences) {
+			const key = nameKey[item];
+			const newValue = differences[item].new;
+			const oldValue = differences[item].old;
+			tooltipText += `
+			<tr>
+				<td>${key}</td>
+				<td>${newValue}</td>
+				<td>${oldValue}</td>
+			</tr>`;
+		}
+
+		tooltipText += `</tbody>`;
+		tooltipText += `</table>`;
+		tooltipText += `<br>`;
+	}
+
+	tooltipText += `<textarea id='exportArea' style='width: 100%' rows='3'>${settings}</textarea>`;
+
+	const u2Affix = game.global.totalRadPortals > 0 ? ` ${game.global.totalRadPortals} U${game.global.universe}` : '';
+	const saveName = `P${game.global.totalPortals}${u2Affix} Z${game.global.world}`;
+	const serializedSettings = encodeURIComponent(settings);
+
+	const costText = `
+		<div class='maxCenter'>
+			<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip()'>Got it</div>
+			<div id='clipBoardBtn' class='btn btn-success'>Copy to Clipboard</div>
+			<a id='downloadLink' target='_blank' download='${saveName}.txt' href='data:text/plain,${serializedSettings}'>
+				<div class='btn btn-danger' id='downloadBtn'>Download as File</div>
+			</a>
+		</div>
+	`;
+
+	const ondisplay = () => {
+		_verticalCenterTooltip();
+		const exportArea = document.getElementById('exportArea');
+		const clipBoardBtn = document.getElementById('clipBoardBtn');
+
+		exportArea.select();
+
+		clipBoardBtn.addEventListener('click', () => {
+			exportArea.select();
+			document.execCommand('copy') || (clipBoardBtn.innerHTML = 'Error, not copied');
+		});
+	};
+
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }
