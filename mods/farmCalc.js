@@ -462,11 +462,19 @@ function stats(lootFunction = lootDefault, checkFragments = true) {
 
 		const simulateMap = _simulateSliders(mapLevel, saveData.special, saveData.mapBiome, [9, 9, 9], saveData.perfectMaps, alwaysPerfect);
 		let map;
-		let mapOwned = findMap(mapLevel - game.global.world, saveData.special, saveData.mapBiome);
-		if (!mapOwned) mapOwned = findMap(mapLevel - game.global.world, simulateMap.special, simulateMap.location, simulateMap.perfect);
+		let mapOwned = findOptimalMap(mapLevel - game.global.world, saveData.special, saveData.mapBiome, undefined, true);
+
+		if (mapOwned && (mapOwned.special !== saveData.special || (mapOwned.location !== saveData.mapBiome && saveData.mapBiome !== 'Random'))) {
+			if (simulateMap.cost <= game.resources.fragments.owned) mapOwned = undefined;
+		}
+
+		if (!mapOwned) {
+			mapOwned = findMap(mapLevel - game.global.world, simulateMap.special, simulateMap.location, simulateMap.perfect);
+		}
 
 		if (checkFragments) {
 			if (mapOwned) {
+				if (typeof mapOwned === 'object') mapOwned = mapOwned.id;
 				map = game.global.mapsOwnedArray[getMapIndex(mapOwned)];
 				saveData.difficulty = Number(map.difficulty);
 				saveData.size = Number(map.size);

@@ -3641,7 +3641,8 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 			size: sliders[1],
 			difficulty: sliders[2]
 		},
-		perfect
+		perfect,
+		cost: mapCost(mapLevel, special, biome, sliders, perfect)
 	};
 }
 

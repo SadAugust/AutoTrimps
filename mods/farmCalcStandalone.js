@@ -163,7 +163,8 @@ function _simulateSliders(mapLevel, special = getAvailableSpecials('lmc'), biome
 			size: sliders[1],
 			difficulty: sliders[2]
 		},
-		perfect
+		perfect,
+		cost: mapCost(mapLevel, special, biome, sliders, perfect)
 	};
 }
 
@@ -206,6 +207,98 @@ function findMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBi
 
 	if (isTricky && sendTricky) return 'Tricky Paradise';
 	return sendTricky;
+}
+
+function findOptimalMap(level = 0, special = getAvailableSpecials('lmc'), biome = getBiome(), perfect = false) {
+	if (perfect) return undefined;
+
+	const mapArray = [];
+	const goldenMaps = Number(game.singleRunBonuses.goldMaps.owned);
+	const minMapSize = masteryPurchased('mapLoot2') ? 20 : 25;
+	let mapLoot = biome === 'Farmlands' && game.global.universe === 2 ? 2.6 : biome === 'Plentiful' ? 1.85 : 1.6;
+	if (goldenMaps) mapLoot += 1;
+
+	for (let mapping in game.global.mapsOwnedArray) {
+		const map = game.global.mapsOwnedArray[mapping];
+
+		if (game.global.world + level !== map.level) continue;
+		if (map.noRecycle) continue;
+
+		if (perfect) {
+			if (map.size > minMapSize) continue;
+			if (map.difficulty > 0.75) continue;
+			if (map.loot > mapLoot) continue;
+			if (map.bonus !== special && special !== '0') continue;
+			if (map.location !== biome && biome !== 'Random') continue;
+
+			return map;
+		}
+
+		mapArray.push(map);
+	}
+
+	if (mapArray.length === 0) return undefined;
+
+	mapArray.sort((a, b) => {
+		const getBiomeForMap = (map) => (map.name === 'Tricky Paradise' && game.resources.fragments.owned < 600 ? 'Plentiful' : biome);
+		const aBiome = getBiomeForMap(a);
+		const bBiome = getBiomeForMap(b);
+
+		const aHasCorrectSpecial = a.bonus === special || special === undefined || special === '0';
+		const aHasCorrectBiome = a.location === aBiome || biome === 'Random';
+		const bHasCorrectSpecial = b.bonus === special || special === undefined || special === '0';
+		const bHasCorrectBiome = b.location === bBiome || biome === 'Random';
+
+		const getPriority = (hasSpecial, hasBiome) => (hasSpecial && hasBiome ? 3 : hasSpecial ? 2 : 1);
+		const aPriority = getPriority(aHasCorrectSpecial, aHasCorrectBiome);
+		const bPriority = getPriority(bHasCorrectSpecial, bHasCorrectBiome);
+
+		return bPriority - aPriority;
+	});
+
+	const { Chronoimp, Jestimp, Whipimp, Magnimp } = game.unlocks.imps;
+	const increaseSizeWeight = special !== '0' || ((Magnimp || Whipimp) && (Jestimp || Chronoimp));
+
+	const biomeLoot = {
+		Plentiful: 1.25,
+		Farmlands: 2
+	};
+
+	const sliderWeights = {
+		loot: 5,
+		size: increaseSizeWeight ? 10 : 3,
+		difficulty: 0.5
+	};
+
+	const highestRank = { rank: -Infinity, level: 0, special: undefined, loot: undefined, size: undefined, difficulty: undefined, location: undefined, name: '', id: undefined };
+
+	for (let mapping in mapArray) {
+		const map = mapArray[mapping];
+		const baseLoot = (biomeLoot[map.location] || 1) + goldenMaps;
+
+		if (highestRank.special === special && map.bonus !== special && special !== '0') {
+			break;
+		}
+
+		let rank = 0;
+		rank += Math.abs(map.loot - baseLoot) * sliderWeights.loot;
+		rank += Math.abs(minMapSize + 50 - map.size) * sliderWeights.size;
+		rank += Math.abs(Number(map.difficulty) - 1.65) * sliderWeights.difficulty;
+
+		if (rank >= highestRank.rank) {
+			highestRank.rank = rank;
+			highestRank.level = map.level;
+			highestRank.special = map.bonus || '0';
+			highestRank.location = map.location;
+			highestRank.loot = map.loot;
+			highestRank.size = map.size;
+			highestRank.difficulty = Number(map.difficulty);
+			highestRank.name = map.name;
+			highestRank.id = map.id;
+		}
+	}
+
+	return highestRank;
 }
 
 function getCurrentQuest() {
