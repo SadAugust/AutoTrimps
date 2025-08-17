@@ -237,6 +237,7 @@ function shouldRunUniqueMap(map) {
 			debug(`Running ${map.name}${map.name === 'Melting Point' ? ` at ${game.buildings.Smithy.owned} smithies` : ''} on zone ${game.global.world}.`, 'map_Details');
 			if (MODULES.mapFunctions.runUniqueMap === map.name) MODULES.mapFunctions.runUniqueMap = '';
 		}
+
 		return true;
 	}
 

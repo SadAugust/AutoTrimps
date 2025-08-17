@@ -560,7 +560,6 @@ function _purchaseMap(lowestMap) {
 		const mapCost = updateMapCost(true);
 		const mapObj = game.global.mapsOwnedArray[game.global.mapsOwnedArray.length - 1];
 		debug(`Bought ${_prettifyMap(mapObj)}. Spent ${prettify(mapCost)}/${prettify(game.resources.fragments.owned + mapCost)} (${((mapCost / (game.resources.fragments.owned + mapCost)) * 100).toFixed(2)}%) fragments.`, 'maps', 'th-large');
-
 		_runSelectedMap(mapObj.id, false);
 	}
 }
@@ -623,10 +622,17 @@ function _abandonMapCheck(selectedMap = null, runUnique) {
 function _runSelectedMap(mapId, runUnique) {
 	_abandonMapCheck(mapId, runUnique);
 
-	if (!mapSettings.prestigeFragMapBought && mapSettings.mapName !== 'Prestige Raiding' && mapSettings.mapName !== 'Bionic Raiding') {
+	const mapObj = game.global.mapsOwnedArray[getMapIndex(mapId)];
+	if (!mapObj.noRecycle && !mapSettings.prestigeFragMapBought && mapSettings.mapName !== 'Prestige Raiding' && mapSettings.mapName !== 'Bionic Raiding') {
 		const { mapLevel, special, biome = getBiome() } = mapSettings;
-		const optimalMap = findOptimalMap(mapLevel, special, biome);
-		if (optimalMap && mapId !== optimalMap.id) mapId = optimalMap.id;
+
+		if (mapObj.level === mapSettings.mapLevel + game.global.world) {
+			const optimalMap = findOptimalMap(mapLevel, special, biome);
+
+			if (optimalMap && mapId !== optimalMap.id) {
+				mapId = optimalMap.id;
+			}
+		}
 	}
 
 	if (game.global.currentMapId !== mapId) selectMap(mapId);
