@@ -189,9 +189,12 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 	else if (challengeActive('Wither') && getPageSetting('wither') && getPageSetting('witherShield') !== 'undefined') return 'witherShield';
 
 	/* breed shield */
-	if (swapLooms && game.global.soldierHealth <= 0 && !sendingArmy && getPerkLevel('Anticipation') === 0 && !noBreedChallenge() && _breedTimeRemaining() > 0) {
-		if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') return 'archaeologyBreedShield';
-		if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
+	if (swapLooms && game.global.soldierHealth <= 0 && !sendingArmy && !noBreedChallenge() && _breedTimeRemaining() > 0) {
+		let canBreedLoom = getPerkLevel('Anticipation') === 0 || getPageSetting('heirloomBreedAnticipation');
+		if (canBreedLoom) {
+			if (challengeActive('Archaeology') && getPageSetting('archaeologyBreedShield') !== 'undefined') return 'archaeologyBreedShield';
+			if (getPageSetting('heirloomBreed') !== 'undefined') return 'heirloomBreed';
+		}
 	}
 
 	if (swapLooms) {

@@ -2043,6 +2043,16 @@ function initialiseAllSettings() {
 			}, 'boolean', false, null, displayTab, [1, 2],
 			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse)) });
 
+		createSetting('heirloomBreedAnticipation',
+			function () { return ('Breed Anticipation Swap') },
+			function () {
+				let description = "<p>Will allow the <b>Breed</b> shield heirloom setting to work when you have points in the <b>Anticipation</b> perk.</p>";
+				description += "<p>This will disable the scripts <b>Gene Assist</b> feature when your breed shield is equipped, and will have issues working with the games <b>Geneticistassist</b> settings.</p>";
+				description += "<p><b>Recommended:</b> Off</p>";
+				return description;
+			}, 'boolean', false, null, displayTab, [1],
+			function () { return (getPageSetting('heirloomSwapping', atConfig.settingUniverse) && getPageSetting('heirloomShield', atConfig.settingUniverse) && !game.portal.Anticipation.locked) });
+
 		createSetting('heirloomVoidSwap',
 			function () { return ('Void Plaguebringer Swap') },
 			function () {
@@ -2160,7 +2170,7 @@ function initialiseAllSettings() {
 				description += "<p>This will override all other heirloom swapping features when active!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breed Speed</b> modifier.</p>";
 				description += "<p>Mapping decisions will be disabled (unless 0 + overkill cells away from c100) when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
-				if (atConfig.settingUniverse === 1) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use.</p>";				
+				if (atConfig.settingUniverse === 1 && !game.portal.Anticipation.locked) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use unless you enable the <b>Breed Anticipation Swap</b> setting.</p>";				
 				description += "<p>If set then when the heirloom calculator evaluates modifiers for heirlooms with this name it will evaluate Breed Speed as better over everything else.</p>";
 				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
 				description += "<p>Set to <b>undefined</b> to disable.</p>";

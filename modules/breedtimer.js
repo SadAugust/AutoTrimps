@@ -178,6 +178,9 @@ function geneAssist() {
 
 function _shouldRunGeneAssist() {
 	if (game.jobs.Geneticist.locked | !getPageSetting('geneAssist') | challengeActive('Trapper') | (getPageSetting('geneAssistTimer') <= 0) | (getPageSetting('geneAssistPercent') <= 0)) return false;
+
+	if (getPerkLevel('Anticipation') > 0 && usingBreedHeirloom() && getPageSetting('heirloomBreedAnticipation')) return false;
+
 	return true;
 }
 
