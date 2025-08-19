@@ -3252,7 +3252,7 @@ function _runHDFarm(setting, mapName, settingName, settingIndex, defaultSettings
 		const shouldMapBonus = game.global.mapBonus !== 10 && (setting.repeat || hdType === 'world' || (hdType === 'hitsSurvived' && game.global.mapBonus < getPageSetting('mapBonusHealth')));
 		const minLevel = shouldMapBonus ? 0 - getPerkLevel('Siphonology') : null;
 
-		mapLevel = autoLevelCheck(mapName, mapSpecial, biome);
+		mapLevel = autoLevelCheck(mapName, mapSpecial);
 		if (setting.repeat && minLevel > mapLevel) return farmingDetails;
 	}
 
@@ -3783,7 +3783,7 @@ function settingShouldRun(currSetting, world, zoneReduction = 0, settingName) {
 	return true;
 }
 
-function autoLevelCheck(mapName, mapSpecial, biome = undefined) {
+function autoLevelCheck(mapName, mapSpecial) {
 	const mapLevel = callAutoMapLevel(mapName, mapSpecial);
 
 	return mapLevel;

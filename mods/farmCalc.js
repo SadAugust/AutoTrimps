@@ -873,7 +873,7 @@ function simulate(saveData, zone, stance) {
 	function deathVarsReset() {
 		/* trimps death phase. 100ms + fighting phase timer */
 		ticks += 1 + Math.ceil(turns * saveData.speed);
-		ticks = Math.max(ticks, last_group_sent + saveData.breedTimer);
+		ticks = Math.max(ticks, last_group_sent + saveData.breedTimer * 10);
 		last_group_sent = ticks;
 		trimpOverkill = Math.abs(trimpHealth);
 
