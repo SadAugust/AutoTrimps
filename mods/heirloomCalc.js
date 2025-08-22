@@ -1322,7 +1322,7 @@ function calculate(autoUpgrade) {
 
 	const resourceListDisplay = startingHeirloom.type.includes('Staff');
 	if (resourceListDisplay) {
-		setElemDisplay('XPWeightDiv', game.global.spiresCompleted < 2 ? 'hidden' : 'visible', false, 'visibility');
+		setElemDisplay('XPWeightDiv', game.global.spiresCompleted < 2 || startingHeirloom.rarity < 8 ? 'hidden' : 'visible', false, 'visibility');
 		setElemDisplay('heirloomCustomParityBtn', startingHeirloom.rarity >= 11 ? 'flex' : 'none', false);
 		setElemDisplay('seedDropDiv', startingHeirloom.rarity < 12 ? 'hidden' : 'visible', false, 'visibility');
 	}
