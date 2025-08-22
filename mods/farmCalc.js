@@ -409,7 +409,8 @@ function populateFarmCalcData() {
 		checkFrenzy,
 		frenzyDuration,
 		frenzyMult,
-		frenzyChance
+		frenzyChance,
+		multitaskingMult: 1 + game.permaBoneBonuses.multitasking.mult()
 	};
 
 	return {
@@ -721,12 +722,13 @@ function _simulateMapGrid(saveData = populateFarmCalcData(), zone = game.global.
 
 /* simulate farming at the given zone for a fixed time, and return the number cells cleared. */
 function simulate(saveData, zone, stance) {
-	const { maxTicks, universe, mapGrid, biome, block, equality, size, specialData, lootMult, magma, checkFrenzy } = saveData;
+	const { maxTicks, universe, mapGrid, biome, block, equality, size, specialData, lootMult, magma, checkFrenzy, multitaskingMult } = saveData;
 
 	let cell = 0;
 	let loot = 0;
 	let ticks = 0;
 	let totalTurns = 0;
+	const breedTimer = saveData.breedTimer * 10;
 
 	let ok_damage = 0,
 		ok_spread = 0,
@@ -782,7 +784,7 @@ function simulate(saveData, zone, stance) {
 	const trimpEqualityMultMax = autoEquality ? Math.pow(saveData.equalityMult, game.portal.Equality.radLevel) : 1;
 	const enemyEqualityMultMax = autoEquality ? Math.pow(0.9, game.portal.Equality.radLevel) : 1; */
 
-	if (saveData.insanity && zone > game.global.world) biome.push([15, 60, true]);
+	if (saveData.insanity && zone > game.global.world) biome.enemy.push([15, 60, true]);
 	const specialTime = getSpecialTime(specialData);
 	const cacheLoot = (27 * game.unlocks.imps.Jestimp + 15 * game.unlocks.imps.Chronoimp) * lootMult;
 
@@ -873,7 +875,7 @@ function simulate(saveData, zone, stance) {
 	function deathVarsReset() {
 		/* trimps death phase. 100ms + fighting phase timer */
 		ticks += 1 + Math.ceil(turns * saveData.speed);
-		ticks = Math.max(ticks, last_group_sent + saveData.breedTimer * 10);
+		if (deaths > 0) ticks = Math.max(ticks, last_group_sent + breedTimer);
 		last_group_sent = ticks;
 		trimpOverkill = Math.abs(trimpHealth);
 
@@ -932,12 +934,18 @@ function simulate(saveData, zone, stance) {
 	let plague_damage = 0;
 	let trimpOverkill = 0;
 	let mapClears = 0;
+	let enemyChance = biome.enemy.length / (1 - saveData.import_chance);
+	let exoticChance = biome.exotic.length / saveData.import_chance;
+	let multitaskingBonus = 1;
 
 	while (ticks < maxTicks) {
 		rngRoll = rng();
+		const isExotic = rngRoll < saveData.import_chance;
+		const enemyArray = isExotic ? biome.exotic : biome.enemy;
+		const enemyChanceMult = isExotic ? exoticChance : enemyChance;
+		const rngRollScaled = rngRoll - (isExotic ? 0 : saveData.import_chance);
 
-		const imp = rngRoll;
-		const imp_stats = imp < saveData.import_chance ? [1, 1, false] : biome[Math.floor(rngRoll * biome.length)];
+		const imp_stats = enemyArray[Math.floor(rngRollScaled * enemyChanceMult)];
 		const fast = saveData.fastEnemy || (imp_stats[2] && !saveData.nom) || (saveData.duel && duelPoints > 90);
 
 		enemyAttack = imp_stats[0] * mapGrid[cell].attack;
@@ -1123,7 +1131,7 @@ function simulate(saveData, zone, stance) {
 		/* saveData.deathPhase is +0.1s then adding ticks from each turn */
 		ticks += +(turns > 0) + saveData.deathPhase + Math.ceil(turns * saveData.speed);
 
-		if (saveData.titimp && imp < 0.03) {
+		if (saveData.titimp && imp_stats[3] === 'Titimp') {
 			const newTitimp = Math.max(titimp, ticks) + 300;
 			titimp = Math.min(newTitimp, ticks + 450);
 		}
@@ -1190,8 +1198,11 @@ function simulate(saveData, zone, stance) {
 			energyShield = energyShieldMax;
 			mapClears++;
 
-			if (wind > 0) loot += wind * saveData.wind * cacheLoot;
-			else loot += cacheLoot;
+			if (deaths === 0 || ticks > last_group_sent + breedTimer) multitaskingBonus = multitaskingMult;
+			else multitaskingBonus = 1;
+
+			if (wind > 0) loot += wind * saveData.wind * cacheLoot * multitaskingBonus;
+			else loot += cacheLoot * multitaskingBonus;
 		}
 	}
 
@@ -1378,58 +1389,74 @@ function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 function _getBiomeEnemyStats(biome) {
 	const biomes = {
 		Plentiful: [
-			[1.3, 0.95, false] /* Flowimp */,
-			[0.95, 0.95, true] /* Kangarimp */,
-			[0.8, 1, false] /* Gnomimp */,
-			[1.05, 0.8, false] /* Slosnimp */,
-			[0.6, 1.3, true] /* Entimp */,
-			[1, 1.1, false] /* Squirrimp */,
-			[0.8, 1.4, false] /* Gravelimp */,
-			[1.1, 0.85, false] /* Platypimp */
+			[1.3, 0.95, false, 'Flowimp'],
+			[0.95, 0.95, true, 'Kangarimp'],
+			[0.8, 1, false, 'Gnomimp'],
+			[1.05, 0.8, false, 'Slosnimp'],
+			[0.6, 1.3, true, 'Entimp'],
+			[1, 1.1, false, 'Squirrimp'],
+			[0.8, 1.4, false, 'Gravelimp'],
+			[1.1, 0.85, false, 'Platypimp']
 		],
 		Sea: [
-			[0.8, 0.9, true] /* Shrimp */,
-			[0.8, 1.1, true] /* Chickimp */,
-			[1.4, 1.1, false] /* Hippopotamimp */,
-			[0.9, 1, true] /* Duckimp */,
-			[1.2, 0.8, false] /* Nooimp */
+			[0.8, 0.9, true, 'Shrimp'],
+			[0.8, 1.1, true, 'Chickimp'],
+			[1.4, 1.1, false, 'Hippopotamimp'],
+			[0.9, 1, true, 'Duckimp'],
+			[1.2, 0.8, false, 'Nooimp']
 		],
 		Mountain: [
-			[0.5, 2, false] /* Mountimp */,
-			[0.8, 1.4, false] /* Onoudidimp */,
-			[1.15, 1.4, false] /* Seirimp */,
-			[1, 0.85, true] /* Kittimp */
+			[0.5, 2, false, 'Mountimp'],
+			[0.8, 1.4, false, 'Onoudidimp'],
+			[1.15, 1.4, false, 'Seirimp'],
+			[1, 0.85, true, 'Kittimp']
 		],
 		Forest: [
-			[0.75, 1.2, true] /* Frimp */,
-			[1, 0.85, true] /* Kittimp */,
-			[1.1, 1.5, false] /* Grimp */
+			[0.75, 1.2, true, 'Frimp'],
+			[1, 0.85, true, 'Kittimp'],
+			[1.1, 1.5, false, 'Grimp']
 		],
 		Depths: [
-			[1.2, 1.4, false] /* Golimp */,
-			[0.9, 1, true] /* Slagimp */,
-			[1.2, 0.7, false] /* Moltimp */,
-			[1, 0.8, true] /* Lavimp */
+			[1.2, 1.4, false, 'Golimp'],
+			[0.9, 1, true, 'Slagimp'],
+			[1.2, 0.7, false, 'Moltimp'],
+			[1, 0.8, true, 'Lavimp']
 		],
 		Farmlands: [
-			[1.1, 0.85, false] /* Platypimp */
+			[1.1, 0.85, false, 'Platypimp']
 			/* force new line */
 		]
 	};
 
 	const baseEnemyBiome = [
-		[0.8, 0.7, true] /* Squimp */,
-		[0.9, 1.3, false] /* Elephimp */,
-		[0.9, 1.3, false] /* Turtlimp */,
-		[1, 1, false] /* Chimp */,
-		[1.1, 0.7, false] /* Penguimp */,
-		[1.05, 0.8, true] /* Snimp */,
-		[0.9, 1.1, true] /* Gorillimp */
+		[0.8, 0.7, true, 'Squimp'],
+		[0.9, 1.3, false, 'Elephimp'],
+		[0.9, 1.3, false, 'Turtlimp'],
+		[1, 1, false, 'Chimp'],
+		[1.1, 0.7, false, 'Penguimp'],
+		[1.05, 0.8, true, 'Snimp'],
+		[0.9, 1.1, true, 'Gorillimp']
 	];
+
+	const exotics = ['Goblimp', 'Flutimp', 'Jestimp', 'Titimp', 'Chronoimp'];
+	const exoticImps = [];
+	for (const exotic of exotics) {
+		if (game.unlocks.imps[exotic]) {
+			exoticImps.push([1, 1, false, exotic]);
+		}
+	}
+
+	if (game.talents.magimp.purchased) {
+		exoticImps.push([1, 1, false, 'Randimp']);
+	}
 
 	if (holidayObj.checkActive('Pumpkimp')) baseEnemyBiome.push([0.9, 1.5, false]); /* Pumpkimp */
 
-	const enemyBiome = [...baseEnemyBiome, ...biomes[biome]];
+	const enemyBiome = {
+		enemy: [...baseEnemyBiome, ...biomes[biome]],
+		exotic: exoticImps
+	};
+
 	return enemyBiome;
 }
 
