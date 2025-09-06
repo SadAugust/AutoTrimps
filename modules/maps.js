@@ -623,7 +623,7 @@ function _runSelectedMap(mapId, runUnique) {
 	_abandonMapCheck(mapId, runUnique);
 
 	const mapObj = game.global.mapsOwnedArray[getMapIndex(mapId)];
-	if (!mapObj.noRecycle && !mapSettings.prestigeFragMapBought && mapSettings.mapName !== 'Prestige Raiding' && mapSettings.mapName !== 'Bionic Raiding') {
+	if (mapObj && !mapObj.noRecycle && !mapSettings.prestigeFragMapBought && mapSettings.mapName !== 'Prestige Raiding' && mapSettings.mapName !== 'Bionic Raiding') {
 		const { mapLevel, special, biome = getBiome() } = mapSettings;
 
 		if (mapObj.level === mapSettings.mapLevel + game.global.world) {

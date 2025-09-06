@@ -77,7 +77,7 @@ function _shouldSaveResource(resourceName) {
 	return shouldSave && upgrades.some((up) => shouldSaveForSpeedUpgrade(game.upgrades[up]));
 }
 
-function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false, ignoreShield = false) {
+function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false, ignoreShield = false, saveResources = { metal: _shouldSaveResource('metal'), wood: _shouldSaveResource('wood') }) {
 	if (mapSettings.pandaEquips) return pandemoniumEquipmentCheck(mapSettings.cacheGain);
 
 	const canAncientTreasure = game.mapUnlocks.AncientTreasure.canRunOnce;
@@ -88,9 +88,9 @@ function mostEfficientEquipment(resourceSpendingPct = undefined, zoneGo = false,
 	if (ignoreShield) equipSettingsArray.Shield.enabled = false;
 
 	const baseEquipmentObj = _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChallenge);
-	const [highestPrestige, prestigesAvailableObj] = _getHighestPrestige(baseEquipmentObj, prestigeSetting, canAncientTreasure, noPrestigeChallenge);
+	const [highestPrestige, prestigesAvailableObj] = _getHighestPrestige(baseEquipmentObj, prestigeSetting, canAncientTreasure, noPrestigeChallenge, saveResources);
 
-	const buyPrestigesObj = _populateBuyPrestiges(equipSettingsArray, baseEquipmentObj);
+	const buyPrestigesObj = _populateBuyPrestiges(equipSettingsArray, baseEquipmentObj, saveResources);
 	const mostEfficientObj = _populateMostEfficientEquipment(equipSettingsArray, baseEquipmentObj, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj);
 
 	return mostEfficientObj;
@@ -134,7 +134,7 @@ function _getMostEfficientObject(resourceSpendingPct, zoneGo, noPrestigeChalleng
 	};
 }
 
-function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure, noPrestigeChallenge) {
+function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure, noPrestigeChallenge, saveResources) {
 	let highestPrestige = 0;
 	const prestigesObj = {
 		prestigesAvailable: false,
@@ -144,13 +144,20 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 		}
 	};
 
+	if (!saveResources) {
+		saveResources = {
+			metal: _shouldSaveResource('metal'),
+			wood: _shouldSaveResource('wood')
+		};
+	}
+
 	if (!noPrestigeChallenge) {
 		for (let equipName in atData.equipment) {
 			if (equipName === 'Shield') continue;
 			const equipType = atData.equipment[equipName].stat;
 			const currentPrestige = game.equipment[equipName].prestige;
 			highestPrestige = Math.max(highestPrestige, currentPrestige);
-			if (prestigesObj.prestigesAvailable || buyPrestigeMaybe(equipName).skip) continue;
+			if (prestigesObj.prestigesAvailable || buyPrestigeMaybe(equipName, undefined, undefined, saveResources).skip) continue;
 			if ((prestigeSetting === 0 && mostEfficient[equipType].zoneGo) || (prestigeSetting === 1 && !canAncientTreasure)) continue;
 
 			prestigesObj.prestigesAvailable = true;
@@ -161,9 +168,16 @@ function _getHighestPrestige(mostEfficient, prestigeSetting, canAncientTreasure,
 	return [highestPrestige, prestigesObj];
 }
 
-function _populateBuyPrestiges(equipSettingsArray, mostEfficient) {
+function _populateBuyPrestiges(equipSettingsArray, mostEfficient, saveResources) {
 	const buyPrestiges = {};
 	const pandemonium = challengeActive('Pandemonium');
+
+	if (!saveResources) {
+		saveResources = {
+			metal: _shouldSaveResource('metal'),
+			wood: _shouldSaveResource('wood')
+		};
+	}
 
 	for (const equipName in atData.equipment) {
 		const equipData = game.equipment[equipName];
@@ -173,7 +187,7 @@ function _populateBuyPrestiges(equipSettingsArray, mostEfficient) {
 		const equipModule = atData.equipment[equipName];
 		const equipType = equipModule.stat;
 		const resourceSpendingPct = mostEfficient[equipType].resourceSpendingPct !== 1 ? equipSettingsArray[equipName].percent / 100 : 1;
-		buyPrestiges[equipName] = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level);
+		buyPrestiges[equipName] = buyPrestigeMaybe(equipName, resourceSpendingPct, equipData.level, saveResources);
 	}
 
 	return buyPrestiges;
@@ -184,6 +198,8 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 	const { prestigeTypes, prestigesAvailable } = prestigesAvailableObj;
 	const prestigeSkip = { attack: false, health: false };
 	let allowPrestigeSkip = true;
+
+	const equipWeight = getPageSetting('equipWeight') > 0 ? getPageSetting('equipWeight') : 1;
 
 	function findEfficientItems(mostEfficient) {
 		const equipMult = getEquipPriceMult();
@@ -268,7 +284,7 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 				}
 			}
 
-			if (equipName === 'Shield' && nextLevelCost > game.resources.wood.owned * resourceSpendingPct) continue;
+			if (equipName === 'Shield' && nextLevelCost / (equipWeight < 1 ? equipWeight : 1) > game.resources.wood.owned * resourceSpendingPct) continue;
 
 			const shieldEff = equipName === 'Shield' && equipType === 'health' && mostEfficient[equipType].cost > game.resources.metal.owned * resourceSpendingPct;
 			const isMostEfficient = mostEfficient[equipType].statPerResource > safeRatio || !mostEfficient[equipType].name || shieldEff;
@@ -302,7 +318,7 @@ function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyP
 	return mostEfficient;
 }
 
-function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinity) {
+function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinity, saveResources) {
 	const prestigeInfo = {
 		minNewLevel: 0,
 		newStatMinValue: 0,
@@ -316,12 +332,19 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 		resourceSpendingPct
 	};
 
+	if (!saveResources) {
+		saveResources = {
+			metal: _shouldSaveResource('metal'),
+			wood: _shouldSaveResource('wood')
+		};
+	}
+
 	if (!Object.getOwnPropertyNames(atData.equipment).includes(equipName)) return prestigeInfo;
 	if (challengeActive('Pandemonium') && game.challenges.Pandemonium.isEquipBlocked(equipName)) return prestigeInfo;
 	if (challengeActive('Scientist') || challengeActive('Frugal')) return prestigeInfo;
 
 	const resourceUsed = equipName === 'Shield' ? 'wood' : 'metal';
-	if (_shouldSaveResource(resourceUsed)) return prestigeInfo;
+	if (saveResources[resourceUsed]) return prestigeInfo;
 
 	const prestigeUpgradeName = atData.equipment[equipName].upgrade;
 	const prestigeUpgrade = game.upgrades[prestigeUpgradeName];
@@ -342,7 +365,7 @@ function buyPrestigeMaybe(equipName, resourceSpendingPct = 1, maxLevel = Infinit
 	prestigeInfo.newStatMinValue = oneLevelStat * prestigeInfo.minNewLevel;
 	prestigeInfo.prestigeCost = prestigeCost;
 
-	if (_shouldSaveResource(resourceUsed)) {
+	if (saveResources[resourceUsed]) {
 		return prestigeInfo;
 	}
 
@@ -443,39 +466,44 @@ function autoEquip() {
 	if (mapSettings.mapName === 'Smithy Farm' || atConfig.timeouts.mapSettings) return;
 	if (runningAncientTreasure()) return;
 
-	if (_autoEquipTimeWarp()) return;
+	const saveResources = {
+		metal: _shouldSaveResource('metal'),
+		wood: _shouldSaveResource('wood')
+	};
+
+	const quest = getCurrentQuest();
+	if (quest === 2) saveResources.wood = false;
+	if (quest === 3) saveResources.metal = false;
+
+	if (_autoEquipTimeWarp(saveResources)) return;
 
 	let equipLeft = false;
 	do {
-		equipLeft = buyEquipsAlways2();
+		equipLeft = buyEquipsAlways2(saveResources);
 	} while (equipLeft);
 
 	let keepBuying = false;
 	do {
-		keepBuying = buyEquips();
+		keepBuying = buyEquips(saveResources);
 	} while (keepBuying);
 }
 
-function _autoEquipTimeWarp() {
+function _autoEquipTimeWarp(saveResources) {
 	const dontWhileLoop = usingRealTimeOffline || atConfig.loops.atTimeLapseFastLoop || liquifiedZone();
 	if (!dontWhileLoop) return false;
 
-	buyEquipsAlways2();
-	buyEquips();
+	buyEquipsAlways2(saveResources);
+	buyEquips(saveResources);
 
 	return true;
 }
 
-function buyEquipsAlways2() {
+function buyEquipsAlways2(saveResources) {
 	const alwaysLvl2 = getPageSetting('equip2');
 	const alwaysPandemonium = trimpStats.currChallenge === 'Pandemonium' && !mapSettings.pandaEquips && getPageSetting('pandemoniumAE') > 0;
 	if (!alwaysLvl2 && !alwaysPandemonium) return false;
 
 	let equipLeft = false;
-	const saveResources = {
-		metal: _shouldSaveResource('metal'),
-		wood: _shouldSaveResource('wood')
-	};
 
 	if (!game.upgrades.Miners.done && !challengeActive('Metal') && !challengeActive('Transmute')) saveResources.metal = true;
 
@@ -501,18 +529,13 @@ function buyEquipsAlways2() {
 	return equipLeft;
 }
 
-function buyEquips() {
-	const bestBuys = mostEfficientEquipment();
+function buyEquips(saveResources) {
+	const bestBuys = mostEfficientEquipment(undefined, undefined, undefined, saveResources);
 	const equipTypeList = ['attack', 'health'];
 	if (game.global.universe === 1) equipTypeList.push('block');
 	const equipTypes = equipTypeList.sort((a, b) => bestBuys[a].cost - bestBuys[b].cost);
 	const equipWeight = getPageSetting('equipWeight') > 0 ? getPageSetting('equipWeight') : 1;
 	let keepBuying = false;
-
-	const saveResources = {
-		metal: _shouldSaveResource('metal'),
-		wood: _shouldSaveResource('wood')
-	};
 
 	if (!game.upgrades.Miners.done && !challengeActive('Metal') && !challengeActive('Transmute')) saveResources.metal = true;
 
@@ -558,7 +581,12 @@ function displayMostEfficientEquipment(forceUpdate = false) {
 	if (!getPageSetting('equipEfficientEquipDisplay')) return;
 	if (game.options.menu.equipHighlight.enabled > 0) toggleSetting('equipHighlight');
 
-	const bestBuys = mostEfficientEquipment(1, undefined, true);
+	const saveResources = {
+		metal: _shouldSaveResource('metal'),
+		wood: _shouldSaveResource('wood')
+	};
+
+	const bestBuys = mostEfficientEquipment(1, undefined, true, saveResources);
 
 	for (let item in game.equipment) {
 		if (game.equipment[item].locked || item === 'Shield') continue;

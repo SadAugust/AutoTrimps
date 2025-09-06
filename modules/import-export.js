@@ -1449,7 +1449,7 @@ function pushSpreadsheetData() {
 		fluffy: fluffy_EvoLevel.fluffy(),
 		scruffy: Number((scruffy_Level.currentLevel() + scruffy_Level.getExp()[1] / scruffy_Level.getExp()[2]).toFixed(3)),
 		achievement: game.global.achievementBonus,
-		nullifium: game.global.nullifium,
+		nullifium: prettify(game.global.nullifium),
 		antenna: game.buildings.Antenna.purchased,
 		spire_Assault_Level: autoBattle.maxEnemyLevel,
 		spire_Assault_Radon: autoBattle.bonuses.Radon.level,

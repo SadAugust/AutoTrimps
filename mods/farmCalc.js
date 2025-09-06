@@ -995,7 +995,7 @@ function simulate(saveData, zone, stance) {
 				oneShot = true;
 			}
 
-			if (saveData.angelic && !saveData.berserk) {
+			if (saveData.angelic && !saveData.berserk && saveData.health > trimpHealth) {
 				trimpHealth += saveData.health / 2;
 				if (trimpHealth > saveData.health) trimpHealth = saveData.health;
 			}

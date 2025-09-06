@@ -312,7 +312,7 @@ function _runUniqueMap(mapName) {
 		if (game.global.preMapsActive && game.global.currentMapId === '') {
 			selectMap(map.id);
 			runMap(false);
-			debug(`Running ${mapName}${mapName === 'Melting Point' ? ` at ${game.buildings.Smithy.owned} smithies ` : ''} on zone ${game.global.world}.`, 'map_Details');
+			debug(`Running ${mapName}${mapName === 'Melting Point' ? ` at ${game.buildings.Smithy.owned} smithies` : ''} on zone ${game.global.world}.`, 'map_Details');
 			MODULES.mapFunctions.runUniqueMap = '';
 		}
 	}
@@ -1049,6 +1049,7 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 
 	const resources = ['gems', 'wood', 'metal'];
 	const farmStatus = { gems: false, wood: false, metal: false };
+	const smithyTotalCost = { gems: 0, wood: 0, metal: 0 };
 	const biomes = { gems: 'Sea', wood: 'Forest', metal: 'Mountain' };
 	const specials = { gems: 'lsc', wood: 'lwc', metal: 'lmc' };
 	const jobRatios = { gems: [1, 0, 0, 0], wood: [0, 1, 0, 0], metal: [0, 0, 1, 0] };
@@ -1061,6 +1062,8 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 	if (smithyGoal > game.buildings.Smithy.purchased) {
 		resources.forEach((resource) => {
 			const smithyCost = getBuildingItemPrice(game.buildings.Smithy, resource, false, smithyGoal - game.buildings.Smithy.purchased);
+			smithyTotalCost[resource] = smithyCost;
+
 			if (smithyCost > game.resources[resource].owned) {
 				farmStatus[resource] = true;
 				shouldMap = true;
@@ -1123,6 +1126,7 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 		gather,
 		smithies: smithyGoal,
 		gemFarm: farmStatus.gems,
+		smithyCost: smithyTotalCost,
 		repeat: true,
 		status,
 		settingIndex,
