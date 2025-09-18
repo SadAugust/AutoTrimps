@@ -542,6 +542,10 @@ function _setMapRepeat(mapObj = getCurrentMapObject()) {
 		repeatState = false;
 	}
 
+	if (mapObj.location === 'Void' && game.options.menu.repeatVoids.enabled === 1 && mapSettings.mapName !== 'Void Map') {
+		toggleSetting('repeatVoids');
+	}
+
 	if (game.global.repeatMap !== repeatState) {
 		repeatClicked();
 	}

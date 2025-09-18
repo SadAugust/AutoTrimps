@@ -194,12 +194,11 @@ function _populateBuyPrestiges(equipSettingsArray, mostEfficient, saveResources)
 }
 
 function _populateMostEfficientEquipment(equipSettingsArray, mostEfficient, buyPrestigesObj, canAncientTreasure, prestigeSetting, highestPrestige, prestigesAvailableObj) {
+	const equipWeight = getPageSetting('equipWeight') > 0 ? getPageSetting('equipWeight') : 1;
 	const mostEfficientOrig = { ...mostEfficient };
 	const { prestigeTypes, prestigesAvailable } = prestigesAvailableObj;
 	const prestigeSkip = { attack: false, health: false };
 	let allowPrestigeSkip = true;
-
-	const equipWeight = getPageSetting('equipWeight') > 0 ? getPageSetting('equipWeight') : 1;
 
 	function findEfficientItems(mostEfficient) {
 		const equipMult = getEquipPriceMult();
