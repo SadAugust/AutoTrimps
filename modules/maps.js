@@ -239,7 +239,8 @@ function autoMaps() {
 	if (_vanillaMAZ()) return;
 	if (_stormDisableMapping()) return;
 
-	_autoMapsDefaults();
+	const mapObj = getCurrentMapObject();
+	_autoMapsDefaults(mapObj);
 
 	const mapsOwned = _checkOwnedMaps();
 
@@ -247,7 +248,6 @@ function autoMaps() {
 
 	mapsOwned.selectedMap = _setSelectedMap(mapsOwned.selectedMap, mapsOwned.voidMap, mapsOwned.optimalMap);
 
-	const mapObj = getCurrentMapObject();
 	if (game.global.mapsActive) _setMapRepeat(mapObj);
 
 	if (!game.global.preMapsActive && !game.global.mapsActive && mapsOwned.selectedMap !== 'world') {
@@ -357,13 +357,18 @@ function _lifeMapping() {
 	MODULES.maps.lifeActive = false;
 }
 
-function _autoMapsDefaults() {
+function _autoMapsDefaults(mapObj = getCurrentMapObject()) {
 	if (!game.global.mapsActive && !game.global.preMapsActive) {
 		game.global.mapRunCounter = 0;
 		MODULES.maps.mapTimer = 0;
 	} else {
-		if (game.options.menu.exitTo.enabled) toggleSetting('exitTo');
-		if (mapSettings.mapName === 'Void Maps' && game.options.menu.repeatVoids.enabled) toggleSetting('repeatVoids');
+		if (game.options.menu.exitTo.enabled) {
+			toggleSetting('exitTo');
+		}
+
+		if (mapObj && mapObj.location === 'Void' && game.options.menu.repeatVoids.enabled === 1 && mapSettings.mapName !== 'Void Map') {
+			toggleSetting('repeatVoids');
+		}
 	}
 }
 
@@ -540,10 +545,6 @@ function _setMapRepeat(mapObj = getCurrentMapObject()) {
 		}
 	} else if (repeatState) {
 		repeatState = false;
-	}
-
-	if (mapObj.location === 'Void' && game.options.menu.repeatVoids.enabled === 1 && mapSettings.mapName !== 'Void Map') {
-		toggleSetting('repeatVoids');
 	}
 
 	if (game.global.repeatMap !== repeatState) {
