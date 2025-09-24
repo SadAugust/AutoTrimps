@@ -109,7 +109,7 @@ function populateFarmCalcData() {
 
 	const trimpBlock = basicData.universe === 1 ? calcOurBlock('X', false, 'map') : 0;
 	const trimpShield = basicData.universe === 2 ? calcOurHealth(true, 'map') : 0;
-	const dmgType = challengesActive.unlucky || challengeActive.discipline ? 'max' : 'min';
+	const dmgType = challengesActive.unlucky ? 'max' : 'min';
 	let trimpAttack = calcOurDmg(dmgType, basicData.universe === 1 ? 'X' : 0, false, 'map', 'never', 0);
 	let trimpHealth = calcOurHealth(basicData.universe === 2 ? challengesActive.shieldBreak : 'X', 'map');
 	trimpHealth -= trimpShield;
@@ -924,7 +924,7 @@ function simulate(saveData, zone, stance) {
 		attack *= titimp > ticks ? 2 : 1;
 		if (saveData.ice > 0) attack *= 2 - 0.366 ** (ice * saveData.ice);
 		if (saveData.weakness) attack *= 1 - saveData.weakness * Math.min(debuff_stacks, 9);
-		if (saveData.unlucky) attack *= 1 + saveData.range * rng();
+		if (saveData.unlucky || saveData.discipline) attack *= 1 + saveData.range * rng();
 		if (frenzyLeft > 0) attack *= saveData.frenzyMult;
 
 		return attack;
