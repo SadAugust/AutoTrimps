@@ -36,7 +36,7 @@ function evaluateHeirloomMods(loom, location) {
 	const remainingMods = targetMods.length - emptyMods;
 
 	const modsLeft = totalMods - remainingMods - emptyMods;
-	if (modTarget > 0 && remainingMods > 0 && modGoal >= targetModsTotal - modsLeft + emptyMods) return totalMods - remainingMods;
+	if (modTarget > 0 && remainingMods > 0 && modGoal >= targetModsTotal - modsLeft - emptyMods) return totalMods - remainingMods;
 	if (modGoal > modsLeft) return 0;
 	if (remainingMods <= 0) return Infinity;
 	if (remainingMods >= totalMods - modGoal) return totalMods - remainingMods;

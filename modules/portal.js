@@ -750,6 +750,7 @@ function c2FinishZone() {
 }
 
 function finishChallengeSquared(onlyDebug) {
+	if (MODULES.portal.afterVoids) return;
 	debug(`Finished ${game.global.challengeActive} at zone ${game.global.world}`, 'challenge', 'oil');
 	if (onlyDebug) return;
 	abandonChallenge();
