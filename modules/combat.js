@@ -1,11 +1,10 @@
 function callBetterAutoFight() {
-	_avoidEmpower();
 	_trimpicide();
-	const autoFightSetting = getPageSetting('autoFight');
 
+	const autoFightSetting = getPageSetting('autoFight');
 	if (autoFightSetting === 0) return;
 	if (autoFightSetting === 1) _betterAutoFight();
-	else if (autoFightSetting === 2) _betterAutoFightVanilla();
+	if (autoFightSetting === 2) _betterAutoFightVanilla();
 }
 
 function newArmyRdy() {
@@ -74,19 +73,20 @@ function _forceAbandonTrimps() {
 }
 
 // Check if we would die from the next enemy attack - Only used in U1
-function _armyDeath() {
-	if (game.global.universe !== 1 || game.global.mapsActive || game.global.soldierHealth <= 0 || !getPageSetting('avoidEmpower')) return false;
+function _armyDeath(formationChanged = false) {
+	if (game.global.universe !== 1 || game.global.mapsActive || (game.global.soldierHealth <= 0 && !formationChanged) || !getPageSetting('avoidEmpower')) return false;
+
+	const runningDaily = challengeActive('Daily');
+	const dailyChallenge = game.global.dailyChallenge;
+	if (!runningDaily || (runningDaily && typeof dailyChallenge.empower === 'undefined')) return false;
 
 	const enemy = getCurrentEnemy();
 	const fluctuation = game.global.universe === 2 ? 1.5 : 1.2;
-	const runningDaily = challengeActive('Daily');
-	const dailyChallenge = game.global.dailyChallenge;
-
-	if (!runningDaily || (runningDaily && typeof dailyChallenge.empower === 'undefined')) return false;
 
 	let ourHealth = game.global.soldierHealth;
 	let block = game.global.soldierCurrentBlock;
 	if (game.global.formation !== 0) block = game.global.formation === 3 ? (block /= 4) : (block *= 2);
+
 	enemyAttack = enemy.attack * fluctuation;
 
 	if (getEmpowerment() === 'Ice') enemyAttack *= game.empowerments.Ice.getCombatModifier();
@@ -118,8 +118,8 @@ function _armyDeath() {
 	return ourHealth - enemyAttack <= 0;
 }
 
-function _avoidEmpower() {
-	if (!game.global.mapsUnlocked || !_armyDeath()) return;
+function _avoidEmpower(formationChanged = false) {
+	if (!game.global.mapsUnlocked || !_armyDeath(formationChanged)) return;
 
 	if (game.global.mapsActive && !game.global.voidBuff) {
 		mapsClicked(true);
@@ -137,7 +137,7 @@ function _setEquality(equality) {
 	if (eqSetting.disabledStackCount === equality) return;
 
 	eqSetting.disabledStackCount = equality;
-	manageEqualityStacks();
+	if (!usingRealTimeOffline) manageEqualityStacks();
 	updateEqualityScaling();
 }
 
@@ -222,7 +222,7 @@ function _getOurHealth(mapping, worldType, forceMax = false) {
 	const dailyChallenge = game.global.dailyChallenge;
 	const dailyEmpower = isDaily && !mapping && typeof dailyChallenge.empower !== 'undefined';
 	const angelicDance = angelicOwned && (runningTrappa || runningRevenge || runningArchaeology || runningBerserk || frenzyCanExpire || dailyEmpower);
-	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || (game.global.spireActive && worldType === 'world');
+	const shieldBreak = challengeActive('Bublé') || getCurrentQuest() === 8 || (game.global.spireActive && worldType === 'world' && !angelicDance);
 
 	return remainingHealth(shieldBreak, angelicDance, worldType, forceMax);
 }

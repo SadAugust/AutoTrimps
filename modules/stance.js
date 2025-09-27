@@ -259,34 +259,47 @@ function shouldWindOverScryer(baseStats = getBaseStats(), currentEnemy = getCurr
 }
 
 function autoStance() {
-	if (!game.upgrades.Formations.done) return;
+	if (!game.upgrades.Formations.done) {
+		_avoidEmpower();
+		return;
+	}
 
+	const currentStance = game.global.formation;
 	const availableStances = unlockedStances();
 	const baseStats = getBaseStats();
 	const currentEnemy = getCurrentEnemy();
+	let checkEmpower = false;
 
 	if (availableStances.includes('S')) {
-		if (voidMapScryer(availableStances, baseStats, currentEnemy)) return;
-		if (autoLevelStance(availableStances, baseStats, currentEnemy)) return;
+		if (voidMapScryer(availableStances, baseStats, currentEnemy)) checkEmpower = true;
+		if (!checkEmpower && autoLevelStance(availableStances, baseStats, currentEnemy)) checkEmpower = true;
 	}
 
 	const settingAffix = trimpStats.isOneOff ? 'OneOff' : trimpStats.isC3 ? 'C2' : trimpStats.isDaily ? 'Daily' : '';
-	if (isDoingSpire() && !game.global.mapsActive && availableStances.includes('D') && getPageSetting(`spireDominanceStance${settingAffix}`)) {
+	if (!checkEmpower && isDoingSpire() && !game.global.mapsActive && availableStances.includes('D') && getPageSetting(`spireDominanceStance${settingAffix}`)) {
 		safeSetStance(2);
-		return;
+		checkEmpower = true;
 	}
 
-	const windStance = shouldWindStance(availableStances, baseStats, currentEnemy);
+	const windStance = !checkEmpower && shouldWindStance(availableStances, baseStats, currentEnemy);
 	if (windStance) {
 		safeSetStance(windStance);
-		return;
+		checkEmpower = true;
 	}
 
-	if (availableStances.includes('S') && shouldScryerStance(availableStances, baseStats, currentEnemy)) return;
+	if (!checkEmpower && availableStances.includes('S') && shouldScryerStance(availableStances, baseStats, currentEnemy)) checkEmpower = true;
 
-	const autoStance = getPageSetting('autoStance');
-	if (autoStance === 1) autoStanceAdvanced(availableStances, baseStats, currentEnemy);
-	if (autoStance === 2 && availableStances.includes('D')) safeSetStance(2);
+	if (!checkEmpower) {
+		const autoStance = getPageSetting('autoStance');
+		if (autoStance === 1) {
+			autoStanceAdvanced(availableStances, baseStats, currentEnemy);
+		}
+		if (autoStance === 2 && game.global.formation !== 2 && availableStances.includes('D')) {
+			safeSetStance(2);
+		}
+	}
+
+	_avoidEmpower(currentStance !== game.global.formation);
 }
 
 function voidMapScryer(availableStances = unlockedStances(), baseStats = getBaseStats(), currentEnemy = getCurrentEnemy()) {

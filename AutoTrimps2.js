@@ -176,7 +176,7 @@ function loadScriptsAT() {
 
 	if (typeof offlineTimeSpeed !== 'undefined') {
 		game.global.timeWarpLimit = offlineTimeSpeed;
-		delete offlineTimeSpeed;
+		delete window.offlineTimeSpeed;
 	}
 
 	if (game.global.timeWarpLimit === 0) game.global.timeWarpLimit = -1;
