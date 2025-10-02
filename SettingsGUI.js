@@ -1602,7 +1602,7 @@ function initialiseAllSettings() {
 				description += "<p><b>Portal: Refresh Respec On</b><br>When your free respec in a run has been used this will delay portaling into your Auto Portal challenge, instead making use of liquification to reach the portal unlock and portaling into your normal run from there.</p>";
 
 				if (game.permaBoneBonuses.voidMaps.owned >= 5) {
-					description += "<p><b>Portal: Void Map Liquification</b><br>Works the same as <b>Portal: Refresh Respec On</b> but in addition to portaling for a respec, it will repeatedly portal until your bone void map counter is 1 drop away from a guaranteed extra void map.";
+					description += "<p><b>Portal: Void Map Liquification</b><br>Works the same as <b>Portal: Refresh Respec On</b>, but in addition to portaling for a respec, it also portals when your bone void map counter is more than 1 void map drop away from guaranteed extra void map.";
 					description += "<br>If you have not reached the void map counter target by either zone 99 or the end of your liquification zones then it will portal and repeat this process until you have.</p>";
 				}
 				
