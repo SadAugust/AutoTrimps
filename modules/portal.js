@@ -42,7 +42,7 @@ function autoPortal(specificPortalZone, universe, skipDaily) {
 		portalType = getPageSetting('dailyPortal', universe).toString();
 	}
 
-	if (heHrSettings.includes(portalType)) {
+	if (heHrSettings.includes(portalType) && !respecSetting) {
 		handleHeHrSettings(runningDaily, universe, challengeSelected, skipDaily);
 	} else {
 		handlePortalType(portalType, portalZone, specificPortalZone, universe, challengeSelected, skipDaily);
