@@ -485,11 +485,6 @@ function autoGather() {
 		.sort((a, b) => game.upgrades[b.up].allowed - game.upgrades[b.up].done - (game.upgrades[a.up].allowed - game.upgrades[a.up].done) || a.idx - b.idx)
 		.map(({ up }) => up);
 
-	saveResources = {
-		metal: _shouldSaveResource('metal'),
-		wood: _shouldSaveResource('wood')
-	};
-
 	// Upgrade accelerator (available only)
 	for (let upgrade of upgradesToGather.filter((up) => game.upgrades[up].allowed > game.upgrades[up].done)) {
 		if (_gatherUpgrade(upgrade, researchAvailable, hasTurkimp)) return;
