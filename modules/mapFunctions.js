@@ -1059,14 +1059,20 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 		smithyGoal = _smithyFarmCalculateGoal(setting, mapLevel, smithyGoal);
 	}
 
-	if (smithyGoal > game.buildings.Smithy.purchased) {
+	if (smithyGoal > game.buildings.Smithy.purchased || (setting.meltingPoint && mapSettings.mapName !== mapName)) {
+		shouldMap = true;
+
+		if (canAffordBuilding('Smithy', false, false, false, false, 1)) {
+			const smithyToPurchase = calculateMaxAfford_AT(game.buildings.Smithy, true, false, false, smithyGoal - game.buildings.Smithy.purchased);
+			buyBuilding('Smithy', true, true, smithyToPurchase);
+		}
+
 		resources.forEach((resource) => {
 			const smithyCost = getBuildingItemPrice(game.buildings.Smithy, resource, false, smithyGoal - game.buildings.Smithy.purchased);
 			smithyTotalCost[resource] = smithyCost;
 
 			if (smithyCost > game.resources[resource].owned) {
 				farmStatus[resource] = true;
-				shouldMap = true;
 
 				mapSpecial = getAvailableSpecials(specials[resource], true);
 				biome = getBiome(null, biomes[resource]);
@@ -1076,6 +1082,8 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 				gather = gatherType[resource];
 			}
 		});
+
+		farmStatus.smithy = setting.meltingPoint && !farmStatus.gems && !farmStatus.wood && !farmStatus.metal;
 	}
 
 	if (farmStatus.gems && !game.buildings.Tribute.purchased) {
@@ -1113,7 +1121,7 @@ function _runSmithyFarm(setting, mapName, settingName, settingIndex) {
 		if (setting.meltingPoint && game.mapUnlocks.SmithFree.canRunOnce) _runUniqueMap('Melting Point');
 	}
 
-	const status = `Smithy Farming for ${resourceGoal}`;
+	const status = farmStatus.smithy ? `Running Melting Point` : `Smithy Farming for ${resourceGoal}`;
 
 	return {
 		shouldRun: shouldMap,

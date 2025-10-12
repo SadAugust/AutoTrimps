@@ -1390,7 +1390,7 @@ atData.autoPerks = {
 		special: {
 			spire: {
 				name: 'Spire respec',
-				description: 'Use this setting to respec for the Spire.',
+				description: 'Use this setting to respec for the Spire. This is only recommended during the first Spire.',
 				require: () => getHighestLevelCleared(true) >= 199,
 				visible: () => getHighestLevelCleared(true) >= 169
 			},
