@@ -2167,7 +2167,7 @@ function initialiseAllSettings() {
 			function () { return ('Breed') },
 			function () {
 				let description = "<p>Shield to use when your army is dead and breeding.</p>";
-				description += "<p>This will override all other heirloom swapping features when active!</p>";
+				description += "<p>This will override all other heirloom swapping features when equipped so ensure no other heirloom setting uses this shield name!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breed Speed</b> modifier.</p>";
 				description += "<p>Mapping decisions will be disabled (unless 0 + overkill cells away from c100) when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
 				if (atConfig.settingUniverse === 1 && !game.portal.Anticipation.locked) description += "<p>If you have any levels in the <b>Anticipation</b> perk then this setting will be ignored when deciding which shield to use unless you enable the <b>Breed Anticipation Swap</b> setting.</p>";				
@@ -2839,7 +2839,7 @@ function initialiseAllSettings() {
 			function () { return ('A: Breed Shield') },
 			function () {
 				let description = "<p>Shield to use during <b>Archaeology</b> when your army is dead and breeding.</p>";
-				description += "<p>This will override all other heirloom swapping features when active!</p>";
+				description += "<p>This will override all other heirloom swapping features when equipped so ensure no other heirloom setting uses this shield name!</p>";
 				description += "<p>Should ideally be a shield with the <b>Breed Speed</b> modifier.</p>";
 				description += "<p>Mapping decisions will be disabled when in world or the map chamber and using this heirloom so make sure it has a different name from your other heirloom settings!</p>";
 				description += "<p>The name you input here must match the name of an heirloom in your heirloom inventory for this to swap heirlooms.</p>";
