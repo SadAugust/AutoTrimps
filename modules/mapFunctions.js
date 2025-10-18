@@ -3415,7 +3415,16 @@ function farmingDecision() {
 
 	if (usingBreedHeirloom(true)) {
 		if (atConfig.intervals.oneMinute && (game.global.fighting || newArmyRdy()) && getPageSetting('autoMaps')) {
-			debug(`Your breed heirloom is equipped and mapping is disabled due to it. If this is not intentional then swap the heirloom you're using for breeding with another.`, `heirlooms`);
+			const heirloomToUse = heirloomShieldToEquip(undefined, true, true, false);
+			if (['heirloomBreed', 'archaeologyBreedShield'].includes(heirloomToUse)) return;
+
+			const breedMessage = `Your breed heirloom is currently equipped so auto maps has been disabled to prioritize breeding. If unintended, then adjust your AutoTrimps Shield heirloom settings.`;
+
+			if (getPageSetting('spamMessages').show) {
+				debug(breedMessage, `heirlooms`);
+			} else {
+				message(breedMessage, 'Notices', null, 'seedMessage', undefined, undefined, 'color: white;');
+			}
 		}
 
 		return;
