@@ -784,7 +784,7 @@ class Heirloom {
 
 		if (type === 'breedSpeed') {
 			if (this.breedHeirloom) return 1e300;
-			const breedSettings = this.heirloomObj.breed;
+			const breedSettings = this.heirloomObj.Breed;
 			if (typeof breedSettings !== 'undefined' && breedSettings.enabled) {
 				if (breedSettings.percent === 0) return 0;
 
