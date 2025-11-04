@@ -233,8 +233,8 @@ function populateFarmCalcData() {
 		Life: () => {
 			enemyHealthMult *= 11;
 			enemyAttackMult *= 6;
-			trimpAttack *= 1 + 0.1 * game.challenges.Life.stacks;
-			trimpHealth *= 1 + 0.1 * game.challenges.Life.stacks;
+			/* trimpAttack and trimpHealth are already done in their initial calcs */
+			/* trimpHealth *= 1 + 0.1 * game.challenges.Life.stacks; */
 		},
 		Crushed: () => {
 			if (trimpHealth < trimpBlock) death_stuff.enemy_cd = 5;
