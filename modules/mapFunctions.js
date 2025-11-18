@@ -3942,7 +3942,7 @@ function fragmentFarm() {
 	//Purchase fragment farming map if we're in map chamber. If you don't have enough fragments for this map then RIP
 	if (!game.global.preMapsActive) return;
 
-	const mapLevel = masteryPurchased('mapLoot') ? -1 : 0;
+	const mapLevel = masteryPurchased('mapLoot') && !challengeActive('Insanity') ? -1 : 0;
 	const special = getAvailableSpecials('fa');
 	const biome = getBiome('fragments');
 	let mapCheck = findMap(mapLevel, special, biome);
