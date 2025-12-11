@@ -190,7 +190,7 @@ function _autoStructureSave() {
 		}
 
 		const percentElem = document.getElementById(name + 'Percent');
-		let percent = parseInt(percentElem.value, 10);
+		let percent = parseFloat(percentElem.value, 10);
 		percent = isNumberBad(percent) ? 0 : Math.max(Math.min(percent, 100), 0);
 		setting[name].percent = percent;
 
@@ -459,7 +459,10 @@ function _autoJobsSave() {
 		setting[name] = setting[name] || {};
 		setting[name].enabled = item.classList.contains('btnItemEquipped');
 
-		if (name === 'NoLumberjacks') return;
+		if (name === 'NoLumberjacks') {
+			return;
+		}
+
 		if (name === 'FarmersUntil') {
 			const zoneElem = document.getElementById(name + 'Zone');
 			let zone = parseInt(zoneElem.value, 10);
@@ -471,7 +474,7 @@ function _autoJobsSave() {
 
 		if (ratioJobs.includes(name)) {
 			const ratioElem = document.getElementById(name + 'Ratio');
-			let ratio = parseInt(ratioElem.value, 10);
+			let ratio = parseFloat(ratioElem.value, 10);
 			ratio = isNumberBad(ratio) ? 0 : Math.max(Math.min(ratio, 1000), 0);
 			setting[name].ratio = ratio;
 
@@ -479,7 +482,7 @@ function _autoJobsSave() {
 		}
 
 		const percentElem = document.getElementById(name + 'Percent');
-		let percent = parseInt(percentElem.value, 10);
+		let percent = parseFloat(percentElem.value, 10);
 		percent = isNumberBad(percent) ? 0 : Math.max(Math.min(percent, 100), 0);
 		setting[name].percent = percent;
 	});
@@ -635,7 +638,7 @@ function _autoEquipSave() {
 		setting[name].enabled = item.classList.contains('btnItemEquipped');
 
 		const percentElem = document.getElementById(name + 'Percent');
-		let percent = parseInt(percentElem.value, 10);
+		let percent = parseFloat(percentElem.value, 10);
 		percent = isNumberBad(percent) ? 0 : Math.max(Math.min(percent, 100), 0);
 		setting[name].percent = percent;
 

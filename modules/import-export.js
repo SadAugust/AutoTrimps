@@ -1317,11 +1317,20 @@ function _raspberryPiSettings() {
 //Loads the base settings that I want to be the same when loading peoples saves as it will save me time.
 function loadAugustSettings() {
 	_raspberryPiSettings();
-	if (atConfig.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') return;
+
+	if (atConfig.initialise.basepath !== 'https://localhost:8887/AutoTrimps_Local/') {
+		return;
+	}
+
 	if (typeof greenworks === 'undefined') {
 		autoTrimpSettings.gameUser.value = 'test';
 		autoTrimpSettings.downloadSaves.enabled = 0;
 		autoTrimpSettings.downloadSaves.enabledU2 = 0;
+		saveSettings();
+	} else {
+		autoTrimpSettings.gameUser.value = 'SadAugust';
+		autoTrimpSettings.downloadSaves.enabled = 1;
+		autoTrimpSettings.downloadSaves.enabledU2 = 1;
 		saveSettings();
 	}
 
