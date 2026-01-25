@@ -2,6 +2,7 @@ const atConfig = {
 	initialise: {
 		version: '',
 		basepath: 'https://SadAugust.github.io/AutoTrimps/',
+		settingsTab: undefined,
 		loaded: false
 	},
 	modules: {

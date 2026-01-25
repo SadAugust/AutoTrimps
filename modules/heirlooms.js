@@ -227,6 +227,7 @@ function heirloomShieldToEquip(mapType = _getWorldType(), swapLooms = false, hdC
 			const compressedHD = getPageSetting('heirloomSwapHDCompressed');
 			if ((compressedHD > 0 || aboveSwapZone) && game.global.gridArray[game.global.lastClearedCell + 1].u2Mutation.indexOf('CMP') !== -1) {
 				if (getPageSetting('heirloomCompressed') !== 'undefined') return 'heirloomCompressed';
+				else MODULES.heirlooms.plagueSwap = false;
 			} else if ((compressedHD > 0 || aboveSwapZone) && game.global.gridArray[game.global.lastClearedCell + 2].u2Mutation.indexOf('CMP') !== -1) {
 				MODULES.heirlooms.plagueSwap = hdStats.hdRatio >= compressedHD || aboveSwapZone || MODULES.heirlooms.plagueSwap;
 			} else {

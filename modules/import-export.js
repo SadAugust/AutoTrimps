@@ -27,7 +27,8 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		resetPerkPreset: typeof _displayResetPerkPreset === 'function' ? _displayResetPerkPreset : null,
 		hideAutomation: typeof hideAutomationDisplay === 'function' ? hideAutomationDisplay : null,
 		perkCalcSave: typeof _displayPerkCalcSave === 'function' ? _displayPerkCalcSave : null,
-		display: typeof _displayFarmCalcTable === 'function' ? _displayFarmCalcTable : null
+		display: typeof _displayFarmCalcTable === 'function' ? _displayFarmCalcTable : null,
+		questZoneSkip: typeof _displayQuestZoneSkip === 'function' ? _displayQuestZoneSkip : null
 	};
 
 	const c2Info = typeof _getChallenge2Info === 'function' ? _getChallenge2Info() : '';
@@ -59,7 +60,8 @@ function importExportTooltip(event, titleText, extraParam, extraParam2) {
 		resetPerkPreset: 'Reset Perk Preset Weights',
 		hideAutomation: 'Hide Automation Buttons',
 		perkCalcSave: 'Last Allocation Save String',
-		display: 'Farm Calc Table'
+		display: 'Farm Calc Table',
+		questZoneSkip: 'Skip Quest Confirmation'
 	};
 
 	cancelTooltip();
@@ -1441,7 +1443,7 @@ function pushSpreadsheetData() {
 		graphData !== undefined
 			? Object.keys(mapCount).reduce(function (m, k) {
 					return mapCount[k] > m ? mapCount[k] : m;
-			  }, -Infinity)
+				}, -Infinity)
 			: 0;
 	const mapZone = graphData !== undefined ? Number(Object.keys(mapCount).find((key) => mapCount[key] === mapTotal)) : 0;
 
@@ -2019,6 +2021,37 @@ function _displayFarmCalcTable(tooltipDiv, titleText, currFragments = 'Current F
 	} else {
 		tooltipText += `${initialText}${tableContent}${endText}`;
 	}
+
+	return [tooltipDiv, tooltipText, costText, ondisplay];
+}
+
+function _displayQuestZoneSkip(tooltipDiv) {
+	let tooltipText;
+	let costText = "<div class='maxCenter'>";
+	tooltipDiv.style.left = '33.75%';
+	tooltipDiv.style.top = '25%';
+	let skipQuest = false;
+
+	if (!challengeActive('Quest')) {
+		tooltipText = `<p>You must be running the <b>Quest</b> challenge to use this feature.</p>`;
+	} else if (game.global.world < game.challenges.Quest.getQuestStartZone()) {
+		tooltipText = `<p>You are not currently within your Quest zone range. You will have to wait until your quests start on zone ${game.challenges.Quest.getQuestStartZone()} to use this feature.</p>`;
+	} else if (game.challenges.Quest.questComplete) {
+		tooltipText = `<p>You have already completed your Quest for this zone. You will have to wait until your next zone to skip a Quest.</p>`;
+	} else if (!MODULES.mapFunctions.questRun) {
+		tooltipText = `<p>Are you sure you want to skip farming for the Quest on your current zone?</p>`;
+		skipQuest = true;
+	} else {
+		tooltipText = `<p>The quest for this zone is already being skipped.</p>`;
+	}
+	costText += `<div id='confirmTooltipBtn' class='btn btn-info' onclick='cancelTooltip(); MODULES.mapFunctions.questRun = true;'>${skipQuest ? 'Skip Quest' : 'Confirm'}</div>`;
+	costText += "<div class='btn btn-danger' onclick='cancelTooltip()'>Cancel</div>";
+	costText += '</div>';
+
+	const ondisplay = function () {
+		if (typeof _verticalCenterTooltip === 'function') _verticalCenterTooltip();
+		else verticalCenterTooltip();
+	};
 
 	return [tooltipDiv, tooltipText, costText, ondisplay];
 }

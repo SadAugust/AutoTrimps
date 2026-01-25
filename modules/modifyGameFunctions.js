@@ -146,6 +146,7 @@ if (typeof offlineProgress.originalStart !== 'function') {
 		if (game.options.menu.offlineProgress.enabled === 1) game.options.menu.offlineProgress.enabled = 2;
 		offlineProgress.originalStart(...arguments);
 		toggleCatchUpMode();
+		_timeWarpSliderAdj();
 		while (game.options.menu.offlineProgress.enabled !== trustWorthy) toggleSetting('offlineProgress');
 
 		try {
@@ -153,8 +154,8 @@ if (typeof offlineProgress.originalStart !== 'function') {
 			if (offlineTime > 0) {
 				const gameTime = getGameTime();
 				offlineTime += 86400000;
-				if (gameTime > game.global.portalTime + offlineTime) game.global.portalTime += offlineTime;
 				if (gameTime > game.global.zoneStarted + offlineTime) game.global.zoneStarted += offlineTime;
+				if (gameTime > game.global.portalTime + offlineTime) game.global.portalTime += offlineTime;
 			}
 			if (typeof _setTimeWarpUI === 'function') _setTimeWarpUI();
 		} catch (e) {
@@ -727,20 +728,20 @@ function simpleSeconds_AT(what, seconds, workerRatio = null) {
 	let heirloom = !jobName
 		? null
 		: jobName === 'Miner' && challengeActive('Pandemonium') && getPageSetting('pandemoniumStaff') !== 'undefined'
-		? 'pandemoniumStaff'
-		: jobName === 'Farmer' && getPageSetting('heirloomStaffFood') !== 'undefined'
-		? 'heirloomStaffFood'
-		: jobName === 'Lumberjack' && getPageSetting('heirloomStaffWood') !== 'undefined'
-		? 'heirloomStaffWood'
-		: jobName === 'Miner' && getPageSetting('heirloomStaffMetal') !== 'undefined'
-		? 'heirloomStaffMetal'
-		: jobName === 'Scientist' && getPageSetting('heirloomStaffScience') !== 'undefined'
-		? 'heirloomStaffScience'
-		: getPageSetting('heirloomStaffMap') !== 'undefined'
-		? 'heirloomStaffMap'
-		: getPageSetting('heirloomStaffWorld') !== 'undefined'
-		? 'heirloomStaffWorld'
-		: null;
+			? 'pandemoniumStaff'
+			: jobName === 'Farmer' && getPageSetting('heirloomStaffFood') !== 'undefined'
+				? 'heirloomStaffFood'
+				: jobName === 'Lumberjack' && getPageSetting('heirloomStaffWood') !== 'undefined'
+					? 'heirloomStaffWood'
+					: jobName === 'Miner' && getPageSetting('heirloomStaffMetal') !== 'undefined'
+						? 'heirloomStaffMetal'
+						: jobName === 'Scientist' && getPageSetting('heirloomStaffScience') !== 'undefined'
+							? 'heirloomStaffScience'
+							: getPageSetting('heirloomStaffMap') !== 'undefined'
+								? 'heirloomStaffMap'
+								: getPageSetting('heirloomStaffWorld') !== 'undefined'
+									? 'heirloomStaffWorld'
+									: null;
 
 	if (game.global.StaffEquipped.name !== heirloom && heirloomSearch(heirloom) === undefined) heirloom = null;
 

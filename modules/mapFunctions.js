@@ -9,7 +9,8 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Shieldblock.allowed) return false;
-			if (mapSetting.unlocks && aboveMapLevel && getPageSetting('equipShieldBlock')) return true; //Don't bother before z12 outside of manual unique map settings setup
+			if (mapSetting.unlocks && aboveMapLevel && getPageSetting('equipShieldBlock'))
+				return true; //Don't bother before z12 outside of manual unique map settings setup
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -23,7 +24,8 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
-			if (mapSetting.unlocks && aboveMapLevel && !masteryPurchased('bounty')) return true; //Don't bother before z16
+			if (mapSetting.unlocks && aboveMapLevel && !masteryPurchased('bounty'))
+				return true; //Don't bother before z16
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -37,7 +39,8 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified) {
 			if (elementExists('portalBtn')) return false;
-			if (mapSetting.unlocks && game.global.world - 1 > map.level) return true; //Don't bother before z22
+			if (mapSetting.unlocks && game.global.world - 1 > map.level)
+				return true; //Don't bother before z22
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -50,7 +53,8 @@ atData.uniqueMaps = Object.freeze({
 		universe: 1,
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (mapSetting.unlocks && aboveMapLevel && game.portal.Relentlessness.locked) return true; //Unlock the Relentlessness perk
+			if (mapSetting.unlocks && aboveMapLevel && game.portal.Relentlessness.locked)
+				return true; //Unlock the Relentlessness perk
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -63,7 +67,8 @@ atData.uniqueMaps = Object.freeze({
 		universe: 1,
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
-			if (mapSetting.unlocks && aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map)) return true; //Unlock the Electricity challenge
+			if (mapSetting.unlocks && aboveMapLevel && game.global.prisonClear <= 0 && enoughHealth(map))
+				return true; //Unlock the Electricity challenge
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -101,7 +106,8 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: true,
 		runConditions: function (map, mapSetting, liquified, aboveMapLevel) {
 			if (game.upgrades.Bounty.allowed) return false;
-			if (mapSetting.unlocks && aboveMapLevel && !masteryPurchased('bounty')) return true; // we need Bounty
+			if (mapSetting.unlocks && aboveMapLevel && !masteryPurchased('bounty'))
+				return true; // we need Bounty
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -115,7 +121,8 @@ atData.uniqueMaps = Object.freeze({
 		mapUnlock: false,
 		runConditions: function (map, mapSetting, liquified) {
 			if (elementExists('portalBtn')) return false;
-			if (mapSetting.unlocks && game.global.world - 1 > map.level && game.global.totalRadPortals === 0) return true; //Don't bother before z17
+			if (mapSetting.unlocks && game.global.world - 1 > map.level && game.global.totalRadPortals === 0)
+				return true; //Don't bother before z17
 			else if (map.clears === 0 && mapSetting.enabled && game.global.world >= mapSetting.zone && (game.global.lastClearedCell + 2 >= mapSetting.cell || liquified)) return true;
 			return false;
 		}
@@ -4270,7 +4277,7 @@ function callAutoMapLevel(mapName, special, mapType) {
 		}
 	}
 
-	if (getCurrentQuest() === 8 || challengeActive('Bublé')) return mapLevel;
+	if ((getCurrentQuest() === 8 && !MODULES.mapFunctions.questRun) || challengeActive('Bublé')) return mapLevel;
 	mapLevel = autoLevelOverides(mapName, mapLevel, mapModifiers);
 
 	const mapBonusLevel = game.global.universe === 1 ? -game.portal.Siphonology.level || 0 : 0;

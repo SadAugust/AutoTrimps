@@ -219,7 +219,7 @@ function autoMaps() {
 
 	if (_checkWaitForFrags()) return;
 
-	if (game.global.soldierCurrentAttack < 0 || getCurrentQuest() === 9 || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
+	if (game.global.soldierCurrentAttack < 0 || (getCurrentQuest() === 9 && !MODULES.mapFunctions.questRun) || (challengeActive('Mapology') && game.challenges.Mapology.credits < 1)) {
 		if (game.global.preMapsActive) mapsClicked();
 		return;
 	}
