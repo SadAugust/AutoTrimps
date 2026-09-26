@@ -509,6 +509,7 @@ function optimize() {
 	const base_income = 600 * mod.whip * books;
 	const base_helium = Math.pow(zone - 19, 2);
 	const max_tiers = zone / 5 + +((zone - 1) % 10 < 5);
+	const preset = $$('#preset').value;
 
 	const exponents = {
 		cost: Math.pow(1.069, 0.85 * (zone < 60 ? 57 : 53)),
@@ -752,7 +753,7 @@ function optimize() {
 	weight.agility = (weight.helium + weight.attack) / 2;
 	weight.overkill = 0.25 * weight.attack * (2 - Math.pow(0.9, weight.helium / weight.attack));
 
-	Agility.min_level = _getPerkBuyCount(Agility, 0.02);
+	if (preset !== 'unessenceted') Agility.min_level = _getPerkBuyCount(Agility, 0.02);
 
 	if (mod.soldiers <= 1 && Bait.min_level === 0) {
 		if (zone > 90) {
@@ -764,7 +765,7 @@ function optimize() {
 
 	if (game.portal.Carpentry.locked) {
 		Bait.min_level = 1;
-		if ($$('#preset').value !== 'trapper') Pheromones.min_level = 1;
+		if (preset !== 'trapper') Pheromones.min_level = 1;
 	}
 
 	if (game.global.viewingUpgrades) {
