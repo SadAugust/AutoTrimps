@@ -1,5 +1,6 @@
 function verifyLayout(layout) {
 	for (const trap of layout) {
+		if (trap === "") continue;
 		if (playerSpireTraps[trap].locked) {
 			tooltip('confirm', null, 'update', 'Illegal trap layout. Try using <a href="http://swaqvalley.com/td_calc/" target="_blank">swaqs spire build calculator</a> instead.', 'cancelTooltip()', `Invalid Import`, 'Confirm');
 			return false;
