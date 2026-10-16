@@ -2082,7 +2082,7 @@ function _runArchaeology(setting, mapName, settingName, settingIndex) {
 		while (relicsToPurchase.length > 0 && game.resources.science.owned > game.challenges.Archaeology.getNextCost()) {
 			const relicName = game.challenges.Archaeology.getDefs()[relicsToPurchase[0].slice(-1)];
 			const relicToBuy = parseInt(relicsToPurchase[0]);
-			game.challenges.Archaeology.buyRelic(relicName + 'Relic', true);
+			buyUpgrade(relicName + 'Relic', true, true);
 			if (game.challenges.Archaeology.points[relicName] >= relicToBuy) relicsToPurchase.shift();
 		}
 	}
