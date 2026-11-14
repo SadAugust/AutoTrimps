@@ -259,7 +259,10 @@ function _obtainUniqueMap(uniqueMap) {
 	const mapName = 'Unique Map Farm';
 	const farmingDetails = {
 		shouldRun: false,
-		mapName
+		mapName,
+		/* This object is assigned straight to mapSettings, so it needs the same auto level bookkeeping that farmingDecision sets up. */
+		levelCheck: Infinity,
+		levelData: []
 	};
 
 	if (!uniqueMap || typeof uniqueMap !== 'string') uniqueMap = mapSettings.uniqueMap;
@@ -4243,22 +4246,28 @@ function callAutoMapLevel(mapName, special, mapType) {
 		hdStats.autoLevelZoneDeso = game.global.world;
 	}
 
-	let mapLevel = mapSettings.levelCheck;
+	/* mapSettings is replaced by objects built elsewhere (eg. the unique map farm), so treat a missing level as "auto level". */
+	let mapLevel = Number.isFinite(mapSettings.levelCheck) ? mapSettings.levelCheck : Infinity;
 	if (mapLevel !== Infinity && challengeActive('Mapology')) return mapLevel;
 	const autoLevelObj = mapName === 'Desolation Destacking' ? hdStats.autoLevelDesolation : hdStats.autoLevelInitial;
 	const intervalCheck = usingRealTimeOffline ? atConfig.intervals.thirtySecond : atConfig.intervals.sixSecond;
 
+	if (!Array.isArray(mapSettings.levelData)) mapSettings.levelData = [];
+	/* Drop invalid levels from the history so the mode below can never resolve to NaN. */
+	if (mapSettings.levelData.some((level) => !Number.isFinite(level))) mapSettings.levelData = mapSettings.levelData.filter((level) => Number.isFinite(level));
+
 	if (mapLevel === Infinity) {
 		mapLevel = get_best(autoLevelObj, true, mapModifiers)[mapType].mapLevel;
+		if (!Number.isFinite(mapLevel)) mapLevel = 0;
 		mapSettings.levelData = [mapLevel];
 	} else if (mapName && intervalCheck) {
 		const autoLevelData = get_best(autoLevelObj, true, mapModifiers)[mapType];
 		const autoLevel = autoLevelData.mapLevel;
-		mapLevel = Math.max(mapLevel, autoLevel);
+		if (Number.isFinite(autoLevel)) mapLevel = Math.max(mapLevel, autoLevel);
 
 		const autoLevelDataNoFrags = get_best(autoLevelObj)[mapType];
 		const autoLevelIgnoreFragments = autoLevelDataNoFrags.mapLevel;
-		mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
+		if (Number.isFinite(autoLevelIgnoreFragments)) mapLevel = Math.min(mapLevel, autoLevelIgnoreFragments);
 		mapSettings.levelData.push(mapLevel);
 
 		if (autoLevelData.ratio < 1.05) {

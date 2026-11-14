@@ -1306,7 +1306,7 @@ function get_best(results, fragmentCheck, mapModifiers, popup = false) {
 		for (let i = 0; i <= stats.length - 1; i++) {
 			if (forcePerfect && stats[i].zone !== 6) {
 				if (findMap(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, forcePerfect)) continue;
-				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.mapBiome, [9, 9, 9])) break;
+				if (fragments >= mapCost(stats[i].mapLevel, mapModifiers.special, mapModifiers.biome, [9, 9, 9])) break;
 
 				if (stats.length > 1) {
 					stats.splice(i, 1);
